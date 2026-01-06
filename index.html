@@ -1166,6 +1166,14 @@
         await createBin(dataByTab.projets, 'projets');
       }
       
+      // S'assurer que les bins existent (pour le partage)
+      if (!BIN_ID_DC && dataByTab.datacenter.length > 0) {
+        await createBin(dataByTab.datacenter, 'datacenter');
+      }
+      if (!BIN_ID_PROJ && dataByTab.projets.length > 0) {
+        await createBin(dataByTab.projets, 'projets');
+      }
+      
       updateTabCounts();
       showSyncStatus('saved');
     }
@@ -1670,11 +1678,23 @@
       });
 
       // Share Button
-      document.getElementById('shareBtn')?.addEventListener('click', () => {
+      document.getElementById('shareBtn')?.addEventListener('click', async () => {
+        // Créer les bins s'ils n'existent pas
+        if (!BIN_ID_DC) {
+          showSyncStatus('saving');
+          await createBin(dataByTab.datacenter, 'datacenter');
+        }
+        if (!BIN_ID_PROJ) {
+          showSyncStatus('saving');
+          await createBin(dataByTab.projets, 'projets');
+        }
+        showSyncStatus('saved');
+        
         if (!BIN_ID_DC && !BIN_ID_PROJ) {
-          alert('Ajoutez d\'abord une affaire pour générer le lien de partage.');
+          alert('Erreur de connexion. Réessayez.');
           return;
         }
+        
         let shareUrl = `${window.location.origin}${window.location.pathname}?`;
         const params = [];
         if (BIN_ID_DC) params.push(`dc=${BIN_ID_DC}`);
