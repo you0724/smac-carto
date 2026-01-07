@@ -929,16 +929,16 @@
   </div>
 
   <script>
-    /* npoint.io Configuration (gratuit, supporte CORS) */
+    /* Pantry.cloud Configuration (gratuit, CORS OK) */
+    // Pantry ID - chaque utilisateur peut créer le sien sur https://getpantry.cloud/
+    let PANTRY_ID = localStorage.getItem('smac_pantry_id') || null;
     
-    // Récupérer les IDs depuis l'URL ou localStorage
+    // Récupérer depuis l'URL si présent
     const urlParams = new URLSearchParams(window.location.search);
-    let NPOINT_ID_DC = urlParams.get('dc') || localStorage.getItem('smac_npoint_dc') || null;
-    let NPOINT_ID_PROJ = urlParams.get('proj') || localStorage.getItem('smac_npoint_proj') || null;
-    
-    // Sauvegarder les IDs si présents dans l'URL
-    if (urlParams.get('dc')) localStorage.setItem('smac_npoint_dc', urlParams.get('dc'));
-    if (urlParams.get('proj')) localStorage.setItem('smac_npoint_proj', urlParams.get('proj'));
+    if (urlParams.get('pantry')) {
+      PANTRY_ID = urlParams.get('pantry');
+      localStorage.setItem('smac_pantry_id', PANTRY_ID);
+    }
 
     /* CDN URLs */
     const CDN = {
@@ -1037,51 +1037,64 @@
     let deletingIdx = null;
     let isSaving = false;
 
-    /* npoint.io API Functions (gratuit, CORS OK) */
-    async function createNpoint(data, tabName) {
-      console.log('Création npoint pour:', tabName);
+    /* Pantry API Functions (gratuit, CORS OK) */
+    async function createPantry() {
+      // Créer un nouveau Pantry
       try {
-        const res = await fetch('https://api.npoint.io/doc', {
+        const res = await fetch('https://getpantry.cloud/apiv1/pantry', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ contents: JSON.stringify(data) })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            name: 'SMAC-Carto-' + Date.now(),
+            description: 'SMAC Cartographie'
+          })
         });
-        console.log('Réponse createNpoint:', res.status);
-        const json = await res.json();
-        console.log('JSON:', json);
-        
-        if (json && json.id) {
-          if (tabName === 'datacenter') {
-            NPOINT_ID_DC = json.id;
-            localStorage.setItem('smac_npoint_dc', NPOINT_ID_DC);
-          } else {
-            NPOINT_ID_PROJ = json.id;
-            localStorage.setItem('smac_npoint_proj', NPOINT_ID_PROJ);
-          }
-          console.log('ID créé:', json.id);
+        const text = await res.text();
+        // Le Pantry ID est retourné dans la réponse
+        const match = text.match(/[a-f0-9-]{36}/i);
+        if (match) {
+          PANTRY_ID = match[0];
+          localStorage.setItem('smac_pantry_id', PANTRY_ID);
           return true;
         }
         return false;
       } catch (e) {
-        console.error('Erreur création npoint:', e);
+        console.error('Erreur création pantry:', e);
         return false;
       }
     }
 
-    async function loadFromCloud(tabName) {
-      const npointId = tabName === 'datacenter' ? NPOINT_ID_DC : NPOINT_ID_PROJ;
-      if (!npointId) return null;
+    async function saveBasket(basketName, data) {
+      if (!PANTRY_ID) return false;
       try {
-        const res = await fetch(`https://api.npoint.io/${npointId}`);
+        await fetch(`https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${basketName}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: data })
+        });
+        return true;
+      } catch (e) {
+        console.error('Erreur sauvegarde basket:', e);
+        return false;
+      }
+    }
+
+    async function loadBasket(basketName) {
+      if (!PANTRY_ID) return null;
+      try {
+        const res = await fetch(`https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${basketName}`);
         if (!res.ok) return null;
         const json = await res.json();
-        return json || null;
+        return json.data || null;
       } catch (e) {
-        console.error('Erreur chargement:', e);
+        console.error('Erreur chargement basket:', e);
         return null;
       }
+    }
+
+    async function loadFromCloud(tabName) {
+      const basketName = tabName === 'datacenter' ? 'datacenter' : 'projets2026';
+      return await loadBasket(basketName);
     }
 
     async function saveToCloud(tabName) {
@@ -1089,21 +1102,14 @@
       isSaving = true;
       showSyncStatus('saving');
       
-      const npointId = tabName === 'datacenter' ? NPOINT_ID_DC : NPOINT_ID_PROJ;
+      const basketName = tabName === 'datacenter' ? 'datacenter' : 'projets2026';
       const data = dataByTab[tabName];
       
       try {
-        if (!npointId) {
-          await createNpoint(data, tabName);
-        } else {
-          await fetch(`https://api.npoint.io/${npointId}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-          });
+        if (!PANTRY_ID) {
+          await createPantry();
         }
+        await saveBasket(basketName, data);
         showSyncStatus('saved');
       } catch (e) {
         console.error('Erreur sauvegarde:', e);
@@ -1148,13 +1154,19 @@
     async function initData() {
       showSyncStatus('saving');
       
+      // Créer un Pantry si besoin
+      if (!PANTRY_ID) {
+        console.log('Création du Pantry...');
+        await createPantry();
+      }
+      
       // Load Data-Centers
       let cloudDC = await loadFromCloud('datacenter');
       if (cloudDC && Array.isArray(cloudDC) && cloudDC.length > 0) {
         dataByTab.datacenter = migrateData(cloudDC);
       } else {
         dataByTab.datacenter = migrateData(JSON.parse(JSON.stringify(defaultDataDC)));
-        await createNpoint(dataByTab.datacenter, 'datacenter');
+        await saveBasket('datacenter', dataByTab.datacenter);
       }
       
       // Load Projets 2026
@@ -1163,15 +1175,7 @@
         dataByTab.projets = migrateData(cloudProj);
       } else {
         dataByTab.projets = migrateData(JSON.parse(JSON.stringify(defaultDataProj)));
-        await createNpoint(dataByTab.projets, 'projets');
-      }
-      
-      // S'assurer que les endpoints existent
-      if (!NPOINT_ID_DC && dataByTab.datacenter.length > 0) {
-        await createNpoint(dataByTab.datacenter, 'datacenter');
-      }
-      if (!NPOINT_ID_PROJ && dataByTab.projets.length > 0) {
-        await createNpoint(dataByTab.projets, 'projets');
+        await saveBasket('projets2026', dataByTab.projets);
       }
       
       updateTabCounts();
@@ -1679,29 +1683,20 @@
 
       // Share Button
       document.getElementById('shareBtn')?.addEventListener('click', async () => {
-        console.log('Clic partager - NPOINT_ID_DC:', NPOINT_ID_DC, 'NPOINT_ID_PROJ:', NPOINT_ID_PROJ);
+        console.log('Clic partager - PANTRY_ID:', PANTRY_ID);
         
-        // Créer les endpoints s'ils n'existent pas
-        if (!NPOINT_ID_DC) {
-          console.log('Création npoint DC...');
+        // Créer le Pantry s'il n'existe pas
+        if (!PANTRY_ID) {
           showSyncStatus('saving');
-          await createNpoint(dataByTab.datacenter, 'datacenter');
-        }
-        if (!NPOINT_ID_PROJ) {
-          console.log('Création npoint PROJ...');
-          showSyncStatus('saving');
-          await createNpoint(dataByTab.projets, 'projets');
+          await createPantry();
+          // Sauvegarder les données
+          await saveBasket('datacenter', dataByTab.datacenter);
+          await saveBasket('projets2026', dataByTab.projets);
         }
         showSyncStatus('saved');
         
-        // Construire le lien
-        let shareUrl = `${window.location.origin}${window.location.pathname}`;
-        const params = [];
-        if (NPOINT_ID_DC) params.push(`dc=${NPOINT_ID_DC}`);
-        if (NPOINT_ID_PROJ) params.push(`proj=${NPOINT_ID_PROJ}`);
-        
-        if (params.length > 0) {
-          shareUrl += '?' + params.join('&');
+        if (PANTRY_ID) {
+          const shareUrl = `${window.location.origin}${window.location.pathname}?pantry=${PANTRY_ID}`;
           if (navigator.clipboard) {
             navigator.clipboard.writeText(shareUrl).then(() => {
               alert('✅ Lien copié !\n\nPartagez ce lien avec vos collègues :\n\n' + shareUrl);
