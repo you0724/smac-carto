@@ -1187,6 +1187,25 @@
     const statusClass = s => s === 'Gagné' ? 'gagne' : s === 'Perdu' ? 'perdu' : s === 'Faste' ? 'faste' : 'encours';
     const statusIcon = s => s === 'Gagné' ? '✓' : s === 'Perdu' ? '✕' : s === 'Faste' ? '⚡' : '◷';
 
+    /* Duplicate to other tab */
+    async function duplicateToOtherTab(idx) {
+      const dc = currentList[idx];
+      if (!dc) return;
+      
+      const otherTab = currentTab === 'datacenter' ? 'projets' : 'datacenter';
+      const otherTabName = currentTab === 'datacenter' ? 'Projets Chiffrés 2026' : 'Data-Centers';
+      
+      // Créer une copie avec un nouvel ID
+      const copy = { ...dc, id: makeId() };
+      
+      // Ajouter à l'autre onglet
+      dataByTab[otherTab].push(copy);
+      await saveToCloud(otherTab);
+      
+      updateTabCounts();
+      alert(`✅ Affaire dupliquée vers "${otherTabName}" !`);
+    }
+
     /* Render List */
     function renderList() {
       const container = document.getElementById('listContainer');
@@ -1212,6 +1231,7 @@
           <div class="list-item-footer">
             <span class="list-item-amount">${escapeHTML(displayMontant(dc.montant))}</span>
             <div class="list-item-actions">
+              <button class="btn-icon duplicate" title="Dupliquer vers l'autre onglet">📋</button>
               <button class="btn-icon edit" title="Modifier">✏️</button>
               <button class="btn-icon delete" title="Supprimer">🗑️</button>
             </div>
@@ -1227,6 +1247,7 @@
         cont.querySelectorAll('.list-item').forEach(item => {
           const idx = parseInt(item.dataset.idx);
           item.addEventListener('click', e => {
+            if (e.target.closest('.duplicate')) { duplicateToOtherTab(idx); return; }
             if (e.target.closest('.edit')) { openEdit(idx); return; }
             if (e.target.closest('.delete')) { openDelete(idx); return; }
             const mk = markerByIndex.get(idx);
