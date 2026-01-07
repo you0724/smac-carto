@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -94,6 +93,14 @@
       padding: 0 24px;
       display: flex;
       gap: 0;
+      align-items: center;
+      overflow-x: auto;
+    }
+
+    .tabs-wrapper {
+      display: flex;
+      gap: 0;
+      flex: 1;
     }
 
     .tab-btn {
@@ -153,6 +160,45 @@
 
     .tab-btn.projets .tab-count { background: var(--purple-light); color: var(--purple); }
     .tab-btn.projets.active .tab-count { background: var(--purple); color: white; }
+
+    .tab-actions {
+      display: none;
+      gap: 2px;
+      margin-left: 6px;
+    }
+    .tab-btn:hover .tab-actions { display: flex; }
+
+    .tab-action-btn {
+      width: 20px;
+      height: 20px;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .tab-action-btn:hover { background: var(--gray-200); color: var(--dark); }
+    .tab-action-btn.delete:hover { background: var(--rose-light); color: var(--rose); }
+
+    .add-tab-btn {
+      padding: 8px 14px;
+      border: 1px dashed var(--gray-300);
+      background: transparent;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--gray-500);
+      cursor: pointer;
+      margin-left: 12px;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .add-tab-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
 
     /* === BUTTONS === */
     .btn {
@@ -248,6 +294,31 @@
       outline: none;
       border-color: var(--red);
       background: white;
+    }
+
+    /* Sort Select */
+    .sort-select {
+      padding: 8px 10px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 12px;
+      background: white;
+      cursor: pointer;
+      min-width: 130px;
+    }
+    .sort-select:focus { outline: none; border-color: var(--red); }
+
+    /* Description style */
+    .list-item-description {
+      font-size: 11px;
+      color: var(--blue);
+      font-style: italic;
+      margin-top: 4px;
+      padding: 3px 8px;
+      background: var(--blue-light);
+      border-radius: 4px;
+      display: inline-block;
     }
 
     /* Filter Pills */
@@ -727,14 +798,10 @@
 
   <!-- TABS -->
   <div class="tabs-container">
-    <button class="tab-btn datacenter active" data-tab="datacenter">
-      <span class="tab-indicator dc"></span>Data-Centers
-      <span class="tab-count" id="countDC">0</span>
-    </button>
-    <button class="tab-btn projets" data-tab="projets">
-      <span class="tab-indicator proj"></span>Projets Chiffrés 2026
-      <span class="tab-count" id="countProj">0</span>
-    </button>
+    <div class="tabs-wrapper" id="tabsWrapper">
+      <!-- Les onglets seront générés dynamiquement -->
+    </div>
+    <button class="add-tab-btn" id="addTabBtn">+ Onglet</button>
   </div>
 
   <!-- MAIN -->
@@ -746,6 +813,14 @@
       <div class="search-section">
         <div class="search-box">
           <input type="text" class="search-input" id="searchInput" placeholder="Rechercher une affaire...">
+          <select class="sort-select" id="sortSelect">
+            <option value="name">Tri: Nom A-Z</option>
+            <option value="name-desc">Tri: Nom Z-A</option>
+            <option value="montant-desc">Tri: Montant ↓</option>
+            <option value="montant-asc">Tri: Montant ↑</option>
+            <option value="date-desc">Tri: Date récente</option>
+            <option value="date-asc">Tri: Date ancienne</option>
+          </select>
         </div>
         <div class="filter-pills">
           <button class="pill active" data-filter="Tous">Tous</button>
@@ -857,6 +932,10 @@
             <label class="form-label">Client *</label>
             <input type="text" class="form-input" id="mClient" required>
           </div>
+          <div class="form-group full">
+            <label class="form-label">Description / Lot</label>
+            <input type="text" class="form-input" id="mDescription" placeholder="Ex: Lot CVC, Lot Plomberie, Étanchéité...">
+          </div>
           <div class="form-group">
             <label class="form-label">EG</label>
             <input type="text" class="form-input" id="mEG" placeholder="BY, VINCI...">
@@ -925,6 +1004,26 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" id="confirmNo">Annuler</button>
         <button class="btn btn-primary" id="confirmYes" style="background:var(--rose)">Supprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Modal (Add/Rename) -->
+  <div class="modal-overlay" id="tabModal">
+    <div class="modal" style="max-width:400px">
+      <div class="modal-header">
+        <span class="modal-title" id="tabModalTitle">Nouvel onglet</span>
+        <button class="btn-icon" id="tabModalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Nom de l'onglet</label>
+          <input type="text" class="form-input" id="tabNameInput" placeholder="Ex: Projets 2027, Rénovations...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="tabModalCancel">Annuler</button>
+        <button class="btn btn-primary" id="tabModalSave">Enregistrer</button>
       </div>
     </div>
   </div>
@@ -1020,16 +1119,23 @@
     ];
 
     /* State */
-    let dataByTab = { datacenter: [], projets: [] };
+    let tabs = [
+      { id: 'datacenter', name: 'Data-Centers', color: '#3b82f6' },
+      { id: 'projets', name: 'Projets Chiffrés 2026', color: '#8b5cf6' }
+    ];
+    let dataByTab = {};
     let currentTab = 'datacenter';
     let currentList = [];
     let currentFilter = 'Tous';
+    let currentSort = 'name';
     let currentQuery = '';
     let map, markerCluster;
     const markerByIndex = new Map();
     let editingId = null;
     let deletingIdx = null;
     let isSaving = false;
+    let tabModalMode = 'add'; // 'add' ou 'rename'
+    let renamingTabId = null;
 
     /* Supabase API Functions */
     async function supabaseFetch(endpoint, options = {}) {
@@ -1110,6 +1216,182 @@
       }
     }
 
+    /* Tabs Config - Save & Load */
+    async function loadTabsConfig() {
+      try {
+        const res = await supabaseFetch(`affaires?tab=eq._tabs_config&select=data`);
+        if (!res.ok) return null;
+        const json = await res.json();
+        if (json && json.length > 0 && json[0].data) {
+          return json[0].data;
+        }
+        return null;
+      } catch (e) {
+        console.error('Erreur chargement tabs config:', e);
+        return null;
+      }
+    }
+
+    async function saveTabsConfig() {
+      try {
+        const checkRes = await supabaseFetch(`affaires?tab=eq._tabs_config&select=id`);
+        const existing = await checkRes.json();
+        
+        if (existing && existing.length > 0) {
+          await supabaseFetch(`affaires?tab=eq._tabs_config`, {
+            method: 'PATCH',
+            body: JSON.stringify({ data: tabs })
+          });
+        } else {
+          await supabaseFetch('affaires', {
+            method: 'POST',
+            body: JSON.stringify({ tab: '_tabs_config', data: tabs })
+          });
+        }
+      } catch (e) {
+        console.error('Erreur sauvegarde tabs config:', e);
+      }
+    }
+
+    async function deleteTabData(tabId) {
+      try {
+        await supabaseFetch(`affaires?tab=eq.${tabId}`, { method: 'DELETE' });
+      } catch (e) {
+        console.error('Erreur suppression tab data:', e);
+      }
+    }
+
+    /* Render Tabs */
+    function renderTabs() {
+      const wrapper = document.getElementById('tabsWrapper');
+      if (!wrapper) return;
+      
+      wrapper.innerHTML = '';
+      
+      tabs.forEach(tab => {
+        const btn = document.createElement('button');
+        btn.className = `tab-btn ${tab.id === currentTab ? 'active' : ''}`;
+        btn.dataset.tab = tab.id;
+        btn.innerHTML = `
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${tab.color};margin-right:6px;"></span>
+          ${escapeHTML(tab.name)}
+          <span class="tab-count">${dataByTab[tab.id]?.length || 0}</span>
+          <span class="tab-actions">
+            <button class="tab-action-btn rename" title="Renommer">✏️</button>
+            <button class="tab-action-btn delete" title="Supprimer">✕</button>
+          </span>
+        `;
+        wrapper.appendChild(btn);
+        
+        // Tab click
+        btn.addEventListener('click', (e) => {
+          if (e.target.closest('.tab-action-btn')) return;
+          switchTab(tab.id);
+        });
+        
+        // Rename click
+        btn.querySelector('.rename').addEventListener('click', (e) => {
+          e.stopPropagation();
+          openTabModal('rename', tab.id);
+        });
+        
+        // Delete click
+        btn.querySelector('.delete').addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (tabs.length <= 1) {
+            alert('Impossible de supprimer le dernier onglet.');
+            return;
+          }
+          if (confirm(`Supprimer l'onglet "${tab.name}" et toutes ses affaires ?`)) {
+            deleteTab(tab.id);
+          }
+        });
+      });
+    }
+
+    /* Tab Modal */
+    function openTabModal(mode, tabId = null) {
+      tabModalMode = mode;
+      renamingTabId = tabId;
+      
+      const title = document.getElementById('tabModalTitle');
+      const input = document.getElementById('tabNameInput');
+      
+      if (mode === 'add') {
+        title.textContent = 'Nouvel onglet';
+        input.value = '';
+      } else {
+        title.textContent = 'Renommer l\'onglet';
+        const tab = tabs.find(t => t.id === tabId);
+        input.value = tab?.name || '';
+      }
+      
+      document.getElementById('tabModal').classList.add('open');
+      input.focus();
+    }
+
+    function closeTabModal() {
+      document.getElementById('tabModal').classList.remove('open');
+    }
+
+    async function saveTabModal() {
+      const name = document.getElementById('tabNameInput').value.trim();
+      if (!name) {
+        alert('Veuillez entrer un nom pour l\'onglet.');
+        return;
+      }
+      
+      if (tabModalMode === 'add') {
+        await addTab(name);
+      } else {
+        await renameTab(renamingTabId, name);
+      }
+      
+      closeTabModal();
+    }
+
+    /* Tab Actions */
+    const makeTabId = () => 'tab_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+
+    async function addTab(name) {
+      const newTab = {
+        id: makeTabId(),
+        name: name,
+        color: `hsl(${Math.random() * 360}, 60%, 50%)`
+      };
+      tabs.push(newTab);
+      dataByTab[newTab.id] = [];
+      await saveTabsConfig();
+      await saveToCloud(newTab.id);
+      renderTabs();
+      switchTab(newTab.id);
+    }
+
+    async function renameTab(tabId, newName) {
+      const tab = tabs.find(t => t.id === tabId);
+      if (tab) {
+        tab.name = newName;
+        await saveTabsConfig();
+        renderTabs();
+      }
+    }
+
+    async function deleteTab(tabId) {
+      const idx = tabs.findIndex(t => t.id === tabId);
+      if (idx > -1) {
+        tabs.splice(idx, 1);
+        delete dataByTab[tabId];
+        await deleteTabData(tabId);
+        await saveTabsConfig();
+        
+        if (currentTab === tabId) {
+          currentTab = tabs[0]?.id || '';
+        }
+        renderTabs();
+        applyFilters();
+      }
+    }
+
     function showSyncStatus(status) {
       const el = document.getElementById('syncStatus');
       if (!el) return;
@@ -1137,6 +1419,7 @@
         if (obj.smac && !obj.eg && /BY|VINCI|EIFFAGE/i.test(obj.smac)) { obj.eg = obj.smac; obj.smac = ''; }
         obj.datePrevisionnelle = obj.datePrevisionnelle ?? '';
         obj.smac = obj.smac ?? '';
+        obj.description = obj.description ?? '';
         if (!obj.id) obj.id = makeId();
         return obj;
       });
@@ -1146,31 +1429,45 @@
     async function initData() {
       showSyncStatus('saving');
       
-      // Load Data-Centers
-      let cloudDC = await loadFromCloud('datacenter');
-      if (cloudDC && Array.isArray(cloudDC) && cloudDC.length > 0) {
-        dataByTab.datacenter = migrateData(cloudDC);
+      // Load tabs config
+      const cloudTabs = await loadTabsConfig();
+      if (cloudTabs && Array.isArray(cloudTabs) && cloudTabs.length > 0) {
+        tabs = cloudTabs;
       } else {
-        dataByTab.datacenter = migrateData(JSON.parse(JSON.stringify(defaultDataDC)));
-        await saveToCloud('datacenter');
+        // Default tabs
+        tabs = [
+          { id: 'datacenter', name: 'Data-Centers', color: '#3b82f6' },
+          { id: 'projets', name: 'Projets Chiffrés 2026', color: '#8b5cf6' }
+        ];
+        await saveTabsConfig();
       }
       
-      // Load Projets 2026
-      let cloudProj = await loadFromCloud('projets');
-      if (cloudProj && Array.isArray(cloudProj) && cloudProj.length > 0) {
-        dataByTab.projets = migrateData(cloudProj);
-      } else {
-        dataByTab.projets = migrateData(JSON.parse(JSON.stringify(defaultDataProj)));
-        await saveToCloud('projets');
+      // Load data for each tab
+      for (const tab of tabs) {
+        const cloudData = await loadFromCloud(tab.id);
+        if (cloudData && Array.isArray(cloudData) && cloudData.length > 0) {
+          dataByTab[tab.id] = migrateData(cloudData);
+        } else {
+          // Default data for initial tabs
+          if (tab.id === 'datacenter') {
+            dataByTab[tab.id] = migrateData(JSON.parse(JSON.stringify(defaultDataDC)));
+          } else if (tab.id === 'projets') {
+            dataByTab[tab.id] = migrateData(JSON.parse(JSON.stringify(defaultDataProj)));
+          } else {
+            dataByTab[tab.id] = [];
+          }
+          await saveToCloud(tab.id);
+        }
       }
       
-      updateTabCounts();
+      currentTab = tabs[0]?.id || 'datacenter';
+      renderTabs();
       showSyncStatus('saved');
     }
 
     function updateTabCounts() {
-      document.getElementById('countDC').textContent = dataByTab.datacenter.length;
-      document.getElementById('countProj').textContent = dataByTab.projets.length;
+      // Re-render tabs to update counts
+      renderTabs();
     }
 
     /* Pin Icons */
@@ -1193,18 +1490,38 @@
       const dc = currentList[idx];
       if (!dc) return;
       
-      const otherTab = currentTab === 'datacenter' ? 'projets' : 'datacenter';
-      const otherTabName = currentTab === 'datacenter' ? 'Projets Chiffrés 2026' : 'Data-Centers';
+      const otherTabs = tabs.filter(t => t.id !== currentTab);
+      if (otherTabs.length === 0) {
+        alert('Créez d\'abord un autre onglet pour dupliquer.');
+        return;
+      }
+      
+      let targetTab;
+      if (otherTabs.length === 1) {
+        targetTab = otherTabs[0];
+      } else {
+        const choice = prompt(
+          'Vers quel onglet dupliquer ?\n\n' + 
+          otherTabs.map((t, i) => `${i + 1}. ${t.name}`).join('\n') +
+          '\n\nEntrez le numéro :'
+        );
+        const num = parseInt(choice);
+        if (num >= 1 && num <= otherTabs.length) {
+          targetTab = otherTabs[num - 1];
+        } else {
+          return;
+        }
+      }
       
       // Créer une copie avec un nouvel ID
       const copy = { ...dc, id: makeId() };
       
       // Ajouter à l'autre onglet
-      dataByTab[otherTab].push(copy);
-      await saveToCloud(otherTab);
+      dataByTab[targetTab.id].push(copy);
+      await saveToCloud(targetTab.id);
       
       updateTabCounts();
-      alert(`✅ Affaire dupliquée vers "${otherTabName}" !`);
+      alert(`✅ Affaire dupliquée vers "${targetTab.name}" !`);
     }
 
     /* Render List */
@@ -1229,6 +1546,7 @@
             <span>${escapeHTML(dc.client)} · ${escapeHTML(dc.eg || '-')}</span>
             <span>${escapeHTML(dc.adresse)}</span>
           </div>
+          ${dc.description ? `<div class="list-item-description">📋 ${escapeHTML(dc.description)}</div>` : ''}
           <div class="list-item-footer">
             <span class="list-item-amount">${escapeHTML(displayMontant(dc.montant))}</span>
             <div class="list-item-actions">
@@ -1267,6 +1585,7 @@
         const marker = L.marker(dc.coords, { icon: pinIcon(dc.statut) }).bindPopup(`
           <strong>${escapeHTML(dc.affaires)}</strong><br>
           Client: ${escapeHTML(dc.client)}<br>
+          ${dc.description ? `<em>Lot: ${escapeHTML(dc.description)}</em><br>` : ''}
           EG: ${escapeHTML(dc.eg || '-')}<br>
           Architecte: ${escapeHTML(dc.architect || '-')}<br>
           Adresse: ${escapeHTML(dc.adresse)}<br>
@@ -1303,6 +1622,60 @@
       if (mobileTotalEl) mobileTotalEl.textContent = nfEUR.format(total);
     }
 
+    /* Sort function */
+    function sortList(list) {
+      const sorted = [...list];
+      switch (currentSort) {
+        case 'name':
+          sorted.sort((a, b) => normalize(a.affaires).localeCompare(normalize(b.affaires)));
+          break;
+        case 'name-desc':
+          sorted.sort((a, b) => normalize(b.affaires).localeCompare(normalize(a.affaires)));
+          break;
+        case 'montant-desc':
+          sorted.sort((a, b) => {
+            const ma = parseMontant(a.montant);
+            const mb = parseMontant(b.montant);
+            if (isNaN(ma) && isNaN(mb)) return 0;
+            if (isNaN(ma)) return 1;
+            if (isNaN(mb)) return -1;
+            return mb - ma;
+          });
+          break;
+        case 'montant-asc':
+          sorted.sort((a, b) => {
+            const ma = parseMontant(a.montant);
+            const mb = parseMontant(b.montant);
+            if (isNaN(ma) && isNaN(mb)) return 0;
+            if (isNaN(ma)) return 1;
+            if (isNaN(mb)) return -1;
+            return ma - mb;
+          });
+          break;
+        case 'date-desc':
+          sorted.sort((a, b) => {
+            const da = parseDateISO(a.datePrevisionnelle);
+            const db = parseDateISO(b.datePrevisionnelle);
+            if (isNaN(da) && isNaN(db)) return 0;
+            if (isNaN(da)) return 1;
+            if (isNaN(db)) return -1;
+            return db - da;
+          });
+          break;
+        case 'date-asc':
+          sorted.sort((a, b) => {
+            const da = parseDateISO(a.datePrevisionnelle);
+            const db = parseDateISO(b.datePrevisionnelle);
+            if (isNaN(da) && isNaN(db)) return 0;
+            if (isNaN(da)) return 1;
+            if (isNaN(db)) return -1;
+            return da - db;
+          });
+          break;
+      }
+      return sorted;
+    }
+
     /* Filter & Search */
     function applyFilters() {
       let list = dataByTab[currentTab].filter(dc => currentFilter === 'Tous' || dc.statut === currentFilter);
@@ -1316,7 +1689,8 @@
           normalize(dc.architect).includes(q) ||
           normalize(dc.adresse).includes(q) ||
           normalize(dc.smac).includes(q) ||
-          normalize(dc.statut).includes(q)
+          normalize(dc.statut).includes(q) ||
+          normalize(dc.description || '').includes(q)
         );
       }
 
@@ -1342,7 +1716,7 @@
         });
       }
 
-      currentList = list;
+      currentList = sortList(list);
       updateStats();
       renderList();
       renderMarkers();
@@ -1378,7 +1752,7 @@
     }
 
     function clearModalForm() {
-      ['mAffaires', 'mClient', 'mEG', 'mArchitect', 'mAdresse', 'mDate', 'mMontant', 'mLat', 'mLng'].forEach(id => {
+      ['mAffaires', 'mClient', 'mEG', 'mArchitect', 'mAdresse', 'mDate', 'mMontant', 'mLat', 'mLng', 'mDescription'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
@@ -1403,6 +1777,7 @@
       editingId = dc.id;
       document.getElementById('mAffaires').value = dc.affaires || '';
       document.getElementById('mClient').value = dc.client || '';
+      document.getElementById('mDescription').value = dc.description || '';
       document.getElementById('mEG').value = dc.eg || '';
       document.getElementById('mArchitect').value = dc.architect || '';
       document.getElementById('mAdresse').value = dc.adresse || '';
@@ -1429,6 +1804,7 @@
       const data = {
         affaires,
         client,
+        description: document.getElementById('mDescription').value.trim(),
         eg: document.getElementById('mEG').value.trim(),
         architect: document.getElementById('mArchitect').value.trim(),
         adresse: document.getElementById('mAdresse').value.trim(),
@@ -1643,9 +2019,17 @@
       // Initial render
       applyFilters();
 
-      // Tab Events
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      // Add Tab Button
+      document.getElementById('addTabBtn')?.addEventListener('click', () => {
+        openTabModal('add');
+      });
+
+      // Tab Modal Events
+      document.getElementById('tabModalClose')?.addEventListener('click', closeTabModal);
+      document.getElementById('tabModalCancel')?.addEventListener('click', closeTabModal);
+      document.getElementById('tabModalSave')?.addEventListener('click', saveTabModal);
+      document.getElementById('tabNameInput')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') saveTabModal();
       });
 
       // Search Events
@@ -1653,6 +2037,12 @@
       const debounce = (fn, delay) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); }; };
       const doSearch = debounce(() => { currentQuery = searchInput?.value || ''; applyFilters(); }, 200);
       searchInput?.addEventListener('input', doSearch);
+
+      // Sort Select
+      document.getElementById('sortSelect')?.addEventListener('change', (e) => {
+        currentSort = e.target.value;
+        applyFilters();
+      });
 
       // Filter Pills
       document.querySelectorAll('.filter-pills .pill').forEach(pill => {
@@ -1748,6 +2138,7 @@
         if (e.key === 'Escape') {
           closeModal();
           closeConfirm();
+          closeTabModal();
           document.getElementById('mobileSidebar')?.classList.remove('open');
         }
       });
