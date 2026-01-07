@@ -929,16 +929,16 @@
   </div>
 
   <script>
-    /* JSONBlob Configuration (pas besoin de clé API) */
+    /* npoint.io Configuration (gratuit, supporte CORS) */
     
-    // Récupérer les blob IDs depuis l'URL ou localStorage
+    // Récupérer les IDs depuis l'URL ou localStorage
     const urlParams = new URLSearchParams(window.location.search);
-    let BLOB_ID_DC = urlParams.get('dc') || localStorage.getItem('smac_blob_dc') || null;
-    let BLOB_ID_PROJ = urlParams.get('proj') || localStorage.getItem('smac_blob_proj') || null;
+    let NPOINT_ID_DC = urlParams.get('dc') || localStorage.getItem('smac_npoint_dc') || null;
+    let NPOINT_ID_PROJ = urlParams.get('proj') || localStorage.getItem('smac_npoint_proj') || null;
     
     // Sauvegarder les IDs si présents dans l'URL
-    if (urlParams.get('dc')) localStorage.setItem('smac_blob_dc', urlParams.get('dc'));
-    if (urlParams.get('proj')) localStorage.setItem('smac_blob_proj', urlParams.get('proj'));
+    if (urlParams.get('dc')) localStorage.setItem('smac_npoint_dc', urlParams.get('dc'));
+    if (urlParams.get('proj')) localStorage.setItem('smac_npoint_proj', urlParams.get('proj'));
 
     /* CDN URLs */
     const CDN = {
@@ -1037,51 +1037,44 @@
     let deletingIdx = null;
     let isSaving = false;
 
-    /* JSONBlob API Functions (gratuit, sans clé) */
-    async function createBlob(data, tabName) {
-      console.log('Création blob pour:', tabName);
+    /* npoint.io API Functions (gratuit, CORS OK) */
+    async function createNpoint(data, tabName) {
+      console.log('Création npoint pour:', tabName);
       try {
-        const res = await fetch('https://jsonblob.com/api/jsonBlob', {
+        const res = await fetch('https://api.npoint.io/doc', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify({ contents: JSON.stringify(data) })
         });
-        console.log('Réponse createBlob:', res.status);
+        console.log('Réponse createNpoint:', res.status);
+        const json = await res.json();
+        console.log('JSON:', json);
         
-        // L'ID est dans le header Location
-        const location = res.headers.get('Location');
-        console.log('Location:', location);
-        
-        if (location) {
-          const blobId = location.split('/').pop();
-          console.log('Blob ID:', blobId);
-          
+        if (json && json.id) {
           if (tabName === 'datacenter') {
-            BLOB_ID_DC = blobId;
-            localStorage.setItem('smac_blob_dc', BLOB_ID_DC);
+            NPOINT_ID_DC = json.id;
+            localStorage.setItem('smac_npoint_dc', NPOINT_ID_DC);
           } else {
-            BLOB_ID_PROJ = blobId;
-            localStorage.setItem('smac_blob_proj', BLOB_ID_PROJ);
+            NPOINT_ID_PROJ = json.id;
+            localStorage.setItem('smac_npoint_proj', NPOINT_ID_PROJ);
           }
+          console.log('ID créé:', json.id);
           return true;
         }
         return false;
       } catch (e) {
-        console.error('Erreur création blob:', e);
+        console.error('Erreur création npoint:', e);
         return false;
       }
     }
 
     async function loadFromCloud(tabName) {
-      const blobId = tabName === 'datacenter' ? BLOB_ID_DC : BLOB_ID_PROJ;
-      if (!blobId) return null;
+      const npointId = tabName === 'datacenter' ? NPOINT_ID_DC : NPOINT_ID_PROJ;
+      if (!npointId) return null;
       try {
-        const res = await fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`, {
-          headers: { 'Accept': 'application/json' }
-        });
+        const res = await fetch(`https://api.npoint.io/${npointId}`);
         if (!res.ok) return null;
         const json = await res.json();
         return json || null;
@@ -1096,18 +1089,17 @@
       isSaving = true;
       showSyncStatus('saving');
       
-      const blobId = tabName === 'datacenter' ? BLOB_ID_DC : BLOB_ID_PROJ;
+      const npointId = tabName === 'datacenter' ? NPOINT_ID_DC : NPOINT_ID_PROJ;
       const data = dataByTab[tabName];
       
       try {
-        if (!blobId) {
-          await createBlob(data, tabName);
+        if (!npointId) {
+          await createNpoint(data, tabName);
         } else {
-          await fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`, {
-            method: 'PUT',
+          await fetch(`https://api.npoint.io/${npointId}`, {
+            method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
+              'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
           });
@@ -1162,7 +1154,7 @@
         dataByTab.datacenter = migrateData(cloudDC);
       } else {
         dataByTab.datacenter = migrateData(JSON.parse(JSON.stringify(defaultDataDC)));
-        await createBlob(dataByTab.datacenter, 'datacenter');
+        await createNpoint(dataByTab.datacenter, 'datacenter');
       }
       
       // Load Projets 2026
@@ -1171,15 +1163,15 @@
         dataByTab.projets = migrateData(cloudProj);
       } else {
         dataByTab.projets = migrateData(JSON.parse(JSON.stringify(defaultDataProj)));
-        await createBlob(dataByTab.projets, 'projets');
+        await createNpoint(dataByTab.projets, 'projets');
       }
       
-      // S'assurer que les blobs existent (pour le partage)
-      if (!BLOB_ID_DC && dataByTab.datacenter.length > 0) {
-        await createBlob(dataByTab.datacenter, 'datacenter');
+      // S'assurer que les endpoints existent
+      if (!NPOINT_ID_DC && dataByTab.datacenter.length > 0) {
+        await createNpoint(dataByTab.datacenter, 'datacenter');
       }
-      if (!BLOB_ID_PROJ && dataByTab.projets.length > 0) {
-        await createBlob(dataByTab.projets, 'projets');
+      if (!NPOINT_ID_PROJ && dataByTab.projets.length > 0) {
+        await createNpoint(dataByTab.projets, 'projets');
       }
       
       updateTabCounts();
@@ -1687,26 +1679,26 @@
 
       // Share Button
       document.getElementById('shareBtn')?.addEventListener('click', async () => {
-        console.log('Clic partager - BLOB_ID_DC:', BLOB_ID_DC, 'BLOB_ID_PROJ:', BLOB_ID_PROJ);
+        console.log('Clic partager - NPOINT_ID_DC:', NPOINT_ID_DC, 'NPOINT_ID_PROJ:', NPOINT_ID_PROJ);
         
-        // Créer les blobs s'ils n'existent pas
-        if (!BLOB_ID_DC) {
-          console.log('Création blob DC...');
+        // Créer les endpoints s'ils n'existent pas
+        if (!NPOINT_ID_DC) {
+          console.log('Création npoint DC...');
           showSyncStatus('saving');
-          await createBlob(dataByTab.datacenter, 'datacenter');
+          await createNpoint(dataByTab.datacenter, 'datacenter');
         }
-        if (!BLOB_ID_PROJ) {
-          console.log('Création blob PROJ...');
+        if (!NPOINT_ID_PROJ) {
+          console.log('Création npoint PROJ...');
           showSyncStatus('saving');
-          await createBlob(dataByTab.projets, 'projets');
+          await createNpoint(dataByTab.projets, 'projets');
         }
         showSyncStatus('saved');
         
-        // Construire le lien avec ce qu'on a
+        // Construire le lien
         let shareUrl = `${window.location.origin}${window.location.pathname}`;
         const params = [];
-        if (BLOB_ID_DC) params.push(`dc=${BLOB_ID_DC}`);
-        if (BLOB_ID_PROJ) params.push(`proj=${BLOB_ID_PROJ}`);
+        if (NPOINT_ID_DC) params.push(`dc=${NPOINT_ID_DC}`);
+        if (NPOINT_ID_PROJ) params.push(`proj=${NPOINT_ID_PROJ}`);
         
         if (params.length > 0) {
           shareUrl += '?' + params.join('&');
