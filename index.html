@@ -929,17 +929,16 @@
   </div>
 
   <script>
-    /* JSONBin Configuration */
-    const JSONBIN_API_KEY = '$2a$10$S6Bh3V3TbRkrOYfdr81TIu9XU7Av7WFPA/s00jq86CMiPqoFuVXiW';
+    /* JSONBlob Configuration (pas besoin de clé API) */
     
-    // Récupérer les bin IDs depuis l'URL ou localStorage
+    // Récupérer les blob IDs depuis l'URL ou localStorage
     const urlParams = new URLSearchParams(window.location.search);
-    let BIN_ID_DC = urlParams.get('dc') || localStorage.getItem('smac_bin_dc') || null;
-    let BIN_ID_PROJ = urlParams.get('proj') || localStorage.getItem('smac_bin_proj') || null;
+    let BLOB_ID_DC = urlParams.get('dc') || localStorage.getItem('smac_blob_dc') || null;
+    let BLOB_ID_PROJ = urlParams.get('proj') || localStorage.getItem('smac_blob_proj') || null;
     
     // Sauvegarder les IDs si présents dans l'URL
-    if (urlParams.get('dc')) localStorage.setItem('smac_bin_dc', urlParams.get('dc'));
-    if (urlParams.get('proj')) localStorage.setItem('smac_bin_proj', urlParams.get('proj'));
+    if (urlParams.get('dc')) localStorage.setItem('smac_blob_dc', urlParams.get('dc'));
+    if (urlParams.get('proj')) localStorage.setItem('smac_blob_proj', urlParams.get('proj'));
 
     /* CDN URLs */
     const CDN = {
@@ -1038,50 +1037,54 @@
     let deletingIdx = null;
     let isSaving = false;
 
-    /* JSONBin API Functions */
-    async function createBin(data, tabName) {
-      console.log('Création bin pour:', tabName);
+    /* JSONBlob API Functions (gratuit, sans clé) */
+    async function createBlob(data, tabName) {
+      console.log('Création blob pour:', tabName);
       try {
-        const res = await fetch('https://api.jsonbin.io/v3/b', {
+        const res = await fetch('https://jsonblob.com/api/jsonBlob', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-Master-Key': JSONBIN_API_KEY,
-            'X-Bin-Name': `SMAC-${tabName}`
+            'Accept': 'application/json'
           },
           body: JSON.stringify(data)
         });
-        console.log('Réponse createBin:', res.status);
-        const json = await res.json();
-        console.log('JSON createBin:', json);
-        if (json.metadata?.id) {
+        console.log('Réponse createBlob:', res.status);
+        
+        // L'ID est dans le header Location
+        const location = res.headers.get('Location');
+        console.log('Location:', location);
+        
+        if (location) {
+          const blobId = location.split('/').pop();
+          console.log('Blob ID:', blobId);
+          
           if (tabName === 'datacenter') {
-            BIN_ID_DC = json.metadata.id;
-            localStorage.setItem('smac_bin_dc', BIN_ID_DC);
-            console.log('BIN_ID_DC créé:', BIN_ID_DC);
+            BLOB_ID_DC = blobId;
+            localStorage.setItem('smac_blob_dc', BLOB_ID_DC);
           } else {
-            BIN_ID_PROJ = json.metadata.id;
-            localStorage.setItem('smac_bin_proj', BIN_ID_PROJ);
-            console.log('BIN_ID_PROJ créé:', BIN_ID_PROJ);
+            BLOB_ID_PROJ = blobId;
+            localStorage.setItem('smac_blob_proj', BLOB_ID_PROJ);
           }
           return true;
         }
         return false;
       } catch (e) {
-        console.error('Erreur création bin:', e);
+        console.error('Erreur création blob:', e);
         return false;
       }
     }
 
     async function loadFromCloud(tabName) {
-      const binId = tabName === 'datacenter' ? BIN_ID_DC : BIN_ID_PROJ;
-      if (!binId) return null;
+      const blobId = tabName === 'datacenter' ? BLOB_ID_DC : BLOB_ID_PROJ;
+      if (!blobId) return null;
       try {
-        const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-          headers: { 'X-Master-Key': JSONBIN_API_KEY }
+        const res = await fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`, {
+          headers: { 'Accept': 'application/json' }
         });
+        if (!res.ok) return null;
         const json = await res.json();
-        return json.record || null;
+        return json || null;
       } catch (e) {
         console.error('Erreur chargement:', e);
         return null;
@@ -1093,18 +1096,18 @@
       isSaving = true;
       showSyncStatus('saving');
       
-      const binId = tabName === 'datacenter' ? BIN_ID_DC : BIN_ID_PROJ;
+      const blobId = tabName === 'datacenter' ? BLOB_ID_DC : BLOB_ID_PROJ;
       const data = dataByTab[tabName];
       
       try {
-        if (!binId) {
-          await createBin(data, tabName);
+        if (!blobId) {
+          await createBlob(data, tabName);
         } else {
-          await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+          await fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              'X-Master-Key': JSONBIN_API_KEY
+              'Accept': 'application/json'
             },
             body: JSON.stringify(data)
           });
@@ -1159,7 +1162,7 @@
         dataByTab.datacenter = migrateData(cloudDC);
       } else {
         dataByTab.datacenter = migrateData(JSON.parse(JSON.stringify(defaultDataDC)));
-        await createBin(dataByTab.datacenter, 'datacenter');
+        await createBlob(dataByTab.datacenter, 'datacenter');
       }
       
       // Load Projets 2026
@@ -1168,15 +1171,15 @@
         dataByTab.projets = migrateData(cloudProj);
       } else {
         dataByTab.projets = migrateData(JSON.parse(JSON.stringify(defaultDataProj)));
-        await createBin(dataByTab.projets, 'projets');
+        await createBlob(dataByTab.projets, 'projets');
       }
       
-      // S'assurer que les bins existent (pour le partage)
-      if (!BIN_ID_DC && dataByTab.datacenter.length > 0) {
-        await createBin(dataByTab.datacenter, 'datacenter');
+      // S'assurer que les blobs existent (pour le partage)
+      if (!BLOB_ID_DC && dataByTab.datacenter.length > 0) {
+        await createBlob(dataByTab.datacenter, 'datacenter');
       }
-      if (!BIN_ID_PROJ && dataByTab.projets.length > 0) {
-        await createBin(dataByTab.projets, 'projets');
+      if (!BLOB_ID_PROJ && dataByTab.projets.length > 0) {
+        await createBlob(dataByTab.projets, 'projets');
       }
       
       updateTabCounts();
@@ -1684,28 +1687,26 @@
 
       // Share Button
       document.getElementById('shareBtn')?.addEventListener('click', async () => {
-        console.log('Clic partager - BIN_ID_DC:', BIN_ID_DC, 'BIN_ID_PROJ:', BIN_ID_PROJ);
+        console.log('Clic partager - BLOB_ID_DC:', BLOB_ID_DC, 'BLOB_ID_PROJ:', BLOB_ID_PROJ);
         
-        // Créer les bins s'ils n'existent pas
-        if (!BIN_ID_DC) {
-          console.log('Création bin DC...');
+        // Créer les blobs s'ils n'existent pas
+        if (!BLOB_ID_DC) {
+          console.log('Création blob DC...');
           showSyncStatus('saving');
-          const ok = await createBin(dataByTab.datacenter, 'datacenter');
-          console.log('Résultat création DC:', ok, 'BIN_ID_DC:', BIN_ID_DC);
+          await createBlob(dataByTab.datacenter, 'datacenter');
         }
-        if (!BIN_ID_PROJ) {
-          console.log('Création bin PROJ...');
+        if (!BLOB_ID_PROJ) {
+          console.log('Création blob PROJ...');
           showSyncStatus('saving');
-          const ok = await createBin(dataByTab.projets, 'projets');
-          console.log('Résultat création PROJ:', ok, 'BIN_ID_PROJ:', BIN_ID_PROJ);
+          await createBlob(dataByTab.projets, 'projets');
         }
         showSyncStatus('saved');
         
         // Construire le lien avec ce qu'on a
         let shareUrl = `${window.location.origin}${window.location.pathname}`;
         const params = [];
-        if (BIN_ID_DC) params.push(`dc=${BIN_ID_DC}`);
-        if (BIN_ID_PROJ) params.push(`proj=${BIN_ID_PROJ}`);
+        if (BLOB_ID_DC) params.push(`dc=${BLOB_ID_DC}`);
+        if (BLOB_ID_PROJ) params.push(`proj=${BLOB_ID_PROJ}`);
         
         if (params.length > 0) {
           shareUrl += '?' + params.join('&');
