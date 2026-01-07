@@ -1040,6 +1040,7 @@
 
     /* JSONBin API Functions */
     async function createBin(data, tabName) {
+      console.log('Création bin pour:', tabName);
       try {
         const res = await fetch('https://api.jsonbin.io/v3/b', {
           method: 'POST',
@@ -1050,14 +1051,18 @@
           },
           body: JSON.stringify(data)
         });
+        console.log('Réponse createBin:', res.status);
         const json = await res.json();
+        console.log('JSON createBin:', json);
         if (json.metadata?.id) {
           if (tabName === 'datacenter') {
             BIN_ID_DC = json.metadata.id;
             localStorage.setItem('smac_bin_dc', BIN_ID_DC);
+            console.log('BIN_ID_DC créé:', BIN_ID_DC);
           } else {
             BIN_ID_PROJ = json.metadata.id;
             localStorage.setItem('smac_bin_proj', BIN_ID_PROJ);
+            console.log('BIN_ID_PROJ créé:', BIN_ID_PROJ);
           }
           return true;
         }
@@ -1679,34 +1684,42 @@
 
       // Share Button
       document.getElementById('shareBtn')?.addEventListener('click', async () => {
+        console.log('Clic partager - BIN_ID_DC:', BIN_ID_DC, 'BIN_ID_PROJ:', BIN_ID_PROJ);
+        
         // Créer les bins s'ils n'existent pas
         if (!BIN_ID_DC) {
+          console.log('Création bin DC...');
           showSyncStatus('saving');
-          await createBin(dataByTab.datacenter, 'datacenter');
+          const ok = await createBin(dataByTab.datacenter, 'datacenter');
+          console.log('Résultat création DC:', ok, 'BIN_ID_DC:', BIN_ID_DC);
         }
         if (!BIN_ID_PROJ) {
+          console.log('Création bin PROJ...');
           showSyncStatus('saving');
-          await createBin(dataByTab.projets, 'projets');
+          const ok = await createBin(dataByTab.projets, 'projets');
+          console.log('Résultat création PROJ:', ok, 'BIN_ID_PROJ:', BIN_ID_PROJ);
         }
         showSyncStatus('saved');
         
-        if (!BIN_ID_DC && !BIN_ID_PROJ) {
-          alert('Erreur de connexion. Réessayez.');
-          return;
-        }
-        
-        let shareUrl = `${window.location.origin}${window.location.pathname}?`;
+        // Construire le lien avec ce qu'on a
+        let shareUrl = `${window.location.origin}${window.location.pathname}`;
         const params = [];
         if (BIN_ID_DC) params.push(`dc=${BIN_ID_DC}`);
         if (BIN_ID_PROJ) params.push(`proj=${BIN_ID_PROJ}`);
-        shareUrl += params.join('&');
         
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(shareUrl).then(() => {
-            alert('✅ Lien copié !\n\nPartagez ce lien avec vos collègues :\n\n' + shareUrl);
-          });
+        if (params.length > 0) {
+          shareUrl += '?' + params.join('&');
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(shareUrl).then(() => {
+              alert('✅ Lien copié !\n\nPartagez ce lien avec vos collègues :\n\n' + shareUrl);
+            }).catch(() => {
+              prompt('Copiez ce lien :', shareUrl);
+            });
+          } else {
+            prompt('Copiez ce lien et partagez-le avec vos collègues :', shareUrl);
+          }
         } else {
-          prompt('Copiez ce lien et partagez-le avec vos collègues :', shareUrl);
+          alert('❌ Impossible de créer le lien.\n\nVérifiez votre connexion internet et réessayez.');
         }
       });
 
