@@ -18,6 +18,9 @@
       --gray-200: #e4e4e7;
       --gray-300: #d4d4d8;
       --gray-500: #71717a;
+      --gray-700: #3f3f46;
+      --gray-800: #27272a;
+      --gray-900: #18181b;
       --green: #22c55e;
       --green-light: #dcfce7;
       --orange: #f59e0b;
@@ -28,6 +31,8 @@
       --rose-light: #ffe4e6;
       --purple: #8b5cf6;
       --purple-light: #ede9fe;
+      --cyan: #06b6d4;
+      --cyan-light: #cffafe;
       --radius: 10px;
       --radius-sm: 6px;
       --shadow: 0 1px 3px rgba(0,0,0,0.08);
@@ -319,6 +324,73 @@
       background: var(--blue-light);
       border-radius: 4px;
       display: inline-block;
+    }
+
+    /* Tags */
+    .list-item-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+    .tag {
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 9px;
+      font-weight: 600;
+      background: var(--purple-light);
+      color: var(--purple);
+    }
+
+    /* Responsable badge */
+    .responsable-badge {
+      font-size: 10px;
+      color: var(--cyan);
+    }
+
+    /* Tags input */
+    .tags-input-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 6px 8px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      background: var(--gray-50);
+      min-height: 36px;
+      align-items: center;
+    }
+    .tags-input-container .tag { cursor: pointer; }
+    .tags-input-container .tag:hover { opacity: 0.7; }
+    .tags-input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 12px;
+      flex: 1;
+      min-width: 60px;
+      color: var(--dark);
+    }
+
+    /* Geocode button */
+    .geocode-btn {
+      padding: 8px 10px;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+    .geocode-btn:hover { background: #2563eb; }
+
+    /* Kbd */
+    .kbd {
+      display: inline-block;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-family: monospace;
+      background: var(--gray-100);
+      border: 1px solid var(--gray-200);
+      border-radius: 4px;
+      color: var(--gray-500);
     }
 
     /* Filter Pills */
@@ -775,24 +847,25 @@
     </div>
     <div class="header-actions">
       <span id="syncStatus" style="font-size:12px;margin-right:8px;color:#71717a;">☁️ En ligne</span>
-      <button class="btn btn-ghost btn-sm" id="refreshBtn" title="Actualiser les données">
+      <button class="btn btn-ghost btn-sm" id="refreshBtn" title="Actualiser (R)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
       </button>
-      <button class="btn btn-secondary" id="exportExcel" title="Export Excel">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <button class="btn btn-secondary" id="exportExcel" title="Export Excel (E)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Excel
       </button>
-      <button class="btn btn-secondary" id="exportPdf" title="Export PDF">
+      <button class="btn btn-secondary" id="exportPdf" title="Export PDF (P)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         PDF
       </button>
-      <button class="btn btn-primary" id="addBtn">
+      <button class="btn btn-primary" id="addBtn" title="Nouvelle affaire (N)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Ajouter
       </button>
-      <button class="btn btn-ghost btn-sm" id="shareBtn" title="Partager le lien">
+      <button class="btn btn-ghost btn-sm" id="shareBtn" title="Partager">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
       </button>
+      <button class="btn btn-ghost btn-sm" id="helpBtn" title="Aide (?)">❓</button>
     </div>
   </header>
 
@@ -946,7 +1019,10 @@
           </div>
           <div class="form-group full">
             <label class="form-label">Adresse</label>
-            <input type="text" class="form-input" id="mAdresse">
+            <div style="display:flex;gap:6px;">
+              <input type="text" class="form-input" id="mAdresse" style="flex:1">
+              <button type="button" class="geocode-btn" id="geocodeBtn" title="Trouver les coordonnées">📍 Géoloc</button>
+            </div>
           </div>
           <div class="form-group full">
             <label class="form-label">Site SMAC</label>
@@ -975,12 +1051,30 @@
             <input type="text" class="form-input" id="mMontant" placeholder="1 500 000">
           </div>
           <div class="form-group">
+            <label class="form-label">Responsable</label>
+            <input type="text" class="form-input" id="mResponsable" placeholder="Jean Dupont">
+          </div>
+          <div class="form-group">
             <label class="form-label">Latitude *</label>
             <input type="text" class="form-input" id="mLat" placeholder="48.85">
           </div>
           <div class="form-group">
             <label class="form-label">Longitude *</label>
             <input type="text" class="form-input" id="mLng" placeholder="2.35">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Tags (Entrée pour ajouter)</label>
+            <div class="tags-input-container" id="tagsContainer">
+              <input type="text" class="tags-input" id="mTagsInput" placeholder="urgent, prioritaire...">
+            </div>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Lien document</label>
+            <input type="text" class="form-input" id="mLink" placeholder="https://drive.google.com/...">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Notes</label>
+            <textarea class="form-textarea" id="mNotes" placeholder="Notes supplémentaires..." style="min-height:60px;resize:vertical;"></textarea>
           </div>
         </div>
       </div>
@@ -1024,6 +1118,30 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" id="tabModalCancel">Annuler</button>
         <button class="btn btn-primary" id="tabModalSave">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div class="modal-overlay" id="helpModal">
+    <div class="modal" style="max-width:420px">
+      <div class="modal-header">
+        <span class="modal-title">⌨️ Raccourcis clavier</span>
+        <button class="btn-icon" id="helpClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13px;">
+          <span class="kbd">N</span><span>Nouvelle affaire</span>
+          <span class="kbd">R</span><span>Actualiser les données</span>
+          <span class="kbd">E</span><span>Export Excel</span>
+          <span class="kbd">P</span><span>Export PDF</span>
+          <span class="kbd">/</span><span>Focus recherche</span>
+          <span class="kbd">Échap</span><span>Fermer les fenêtres</span>
+          <span class="kbd">1-5</span><span>Filtrer par statut</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="helpOk">OK</button>
       </div>
     </div>
   </div>
@@ -1134,8 +1252,22 @@
     let editingId = null;
     let deletingIdx = null;
     let isSaving = false;
-    let tabModalMode = 'add'; // 'add' ou 'rename'
+    let tabModalMode = 'add';
     let renamingTabId = null;
+    let currentTags = [];
+
+    /* Geocode */
+    async function geocodeAddress(address) {
+      if (!address) return null;
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + ', France')}&limit=1`);
+        const data = await res.json();
+        if (data && data[0]) {
+          return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+        }
+      } catch (e) { console.error('Geocode error:', e); }
+      return null;
+    }
 
     /* Supabase API Functions */
     async function supabaseFetch(endpoint, options = {}) {
@@ -1420,6 +1552,10 @@
         obj.datePrevisionnelle = obj.datePrevisionnelle ?? '';
         obj.smac = obj.smac ?? '';
         obj.description = obj.description ?? '';
+        obj.tags = obj.tags ?? [];
+        obj.responsable = obj.responsable ?? '';
+        obj.link = obj.link ?? '';
+        obj.notes = obj.notes ?? '';
         if (!obj.id) obj.id = makeId();
         return obj;
       });
@@ -1536,7 +1672,9 @@
         return;
       }
 
-      const html = currentList.map((dc, i) => `
+      const html = currentList.map((dc, i) => {
+        const tagsHtml = (dc.tags || []).map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('');
+        return `
         <div class="list-item" data-idx="${i}">
           <div class="list-item-header">
             <span class="list-item-title">${escapeHTML(dc.affaires)}</span>
@@ -1545,18 +1683,21 @@
           <div class="list-item-meta">
             <span>${escapeHTML(dc.client)} · ${escapeHTML(dc.eg || '-')}</span>
             <span>${escapeHTML(dc.adresse)}</span>
+            ${dc.responsable ? `<span class="responsable-badge">👤 ${escapeHTML(dc.responsable)}</span>` : ''}
           </div>
           ${dc.description ? `<div class="list-item-description">📋 ${escapeHTML(dc.description)}</div>` : ''}
+          ${tagsHtml ? `<div class="list-item-tags">${tagsHtml}</div>` : ''}
           <div class="list-item-footer">
             <span class="list-item-amount">${escapeHTML(displayMontant(dc.montant))}</span>
             <div class="list-item-actions">
-              <button class="btn-icon duplicate" title="Dupliquer vers l'autre onglet">📋</button>
+              ${dc.link ? `<a href="${escapeHTML(dc.link)}" target="_blank" class="btn-icon" title="Document">📎</a>` : ''}
+              <button class="btn-icon duplicate" title="Dupliquer">📋</button>
               <button class="btn-icon edit" title="Modifier">✏️</button>
               <button class="btn-icon delete" title="Supprimer">🗑️</button>
             </div>
           </div>
-        </div>
-      `).join('');
+        </div>`;
+      }).join('');
 
       container.innerHTML = html;
       if (mobileContainer) mobileContainer.innerHTML = html;
@@ -1569,6 +1710,7 @@
             if (e.target.closest('.duplicate')) { duplicateToOtherTab(idx); return; }
             if (e.target.closest('.edit')) { openEdit(idx); return; }
             if (e.target.closest('.delete')) { openDelete(idx); return; }
+            if (e.target.tagName === 'A') return;
             const mk = markerByIndex.get(idx);
             if (mk) { map.flyTo(mk.getLatLng(), Math.max(map.getZoom(), 12), { duration: 0.5 }); mk.openPopup(); }
           });
@@ -1690,7 +1832,9 @@
           normalize(dc.adresse).includes(q) ||
           normalize(dc.smac).includes(q) ||
           normalize(dc.statut).includes(q) ||
-          normalize(dc.description || '').includes(q)
+          normalize(dc.description || '').includes(q) ||
+          normalize(dc.responsable || '').includes(q) ||
+          (dc.tags || []).some(t => normalize(t).includes(q))
         );
       }
 
@@ -1752,12 +1896,42 @@
     }
 
     function clearModalForm() {
-      ['mAffaires', 'mClient', 'mEG', 'mArchitect', 'mAdresse', 'mDate', 'mMontant', 'mLat', 'mLng', 'mDescription'].forEach(id => {
+      ['mAffaires', 'mClient', 'mEG', 'mArchitect', 'mAdresse', 'mDate', 'mMontant', 'mLat', 'mLng', 'mDescription', 'mResponsable', 'mLink', 'mNotes'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
       document.getElementById('mStatut').value = 'En cours';
       document.querySelectorAll('#mSmacChips .chip').forEach(c => c.classList.remove('active'));
+      currentTags = [];
+      renderTags();
+    }
+
+    function renderTags() {
+      const container = document.getElementById('tagsContainer');
+      const input = document.getElementById('mTagsInput');
+      if (!container) return;
+      const tagsHtml = currentTags.map(t => `<span class="tag">${escapeHTML(t)} <span class="tag-remove" data-tag="${escapeHTML(t)}">×</span></span>`).join('');
+      container.innerHTML = tagsHtml + '<input type="text" class="tags-input" id="mTagsInput" placeholder="Ajouter un tag...">';
+      const newInput = document.getElementById('mTagsInput');
+      newInput.addEventListener('keydown', handleTagInput);
+      container.querySelectorAll('.tag-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentTags = currentTags.filter(t => t !== btn.dataset.tag);
+          renderTags();
+        });
+      });
+    }
+
+    function handleTagInput(e) {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        const val = e.target.value.trim().toLowerCase();
+        if (val && !currentTags.includes(val)) {
+          currentTags.push(val);
+          renderTags();
+        }
+        e.target.value = '';
+      }
     }
 
     function getSmacSelection() {
@@ -1786,6 +1960,11 @@
       document.getElementById('mMontant').value = dc.montant || '';
       document.getElementById('mLat').value = dc.coords?.[0] || '';
       document.getElementById('mLng').value = dc.coords?.[1] || '';
+      document.getElementById('mResponsable').value = dc.responsable || '';
+      document.getElementById('mLink').value = dc.link || '';
+      document.getElementById('mNotes').value = dc.notes || '';
+      currentTags = [...(dc.tags || [])];
+      renderTags();
       setSmacSelection(dc.smac);
       openModal('Modifier l\'affaire');
     }
@@ -1812,7 +1991,11 @@
         datePrevisionnelle: document.getElementById('mDate').value,
         statut: document.getElementById('mStatut').value,
         montant: document.getElementById('mMontant').value.trim() || '-',
-        coords: [lat, lng]
+        coords: [lat, lng],
+        responsable: document.getElementById('mResponsable').value.trim(),
+        tags: [...currentTags],
+        link: document.getElementById('mLink').value.trim(),
+        notes: document.getElementById('mNotes').value.trim()
       };
 
       if (editingId) {
@@ -2133,15 +2316,98 @@
         document.getElementById('mobileSidebar').classList.remove('open');
       });
 
-      // ESC key
+      // ESC key and keyboard shortcuts
       document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') {
-          closeModal();
-          closeConfirm();
-          closeTabModal();
-          document.getElementById('mobileSidebar')?.classList.remove('open');
+        // Ignore if in input
+        if (e.target.matches('input, textarea, select')) {
+          if (e.key === 'Escape') {
+            closeModal();
+            closeConfirm();
+            closeTabModal();
+            document.getElementById('helpModal')?.classList.remove('open');
+            document.getElementById('mobileSidebar')?.classList.remove('open');
+          }
+          return;
+        }
+        
+        switch(e.key) {
+          case 'Escape':
+            closeModal();
+            closeConfirm();
+            closeTabModal();
+            document.getElementById('helpModal')?.classList.remove('open');
+            document.getElementById('mobileSidebar')?.classList.remove('open');
+            break;
+          case 'n': case 'N':
+            clearModalForm();
+            openModal();
+            break;
+          case 'r': case 'R':
+            document.getElementById('refreshBtn')?.click();
+            break;
+          case 'e': case 'E':
+            exportExcel();
+            break;
+          case 'p': case 'P':
+            exportPDF();
+            break;
+          case '/':
+            e.preventDefault();
+            document.getElementById('searchInput')?.focus();
+            break;
+          case '?':
+            document.getElementById('helpModal').classList.add('open');
+            break;
+          case '1':
+            document.querySelector('.pill[data-filter="Tous"]')?.click();
+            break;
+          case '2':
+            document.querySelector('.pill[data-filter="Gagné"]')?.click();
+            break;
+          case '3':
+            document.querySelector('.pill[data-filter="Perdu"]')?.click();
+            break;
+          case '4':
+            document.querySelector('.pill[data-filter="En cours"]')?.click();
+            break;
+          case '5':
+            document.querySelector('.pill[data-filter="Faste"]')?.click();
+            break;
         }
       });
+
+      // Help modal
+      document.getElementById('helpBtn')?.addEventListener('click', () => {
+        document.getElementById('helpModal').classList.add('open');
+      });
+      document.getElementById('helpClose')?.addEventListener('click', () => {
+        document.getElementById('helpModal').classList.remove('open');
+      });
+      document.getElementById('helpOk')?.addEventListener('click', () => {
+        document.getElementById('helpModal').classList.remove('open');
+      });
+
+      // Geocode button
+      document.getElementById('geocodeBtn')?.addEventListener('click', async () => {
+        const address = document.getElementById('mAdresse').value;
+        if (!address) { alert('Entrez d\'abord une adresse'); return; }
+        const btn = document.getElementById('geocodeBtn');
+        btn.textContent = '⏳';
+        btn.disabled = true;
+        const coords = await geocodeAddress(address);
+        if (coords) {
+          document.getElementById('mLat').value = coords.lat.toFixed(6);
+          document.getElementById('mLng').value = coords.lng.toFixed(6);
+          btn.textContent = '✅';
+        } else {
+          btn.textContent = '❌';
+          alert('Adresse non trouvée');
+        }
+        setTimeout(() => { btn.textContent = '📍 Géoloc'; btn.disabled = false; }, 2000);
+      });
+
+      // Tags input
+      document.getElementById('mTagsInput')?.addEventListener('keydown', handleTagInput);
 
       // Preload export libs
       injectJS(CDN.sheetJS);
