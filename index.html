@@ -1162,6 +1162,108 @@
       border-radius: 10px;
       color: var(--gray-500);
     }
+
+    /* Protected Tab Styles */
+    .tab-btn .lock-icon {
+      font-size: 12px;
+      margin-left: 4px;
+      animation: lockPulse 2s ease infinite;
+    }
+
+    @keyframes lockPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .tab-btn.locked {
+      opacity: 0.7;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(0,0,0,0.03) 10px,
+        rgba(0,0,0,0.03) 20px
+      );
+    }
+
+    .tab-btn.locked .tab-name {
+      font-style: italic;
+    }
+
+    .tab-btn.locked:hover {
+      opacity: 0.85;
+    }
+
+    .tab-btn.protected {
+      border: 2px solid var(--orange);
+      background: var(--orange-light);
+    }
+
+    .tab-btn.protected.active {
+      border-color: var(--red);
+    }
+
+    .tab-action-btn.lock {
+      font-size: 12px;
+    }
+
+    .tab-action-btn.lock.has-password {
+      color: var(--orange);
+      background: var(--orange-light);
+    }
+
+    /* Password Modal */
+    .password-input-container {
+      position: relative;
+    }
+
+    .password-input-container input {
+      width: 100%;
+      padding-right: 40px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      opacity: 0.6;
+    }
+
+    .password-toggle:hover {
+      opacity: 1;
+    }
+
+    .password-strength {
+      height: 4px;
+      border-radius: 2px;
+      margin-top: 8px;
+      background: var(--gray-200);
+      overflow: hidden;
+    }
+
+    .password-strength-bar {
+      height: 100%;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .password-strength-bar.weak { width: 33%; background: var(--rose); }
+    .password-strength-bar.medium { width: 66%; background: var(--orange); }
+    .password-strength-bar.strong { width: 100%; background: var(--green); }
+
+    .unlock-hint {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
   </style>
 </head>
 <body>
@@ -1483,6 +1585,104 @@
     </div>
   </div>
 
+  <!-- Set Password Modal -->
+  <div class="modal-overlay" id="setPasswordModal">
+    <div class="modal" style="max-width:400px">
+      <div class="modal-header">
+        <span class="modal-title" id="setPasswordTitle">🔒 Protéger l'onglet</span>
+        <button class="btn-icon" id="setPasswordClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 16px; color: var(--gray-500); font-size: 13px;" id="setPasswordDesc">
+          Définissez un mot de passe pour protéger cet onglet. Les collègues devront le saisir pour y accéder.
+        </p>
+        <div class="form-group">
+          <label class="form-label">Mot de passe</label>
+          <div class="password-input-container">
+            <input type="password" class="form-input" id="newPasswordInput" placeholder="Entrez un mot de passe...">
+            <button type="button" class="password-toggle" id="toggleNewPassword">👁️</button>
+          </div>
+          <div class="password-strength">
+            <div class="password-strength-bar" id="passwordStrengthBar"></div>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 12px;">
+          <label class="form-label">Confirmer le mot de passe</label>
+          <div class="password-input-container">
+            <input type="password" class="form-input" id="confirmPasswordInput" placeholder="Confirmez le mot de passe...">
+            <button type="button" class="password-toggle" id="toggleConfirmPassword">👁️</button>
+          </div>
+        </div>
+        <div class="unlock-hint">
+          <span>💡</span>
+          <span>Le mot de passe sera demandé à chaque session.</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="setPasswordCancel">Annuler</button>
+        <button class="btn btn-primary" id="setPasswordSave">🔒 Protéger</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unlock Password Modal -->
+  <div class="modal-overlay" id="unlockModal">
+    <div class="modal" style="max-width:380px">
+      <div class="modal-header">
+        <span class="modal-title">🔐 Onglet protégé</span>
+        <button class="btn-icon" id="unlockModalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 16px; color: var(--gray-500); font-size: 13px;">
+          Cet onglet est protégé par mot de passe.
+        </p>
+        <div class="form-group">
+          <label class="form-label">Mot de passe</label>
+          <div class="password-input-container">
+            <input type="password" class="form-input" id="unlockPasswordInput" placeholder="Entrez le mot de passe...">
+            <button type="button" class="password-toggle" id="toggleUnlockPassword">👁️</button>
+          </div>
+        </div>
+        <p id="unlockError" style="color: var(--rose); font-size: 12px; margin-top: 8px; display: none;">
+          ❌ Mot de passe incorrect
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="unlockModalCancel">Annuler</button>
+        <button class="btn btn-primary" id="unlockModalSubmit">🔓 Déverrouiller</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Remove Protection Modal -->
+  <div class="modal-overlay" id="removeProtectionModal">
+    <div class="modal" style="max-width:380px">
+      <div class="modal-header">
+        <span class="modal-title">🔓 Retirer la protection</span>
+        <button class="btn-icon" id="removeProtectionClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 16px; color: var(--gray-500); font-size: 13px;">
+          Entrez le mot de passe actuel pour retirer la protection de cet onglet.
+        </p>
+        <div class="form-group">
+          <label class="form-label">Mot de passe actuel</label>
+          <div class="password-input-container">
+            <input type="password" class="form-input" id="removeProtectionPassword" placeholder="Entrez le mot de passe...">
+            <button type="button" class="password-toggle" id="toggleRemovePassword">👁️</button>
+          </div>
+        </div>
+        <p id="removeProtectionError" style="color: var(--rose); font-size: 12px; margin-top: 8px; display: none;">
+          ❌ Mot de passe incorrect
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="removeProtectionCancel">Annuler</button>
+        <button class="btn btn-primary" id="removeProtectionSubmit" style="background: var(--orange);">🔓 Retirer</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Help Modal -->
   <div class="modal-overlay" id="helpModal">
     <div class="modal" style="max-width:450px">
@@ -1492,8 +1692,11 @@
       </div>
       <div class="modal-body">
         <div style="margin-bottom: 16px;">
-          <strong style="color: var(--red);">💡 Astuce :</strong> 
-          <span style="font-size: 13px;">Glissez-déposez les onglets pour les réorganiser !</span>
+          <strong style="color: var(--red);">💡 Astuces :</strong>
+          <ul style="font-size: 13px; margin-top: 8px; padding-left: 20px; color: var(--gray-700);">
+            <li>Glissez-déposez les onglets pour les réorganiser</li>
+            <li>Cliquez sur 🔒 pour protéger un onglet par mot de passe</li>
+          </ul>
         </div>
         <div style="display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13px;">
           <span class="kbd">N</span><span>Nouvelle affaire</span>
@@ -1584,6 +1787,165 @@
       setTimeout(() => toast.remove(), 3000);
     }
 
+    /* Password Hashing (Simple hash that works everywhere) */
+    function hashPassword(password) {
+      // Simple but effective hash function (works on file://, http://, https://)
+      const str = password + 'smac_salt_2024_secure';
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+      }
+      // Make it longer and more complex
+      let result = Math.abs(hash).toString(16);
+      for (let i = 0; i < 3; i++) {
+        hash = ((hash << 5) - hash) + (hash >> 3);
+        result += Math.abs(hash).toString(16);
+      }
+      return result;
+    }
+
+    function getPasswordStrength(password) {
+      if (!password) return '';
+      let strength = 0;
+      if (password.length >= 6) strength++;
+      if (password.length >= 10) strength++;
+      if (/[A-Z]/.test(password)) strength++;
+      if (/[0-9]/.test(password)) strength++;
+      if (/[^A-Za-z0-9]/.test(password)) strength++;
+      
+      if (strength <= 2) return 'weak';
+      if (strength <= 3) return 'medium';
+      return 'strong';
+    }
+
+    /* Protection Modal Functions */
+    function openSetPasswordModal(tabId) {
+      protectingTabId = tabId;
+      document.getElementById('newPasswordInput').value = '';
+      document.getElementById('confirmPasswordInput').value = '';
+      document.getElementById('passwordStrengthBar').className = 'password-strength-bar';
+      document.getElementById('setPasswordModal').classList.add('open');
+      document.getElementById('newPasswordInput').focus();
+    }
+
+    function closeSetPasswordModal() {
+      document.getElementById('setPasswordModal').classList.remove('open');
+      protectingTabId = null;
+    }
+
+    async function saveTabPassword() {
+      const password = document.getElementById('newPasswordInput').value;
+      const confirm = document.getElementById('confirmPasswordInput').value;
+      
+      if (!password) {
+        showToast('Veuillez entrer un mot de passe.', 'error');
+        return;
+      }
+      
+      if (password.length < 4) {
+        showToast('Le mot de passe doit faire au moins 4 caractères.', 'error');
+        return;
+      }
+      
+      if (password !== confirm) {
+        showToast('Les mots de passe ne correspondent pas.', 'error');
+        return;
+      }
+      
+      const tab = tabs.find(t => t.id === protectingTabId);
+      if (tab) {
+        tab.passwordHash = hashPassword(password);
+        await saveTabsConfig();
+        unlockedTabs.add(protectingTabId); // Auto-déverrouiller après définition
+        renderTabs();
+        showToast(`🔒 "${tab.name}" protégé ! (Rafraîchir pour verrouiller)`, 'success');
+      }
+      
+      closeSetPasswordModal();
+    }
+
+    /* Unlock Modal Functions */
+    function openUnlockModal(tabId) {
+      unlockingTabId = tabId;
+      document.getElementById('unlockPasswordInput').value = '';
+      document.getElementById('unlockError').style.display = 'none';
+      document.getElementById('unlockModal').classList.add('open');
+      document.getElementById('unlockPasswordInput').focus();
+    }
+
+    function closeUnlockModal() {
+      document.getElementById('unlockModal').classList.remove('open');
+      unlockingTabId = null;
+    }
+
+    async function submitUnlock() {
+      const password = document.getElementById('unlockPasswordInput').value;
+      const tab = tabs.find(t => t.id === unlockingTabId);
+      
+      if (!tab) return;
+      
+      const hash = hashPassword(password);
+      
+      if (hash === tab.passwordHash) {
+        unlockedTabs.add(unlockingTabId);
+        closeUnlockModal();
+        switchTab(unlockingTabId);
+        showToast(`Onglet "${tab.name}" déverrouillé ! 🔓`, 'success');
+      } else {
+        document.getElementById('unlockError').style.display = 'block';
+        document.getElementById('unlockPasswordInput').value = '';
+        document.getElementById('unlockPasswordInput').focus();
+      }
+    }
+
+    /* Remove Protection Modal Functions */
+    function openRemoveProtectionModal(tabId) {
+      removingProtectionTabId = tabId;
+      document.getElementById('removeProtectionPassword').value = '';
+      document.getElementById('removeProtectionError').style.display = 'none';
+      document.getElementById('removeProtectionModal').classList.add('open');
+      document.getElementById('removeProtectionPassword').focus();
+    }
+
+    function closeRemoveProtectionModal() {
+      document.getElementById('removeProtectionModal').classList.remove('open');
+      removingProtectionTabId = null;
+    }
+
+    async function submitRemoveProtection() {
+      const password = document.getElementById('removeProtectionPassword').value;
+      const tab = tabs.find(t => t.id === removingProtectionTabId);
+      
+      if (!tab) return;
+      
+      const hash = hashPassword(password);
+      
+      if (hash === tab.passwordHash) {
+        delete tab.passwordHash;
+        unlockedTabs.delete(removingProtectionTabId);
+        await saveTabsConfig();
+        renderTabs();
+        closeRemoveProtectionModal();
+        showToast(`Protection retirée de "${tab.name}" 🔓`, 'success');
+      } else {
+        document.getElementById('removeProtectionError').style.display = 'block';
+        document.getElementById('removeProtectionPassword').value = '';
+        document.getElementById('removeProtectionPassword').focus();
+      }
+    }
+
+    function isTabLocked(tabId) {
+      const tab = tabs.find(t => t.id === tabId);
+      return tab?.passwordHash && !unlockedTabs.has(tabId);
+    }
+
+    function isTabProtected(tabId) {
+      const tab = tabs.find(t => t.id === tabId);
+      return !!tab?.passwordHash;
+    }
+
     /* Default Data */
     const defaultDataDC = [
       {affaires:"1&2 - PAR2", client:"COLT", eg:"BY", architect:"RBA", adresse:"Villebon-sur-Yvette", smac:"", datePrevisionnelle:"", statut:"Gagné", montant:"5 000 000 €", coords:[48.69185845097801, 2.219128539789481]},
@@ -1630,6 +1992,10 @@
     let currentTags = [];
     let selectedTabColor = '#3b82f6';
     let duplicatingItemId = null;
+    let protectingTabId = null;
+    let unlockingTabId = null;
+    let removingProtectionTabId = null;
+    const unlockedTabs = new Set(); // Onglets déverrouillés pendant cette session
 
     /* Drag & Drop State */
     let draggedTab = null;
@@ -1760,8 +2126,11 @@
       wrapper.innerHTML = '';
       
       tabs.forEach((tab, index) => {
+        const isProtected = !!tab.passwordHash;
+        const isLocked = isTabLocked(tab.id);
+        
         const btn = document.createElement('button');
-        btn.className = `tab-btn ${tab.id === currentTab ? 'active' : ''}`;
+        btn.className = `tab-btn ${tab.id === currentTab ? 'active' : ''} ${isLocked ? 'locked' : ''} ${isProtected ? 'protected' : ''}`;
         btn.dataset.tab = tab.id;
         btn.dataset.index = index;
         btn.draggable = true;
@@ -1769,8 +2138,10 @@
           <span class="drag-handle">⋮⋮</span>
           <span class="tab-dot" style="background:${tab.color}"></span>
           <span class="tab-name">${escapeHTML(tab.name)}</span>
+          ${isProtected ? '<span class="lock-icon">' + (isLocked ? '🔒' : '🔓') + '</span>' : ''}
           <span class="tab-count">${dataByTab[tab.id]?.length || 0}</span>
           <span class="tab-actions">
+            <button class="tab-action-btn lock ${isProtected ? 'has-password' : ''}" title="${isProtected ? 'Retirer la protection' : 'Protéger'}">${isProtected ? '🔓' : '🔒'}</button>
             <button class="tab-action-btn rename" title="Renommer">✏️</button>
             <button class="tab-action-btn delete" title="Supprimer">✕</button>
           </span>
@@ -1780,7 +2151,24 @@
         // Tab click
         btn.addEventListener('click', (e) => {
           if (e.target.closest('.tab-action-btn')) return;
+          
+          // Si l'onglet est verrouillé, demander le mot de passe
+          if (isTabLocked(tab.id)) {
+            openUnlockModal(tab.id);
+            return;
+          }
+          
           switchTab(tab.id);
+        });
+        
+        // Lock/Unlock click
+        btn.querySelector('.lock').addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (isProtected) {
+            openRemoveProtectionModal(tab.id);
+          } else {
+            openSetPasswordModal(tab.id);
+          }
         });
         
         // Rename click
@@ -2282,17 +2670,30 @@
       
       tabs.forEach(tab => {
         const isCurrent = tab.id === currentTab;
+        const isLocked = isTabLocked(tab.id);
+        const isProtected = isTabProtected(tab.id);
+        
         const btn = document.createElement('button');
-        btn.className = `duplicate-tab-option ${isCurrent ? 'current' : ''}`;
+        btn.className = `duplicate-tab-option ${isCurrent ? 'current' : ''} ${isLocked ? 'locked' : ''}`;
+        btn.style.opacity = isLocked ? '0.5' : '1';
         btn.innerHTML = `
           <span class="tab-dot" style="background: ${tab.color}"></span>
           <div class="tab-info">
-            <div class="tab-name">${escapeHTML(tab.name)}</div>
+            <div class="tab-name">${escapeHTML(tab.name)} ${isProtected ? (isLocked ? '🔒' : '🔓') : ''}</div>
             <div class="tab-count">${dataByTab[tab.id]?.length || 0} affaires</div>
           </div>
           ${isCurrent ? '<span class="current-badge">Onglet actuel</span>' : ''}
+          ${isLocked ? '<span class="current-badge" style="background: var(--orange-light); color: var(--orange);">Verrouillé</span>' : ''}
         `;
-        btn.addEventListener('click', () => performDuplicate(tab.id));
+        
+        if (isLocked) {
+          btn.addEventListener('click', () => {
+            showToast('Déverrouillez d\'abord cet onglet pour y dupliquer.', 'error');
+          });
+        } else {
+          btn.addEventListener('click', () => performDuplicate(tab.id));
+        }
+        
         container.appendChild(btn);
       });
       
@@ -2693,6 +3094,62 @@
       document.getElementById('duplicateModalClose')?.addEventListener('click', closeDuplicateModal);
       document.getElementById('duplicateModalCancel')?.addEventListener('click', closeDuplicateModal);
 
+      // Set Password Modal
+      document.getElementById('setPasswordClose')?.addEventListener('click', closeSetPasswordModal);
+      document.getElementById('setPasswordCancel')?.addEventListener('click', closeSetPasswordModal);
+      document.getElementById('setPasswordSave')?.addEventListener('click', saveTabPassword);
+      
+      document.getElementById('newPasswordInput')?.addEventListener('input', (e) => {
+        const strength = getPasswordStrength(e.target.value);
+        const bar = document.getElementById('passwordStrengthBar');
+        bar.className = 'password-strength-bar ' + strength;
+      });
+      
+      document.getElementById('newPasswordInput')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') document.getElementById('confirmPasswordInput').focus();
+      });
+      
+      document.getElementById('confirmPasswordInput')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') saveTabPassword();
+      });
+
+      // Toggle password visibility
+      document.getElementById('toggleNewPassword')?.addEventListener('click', () => {
+        const input = document.getElementById('newPasswordInput');
+        input.type = input.type === 'password' ? 'text' : 'password';
+      });
+      
+      document.getElementById('toggleConfirmPassword')?.addEventListener('click', () => {
+        const input = document.getElementById('confirmPasswordInput');
+        input.type = input.type === 'password' ? 'text' : 'password';
+      });
+      
+      document.getElementById('toggleUnlockPassword')?.addEventListener('click', () => {
+        const input = document.getElementById('unlockPasswordInput');
+        input.type = input.type === 'password' ? 'text' : 'password';
+      });
+      
+      document.getElementById('toggleRemovePassword')?.addEventListener('click', () => {
+        const input = document.getElementById('removeProtectionPassword');
+        input.type = input.type === 'password' ? 'text' : 'password';
+      });
+
+      // Unlock Modal
+      document.getElementById('unlockModalClose')?.addEventListener('click', closeUnlockModal);
+      document.getElementById('unlockModalCancel')?.addEventListener('click', closeUnlockModal);
+      document.getElementById('unlockModalSubmit')?.addEventListener('click', submitUnlock);
+      document.getElementById('unlockPasswordInput')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') submitUnlock();
+      });
+
+      // Remove Protection Modal
+      document.getElementById('removeProtectionClose')?.addEventListener('click', closeRemoveProtectionModal);
+      document.getElementById('removeProtectionCancel')?.addEventListener('click', closeRemoveProtectionModal);
+      document.getElementById('removeProtectionSubmit')?.addEventListener('click', submitRemoveProtection);
+      document.getElementById('removeProtectionPassword')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') submitRemoveProtection();
+      });
+
       // Export
       document.getElementById('exportExcel')?.addEventListener('click', exportExcel);
       document.getElementById('exportPdf')?.addEventListener('click', exportPDF);
@@ -2716,6 +3173,9 @@
             closeConfirm();
             closeTabModal();
             closeDuplicateModal();
+            closeSetPasswordModal();
+            closeUnlockModal();
+            closeRemoveProtectionModal();
             document.getElementById('helpModal')?.classList.remove('open');
             document.getElementById('mobileSidebar')?.classList.remove('open');
           }
@@ -2728,6 +3188,9 @@
             closeConfirm();
             closeTabModal();
             closeDuplicateModal();
+            closeSetPasswordModal();
+            closeUnlockModal();
+            closeRemoveProtectionModal();
             document.getElementById('helpModal')?.classList.remove('open');
             document.getElementById('mobileSidebar')?.classList.remove('open');
             break;
