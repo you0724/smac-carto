@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8">
+<html lang="fr"><head>
+  <meta charset="UTF-8">
   <title>Cartographie SMAC</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -37,6 +36,7 @@
       --radius-sm: 6px;
       --shadow: 0 1px 3px rgba(0,0,0,0.08);
       --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 40px rgba(0,0,0,0.15);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -91,7 +91,7 @@
       gap: 8px;
     }
 
-    /* === TABS === */
+    /* === TABS with Drag & Drop === */
     .tabs-container {
       background: white;
       border-bottom: 1px solid var(--gray-200);
@@ -100,82 +100,144 @@
       gap: 0;
       align-items: center;
       overflow-x: auto;
+      position: relative;
     }
 
     .tabs-wrapper {
       display: flex;
-      gap: 0;
+      gap: 4px;
       flex: 1;
+      padding: 8px 0;
     }
 
     .tab-btn {
-      padding: 14px 24px;
+      padding: 12px 20px;
       border: none;
       background: transparent;
       font-family: inherit;
       font-size: 14px;
       font-weight: 600;
       color: var(--gray-500);
-      cursor: pointer;
+      cursor: grab;
       position: relative;
-      transition: color 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
     }
 
     .tab-btn:hover {
       color: var(--dark);
+      background: var(--gray-100);
     }
 
     .tab-btn.active {
       color: var(--red);
+      background: var(--red-light);
     }
 
     .tab-btn.active::after {
       content: '';
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
       height: 3px;
       background: var(--red);
       border-radius: 3px 3px 0 0;
+    }
+
+    /* Drag states */
+    .tab-btn.dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+      transform: scale(1.05);
+      box-shadow: var(--shadow-lg);
+      z-index: 100;
+    }
+
+    .tab-btn.drag-over {
+      background: var(--blue-light);
+      transform: translateX(4px);
+    }
+
+    .tab-btn.drag-over-left {
+      transform: translateX(-4px);
+    }
+
+    .drop-indicator {
+      position: absolute;
+      width: 3px;
+      height: 32px;
+      background: var(--red);
+      border-radius: 2px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .drop-indicator.visible {
+      opacity: 1;
+      animation: pulse 0.5s ease infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { transform: scaleY(0.9); }
+      to { transform: scaleY(1.1); }
+    }
+
+    .tab-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: transform 0.3s;
+    }
+
+    .tab-btn:hover .tab-dot {
+      transform: scale(1.3);
     }
 
     .tab-btn .tab-count {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 20px;
-      height: 20px;
+      min-width: 22px;
+      height: 22px;
       padding: 0 6px;
-      border-radius: 10px;
+      border-radius: 11px;
       font-size: 11px;
       font-weight: 600;
-      margin-left: 8px;
       background: var(--gray-100);
       color: var(--gray-500);
+      transition: all 0.3s;
     }
 
     .tab-btn.active .tab-count {
-      background: var(--red-light);
-      color: var(--red);
+      background: var(--red);
+      color: white;
+      transform: scale(1.1);
     }
-
-    .tab-btn.datacenter .tab-count { background: var(--blue-light); color: var(--blue); }
-    .tab-btn.datacenter.active .tab-count { background: var(--blue); color: white; }
-
-    .tab-btn.projets .tab-count { background: var(--purple-light); color: var(--purple); }
-    .tab-btn.projets.active .tab-count { background: var(--purple); color: white; }
 
     .tab-actions {
-      display: none;
+      display: flex;
       gap: 2px;
-      margin-left: 6px;
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: all 0.2s;
     }
-    .tab-btn:hover .tab-actions { display: flex; }
+    .tab-btn:hover .tab-actions { 
+      opacity: 1; 
+      transform: translateX(0);
+    }
 
     .tab-action-btn {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       border: none;
       background: transparent;
       border-radius: 4px;
@@ -186,24 +248,60 @@
       align-items: center;
       justify-content: center;
       padding: 0;
+      transition: all 0.2s;
     }
-    .tab-action-btn:hover { background: var(--gray-200); color: var(--dark); }
-    .tab-action-btn.delete:hover { background: var(--rose-light); color: var(--rose); }
+    .tab-action-btn:hover { 
+      background: var(--gray-200); 
+      color: var(--dark); 
+      transform: scale(1.1);
+    }
+    .tab-action-btn.delete:hover { 
+      background: var(--rose-light); 
+      color: var(--rose); 
+    }
+
+    .drag-handle {
+      cursor: grab;
+      opacity: 0;
+      transition: opacity 0.2s;
+      color: var(--gray-400);
+    }
+
+    .tab-btn:hover .drag-handle {
+      opacity: 1;
+    }
 
     .add-tab-btn {
-      padding: 8px 14px;
-      border: 1px dashed var(--gray-300);
+      padding: 8px 16px;
+      border: 2px dashed var(--gray-300);
       background: transparent;
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius);
       font-family: inherit;
       font-size: 13px;
+      font-weight: 500;
       color: var(--gray-500);
       cursor: pointer;
-      margin-left: 12px;
+      margin-left: 8px;
       white-space: nowrap;
-      transition: all 0.15s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .add-tab-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+    .add-tab-btn:hover { 
+      border-color: var(--red); 
+      color: var(--red); 
+      background: var(--red-light);
+      transform: scale(1.02);
+    }
+
+    .add-tab-btn svg {
+      transition: transform 0.3s;
+    }
+
+    .add-tab-btn:hover svg {
+      transform: rotate(90deg);
+    }
 
     /* === BUTTONS === */
     .btn {
@@ -217,33 +315,59 @@
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .btn-primary { background: var(--red); color: white; }
-    .btn-primary:hover { background: var(--red-dark); }
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary { 
+      background: var(--red); 
+      color: white; 
+    }
+    .btn-primary:hover { 
+      background: var(--red-dark);
+      box-shadow: 0 4px 12px rgba(225, 6, 0, 0.3);
+    }
 
     .btn-secondary {
       background: white;
       color: var(--dark);
       border: 1px solid var(--gray-300);
     }
-    .btn-secondary:hover { background: var(--gray-100); }
+    .btn-secondary:hover { 
+      background: var(--gray-100);
+      border-color: var(--gray-400);
+    }
 
     .btn-ghost {
       background: transparent;
       color: var(--gray-500);
     }
-    .btn-ghost:hover { background: var(--gray-100); color: var(--dark); }
+    .btn-ghost:hover { 
+      background: var(--gray-100); 
+      color: var(--dark); 
+    }
 
     .btn-sm { padding: 6px 10px; font-size: 12px; }
+
+    /* Refresh button animation */
+    .btn-ghost.refreshing svg {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
 
     /* === MAIN LAYOUT === */
     main {
       display: grid;
       grid-template-columns: 1fr 420px;
-      height: calc(100vh - 110px);
-      height: calc(100dvh - 110px);
+      height: calc(100vh - 118px);
+      height: calc(100dvh - 118px);
     }
 
     @media (max-width: 1024px) {
@@ -274,6 +398,20 @@
       overflow: hidden;
     }
 
+    /* === TAB CONTENT ANIMATION === */
+    .tab-content {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeInUp 0.4s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     /* === SEARCH & FILTERS === */
     .search-section {
       padding: 16px;
@@ -293,12 +431,13 @@
       font-family: inherit;
       font-size: 14px;
       background: var(--gray-50);
-      transition: all 0.15s;
+      transition: all 0.2s;
     }
     .search-input:focus {
       outline: none;
       border-color: var(--red);
       background: white;
+      box-shadow: 0 0 0 3px rgba(225, 6, 0, 0.1);
     }
 
     /* Sort Select */
@@ -311,8 +450,12 @@
       background: white;
       cursor: pointer;
       min-width: 130px;
+      transition: all 0.2s;
     }
-    .sort-select:focus { outline: none; border-color: var(--red); }
+    .sort-select:focus { 
+      outline: none; 
+      border-color: var(--red); 
+    }
 
     /* Description style */
     .list-item-description {
@@ -327,7 +470,12 @@
     }
 
     /* Tags */
-    .list-item-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+    .list-item-tags { 
+      display: flex; 
+      gap: 4px; 
+      flex-wrap: wrap; 
+      margin-top: 4px; 
+    }
     .tag {
       padding: 2px 6px;
       border-radius: 8px;
@@ -354,9 +502,20 @@
       background: var(--gray-50);
       min-height: 36px;
       align-items: center;
+      transition: all 0.2s;
     }
-    .tags-input-container .tag { cursor: pointer; }
-    .tags-input-container .tag:hover { opacity: 0.7; }
+    .tags-input-container:focus-within {
+      border-color: var(--red);
+      background: white;
+    }
+    .tags-input-container .tag { 
+      cursor: pointer; 
+      transition: all 0.2s;
+    }
+    .tags-input-container .tag:hover { 
+      opacity: 0.7;
+      transform: scale(0.95);
+    }
     .tags-input {
       border: none;
       outline: none;
@@ -378,8 +537,12 @@
       cursor: pointer;
       font-size: 11px;
       white-space: nowrap;
+      transition: all 0.2s;
     }
-    .geocode-btn:hover { background: #2563eb; }
+    .geocode-btn:hover { 
+      background: #2563eb;
+      transform: translateY(-1px);
+    }
 
     /* Kbd */
     .kbd {
@@ -402,18 +565,25 @@
     }
 
     .pill {
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 20px;
       font-size: 12px;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       border: 1px solid transparent;
       background: var(--gray-100);
       color: var(--gray-500);
     }
-    .pill:hover { background: var(--gray-200); }
-    .pill.active { background: var(--dark); color: white; }
+    .pill:hover { 
+      background: var(--gray-200);
+      transform: translateY(-1px);
+    }
+    .pill.active { 
+      background: var(--dark); 
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
 
     .pill.gagne { background: var(--green-light); color: #166534; border-color: #bbf7d0; }
     .pill.gagne.active { background: var(--green); color: white; }
@@ -451,9 +621,36 @@
       padding: 14px 16px;
       border-bottom: 1px solid var(--gray-100);
       cursor: pointer;
-      transition: background 0.15s;
+      transition: all 0.2s;
+      animation: listItemIn 0.3s ease backwards;
     }
-    .list-item:hover { background: var(--gray-50); }
+
+    .list-item:nth-child(1) { animation-delay: 0.02s; }
+    .list-item:nth-child(2) { animation-delay: 0.04s; }
+    .list-item:nth-child(3) { animation-delay: 0.06s; }
+    .list-item:nth-child(4) { animation-delay: 0.08s; }
+    .list-item:nth-child(5) { animation-delay: 0.1s; }
+    .list-item:nth-child(6) { animation-delay: 0.12s; }
+    .list-item:nth-child(7) { animation-delay: 0.14s; }
+    .list-item:nth-child(8) { animation-delay: 0.16s; }
+    .list-item:nth-child(9) { animation-delay: 0.18s; }
+    .list-item:nth-child(10) { animation-delay: 0.2s; }
+
+    @keyframes listItemIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .list-item:hover { 
+      background: var(--gray-50);
+      transform: translateX(4px);
+    }
 
     .list-item-header {
       display: flex;
@@ -494,9 +691,13 @@
       display: flex;
       gap: 4px;
       opacity: 0;
-      transition: opacity 0.15s;
+      transform: translateX(10px);
+      transition: all 0.2s;
     }
-    .list-item:hover .list-item-actions { opacity: 1; }
+    .list-item:hover .list-item-actions { 
+      opacity: 1;
+      transform: translateX(0);
+    }
 
     .btn-icon {
       width: 28px;
@@ -509,22 +710,35 @@
       border-radius: var(--radius-sm);
       cursor: pointer;
       color: var(--gray-500);
-      transition: all 0.15s;
+      transition: all 0.2s;
     }
-    .btn-icon:hover { background: var(--gray-200); color: var(--dark); }
-    .btn-icon.delete:hover { background: var(--rose-light); color: var(--rose); }
+    .btn-icon:hover { 
+      background: var(--gray-200); 
+      color: var(--dark);
+      transform: scale(1.1);
+    }
+    .btn-icon.delete:hover { 
+      background: var(--rose-light); 
+      color: var(--rose); 
+    }
 
     /* Status Badge */
     .status {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 3px 8px;
+      padding: 3px 10px;
       border-radius: 12px;
       font-size: 11px;
       font-weight: 600;
       white-space: nowrap;
+      transition: all 0.2s;
     }
+    
+    .list-item:hover .status {
+      transform: scale(1.05);
+    }
+
     .status.gagne { background: var(--green-light); color: #166534; }
     .status.perdu { background: var(--rose-light); color: #9f1239; }
     .status.encours { background: var(--orange-light); color: #92400e; }
@@ -532,8 +746,8 @@
 
     /* Total Bar */
     .total-bar {
-      padding: 12px 16px;
-      background: var(--red-light);
+      padding: 14px 16px;
+      background: linear-gradient(135deg, var(--red-light) 0%, white 100%);
       border-top: 1px solid var(--gray-200);
       display: flex;
       justify-content: space-between;
@@ -541,20 +755,29 @@
     }
 
     .total-bar span { font-size: 13px; color: var(--gray-500); }
-    .total-bar strong { font-size: 16px; color: var(--dark); }
+    .total-bar strong { 
+      font-size: 18px; 
+      color: var(--dark);
+      font-weight: 700;
+    }
 
     /* === MODAL === */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.5);
       z-index: 1000;
       justify-content: center;
       align-items: center;
-      backdrop-filter: blur(2px);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity 0.3s;
     }
-    .modal-overlay.open { display: flex; }
+    .modal-overlay.open { 
+      display: flex;
+      opacity: 1;
+    }
 
     .modal {
       background: white;
@@ -563,17 +786,23 @@
       max-width: 520px;
       max-height: 90vh;
       overflow-y: auto;
-      box-shadow: var(--shadow-md);
-      animation: modalIn 0.2s ease;
+      box-shadow: var(--shadow-lg);
+      animation: modalIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     @keyframes modalIn {
-      from { opacity: 0; transform: scale(0.95) translateY(10px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
+      from { 
+        opacity: 0; 
+        transform: scale(0.9) translateY(20px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: scale(1) translateY(0); 
+      }
     }
 
     .modal-header {
-      padding: 16px 20px;
+      padding: 18px 20px;
       border-bottom: 1px solid var(--gray-200);
       display: flex;
       justify-content: space-between;
@@ -581,11 +810,13 @@
     }
 
     .modal-title {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 600;
     }
 
-    .modal-body { padding: 20px; }
+    .modal-body { 
+      padding: 20px;
+    }
 
     .modal-footer {
       padding: 16px 20px;
@@ -599,7 +830,7 @@
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 16px;
     }
 
     .form-group { display: flex; flex-direction: column; gap: 4px; }
@@ -611,176 +842,163 @@
       color: var(--gray-500);
     }
 
-    .form-input, .form-select {
-      padding: 9px 12px;
+    .form-input, .form-select, .form-textarea {
+      padding: 10px 12px;
       border: 1px solid var(--gray-200);
       border-radius: var(--radius-sm);
       font-family: inherit;
       font-size: 14px;
-      transition: border-color 0.15s;
+      transition: all 0.2s;
     }
-    .form-input:focus, .form-select:focus {
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
       outline: none;
       border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(225, 6, 0, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
     }
 
     /* Chips Select */
     .chips-select {
       display: flex;
-      flex-wrap: wrap;
       gap: 6px;
+      flex-wrap: wrap;
     }
 
-    .chip {
+    .chips-select .chip {
       padding: 6px 12px;
+      border: 1px solid var(--gray-200);
       border-radius: 16px;
       font-size: 12px;
-      font-weight: 500;
       cursor: pointer;
-      border: 1px solid var(--gray-300);
       background: white;
-      color: var(--gray-500);
-      transition: all 0.15s;
+      transition: all 0.2s;
     }
-    .chip:hover { border-color: var(--red); color: var(--dark); }
-    .chip.active { background: var(--red); border-color: var(--red); color: white; }
+    .chips-select .chip:hover { 
+      border-color: var(--red);
+      transform: translateY(-1px);
+    }
+    .chips-select .chip.active { 
+      background: var(--red-light); 
+      border-color: var(--red); 
+      color: var(--red);
+    }
 
     /* Advanced Filters */
     .advanced-toggle {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 10px 16px;
-      border-bottom: 1px solid var(--gray-200);
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
+      gap: 4px;
+      padding: 6px 10px;
+      font-size: 12px;
       color: var(--gray-500);
-      background: white;
-      transition: background 0.15s;
+      cursor: pointer;
+      background: transparent;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      margin-top: 12px;
+      transition: all 0.2s;
     }
-    .advanced-toggle:hover { background: var(--gray-50); }
-    .advanced-toggle svg { transition: transform 0.2s; }
-    .advanced-toggle.open svg { transform: rotate(180deg); }
+    .advanced-toggle:hover { 
+      background: var(--gray-100);
+    }
+    .advanced-toggle .arrow { 
+      transition: transform 0.3s; 
+    }
+    .advanced-toggle.open .arrow { 
+      transform: rotate(180deg); 
+    }
 
     .advanced-panel {
       display: none;
-      padding: 16px;
-      background: var(--gray-50);
-      border-bottom: 1px solid var(--gray-200);
-      max-height: 280px;
-      overflow-y: auto;
+      padding: 12px 0;
+      gap: 8px;
+      flex-direction: column;
+      animation: slideDown 0.3s ease;
     }
-    .advanced-panel.open { display: block; }
+    .advanced-panel.open { display: flex; }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
     .advanced-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .filter-group { display: flex; flex-direction: column; gap: 2px; }
+    .filter-group label { font-size: 10px; color: var(--gray-500); }
+    .filter-group input {
+      padding: 6px 8px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
     }
 
     .advanced-actions {
       display: flex;
-      gap: 8px;
-      margin-top: 12px;
+      gap: 6px;
+    }
+    .advanced-actions button {
+      padding: 5px 10px;
+      font-size: 11px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
     }
 
-    /* Legend */
+    /* Leaflet custom */
+    .leaflet-marker-icon {
+      transition: transform 0.2s;
+    }
+    .leaflet-marker-icon:hover {
+      transform: scale(1.1);
+    }
+
     .legend {
       background: white;
-      padding: 10px 12px;
+      padding: 10px;
       border-radius: var(--radius-sm);
       box-shadow: var(--shadow);
-      font-size: 12px;
     }
-    .legend-title { font-weight: 600; margin-bottom: 6px; }
-    .legend-item { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+    .legend-title { font-weight: 600; font-size: 12px; margin-bottom: 6px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; margin: 4px 0; }
     .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
 
-    /* Pins */
-    .pin-svg {
-      width: 28px;
-      height: 28px;
-      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25));
-    }
-
-    /* Clusters */
-    .cluster-icon { background: transparent; }
-    .cluster-circle {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid white;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      color: white;
-      font-weight: 700;
-      font-size: 14px;
-    }
-    .cluster-green { background: var(--green); }
-    .cluster-red { background: var(--rose); }
-    .cluster-orange { background: var(--orange); }
-    .cluster-blue { background: var(--blue); }
-
-    /* House markers */
-    .house-marker {
-      font-size: 22px;
-      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25));
-    }
-    .house-marker.red {
-      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25)) sepia(1) saturate(5) hue-rotate(-10deg) brightness(0.9);
-    }
-    .house-marker.blue {
-      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25)) sepia(1) saturate(3) hue-rotate(180deg) brightness(1.1);
-    }
-
-    /* Leaflet popup */
+    /* Map Popup */
     .leaflet-popup-content-wrapper {
-      border-radius: var(--radius-sm) !important;
-      box-shadow: var(--shadow-md) !important;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
     }
-    .leaflet-popup-content {
-      margin: 12px 14px !important;
-      font-family: 'DM Sans', sans-serif !important;
-      font-size: 13px !important;
-      line-height: 1.6 !important;
-    }
-    .leaflet-popup-content strong { color: var(--dark); }
-
-    /* Empty state */
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-      text-align: center;
-      color: var(--gray-500);
-    }
-    .empty-state svg { margin-bottom: 12px; opacity: 0.5; }
+    .popup-content { font-family: 'DM Sans', sans-serif; }
+    .popup-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+    .popup-client { font-size: 12px; color: var(--gray-500); }
+    .popup-amount { font-weight: 600; color: var(--red); margin-top: 4px; }
 
     /* Mobile */
     .mobile-menu-btn {
       display: none;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: var(--red);
-      color: white;
+      padding: 8px;
       border: none;
-      box-shadow: 0 4px 12px rgba(225,6,0,0.3);
+      background: var(--gray-100);
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      z-index: 99;
-      font-size: 24px;
     }
 
     @media (max-width: 1024px) {
-      .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+      .mobile-menu-btn { display: flex; }
     }
 
     .mobile-sidebar {
@@ -790,13 +1008,14 @@
       z-index: 200;
     }
     .mobile-sidebar.open { display: block; }
-    
-    .mobile-sidebar-backdrop {
+
+    .mobile-backdrop {
       position: absolute;
       inset: 0;
       background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(2px);
     }
-    
+
     .mobile-sidebar-content {
       position: absolute;
       right: 0;
@@ -807,7 +1026,7 @@
       background: white;
       display: flex;
       flex-direction: column;
-      animation: slideIn 0.2s ease;
+      animation: slideIn 0.3s ease;
     }
 
     @keyframes slideIn {
@@ -833,9 +1052,121 @@
     }
     .tab-indicator.dc { background: var(--blue); }
     .tab-indicator.proj { background: var(--purple); }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: var(--dark);
+      color: white;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      box-shadow: var(--shadow-lg);
+      animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes toastOut {
+      to {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.9);
+      }
+    }
+
+    .toast.success { background: var(--green); }
+    .toast.error { background: var(--rose); }
+
+    /* Duplicate Tab List */
+    .duplicate-tab-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .duplicate-tab-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius);
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .duplicate-tab-option:hover {
+      border-color: var(--red);
+      background: var(--red-light);
+      transform: translateX(4px);
+    }
+
+    .duplicate-tab-option.current {
+      border-style: dashed;
+      opacity: 0.7;
+    }
+
+    .duplicate-tab-option.current:hover {
+      border-color: var(--gray-400);
+      background: var(--gray-100);
+    }
+
+    .duplicate-tab-option .tab-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .duplicate-tab-option .tab-info {
+      flex: 1;
+    }
+
+    .duplicate-tab-option .tab-name {
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .duplicate-tab-option .tab-count {
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .duplicate-tab-option .current-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      background: var(--gray-200);
+      border-radius: 10px;
+      color: var(--gray-500);
+    }
   </style>
 </head>
 <body>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
 
   <!-- HEADER -->
   <header>
@@ -846,141 +1177,140 @@
       </div>
     </div>
     <div class="header-actions">
-      <span id="syncStatus" style="font-size:12px;margin-right:8px;color:#71717a;">☁️ En ligne</span>
+      <span id="syncStatus" style="font-size: 12px; margin-right: 8px; color: #71717a;">☁️ En ligne</span>
       <button class="btn btn-ghost btn-sm" id="refreshBtn" title="Actualiser (R)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>
       </button>
       <button class="btn btn-secondary" id="exportExcel" title="Export Excel (E)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
         Excel
       </button>
       <button class="btn btn-secondary" id="exportPdf" title="Export PDF (P)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
         PDF
       </button>
       <button class="btn btn-primary" id="addBtn" title="Nouvelle affaire (N)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         Ajouter
       </button>
       <button class="btn btn-ghost btn-sm" id="shareBtn" title="Partager">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
       </button>
       <button class="btn btn-ghost btn-sm" id="helpBtn" title="Aide (?)">❓</button>
+      <button class="btn btn-ghost btn-sm mobile-menu-btn" id="mobileMenuBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
     </div>
   </header>
 
-  <!-- TABS -->
+  <!-- TABS with Drag & Drop -->
   <div class="tabs-container">
     <div class="tabs-wrapper" id="tabsWrapper">
-      <!-- Les onglets seront générés dynamiquement -->
+      <!-- Tabs will be rendered here -->
     </div>
-    <button class="add-tab-btn" id="addTabBtn">+ Onglet</button>
+    <div class="drop-indicator" id="dropIndicator"></div>
+    <button class="add-tab-btn" id="addTabBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      Onglet
+    </button>
   </div>
 
   <!-- MAIN -->
   <main>
     <div id="map"></div>
-    
-    <aside class="sidebar">
-      <!-- Search -->
+    <div class="sidebar">
       <div class="search-section">
         <div class="search-box">
           <input type="text" class="search-input" id="searchInput" placeholder="Rechercher une affaire...">
           <select class="sort-select" id="sortSelect">
             <option value="name">Tri: Nom A-Z</option>
             <option value="name-desc">Tri: Nom Z-A</option>
-            <option value="montant-desc">Tri: Montant ↓</option>
-            <option value="montant-asc">Tri: Montant ↑</option>
-            <option value="date-desc">Tri: Date récente</option>
-            <option value="date-asc">Tri: Date ancienne</option>
+            <option value="amount-desc">Tri: Montant ↓</option>
+            <option value="amount-asc">Tri: Montant ↑</option>
+            <option value="date">Tri: Date</option>
           </select>
         </div>
         <div class="filter-pills">
-          <button class="pill active" data-filter="Tous">Tous</button>
-          <button class="pill gagne" data-filter="Gagné">✓ Gagné</button>
-          <button class="pill perdu" data-filter="Perdu">✕ Perdu</button>
-          <button class="pill encours" data-filter="En cours">◷ En cours</button>
-          <button class="pill faste" data-filter="Faste">⚡ Faste</button>
+          <span class="pill active" data-filter="Tous">Tous</span>
+          <span class="pill gagne" data-filter="Gagné">✓ Gagné</span>
+          <span class="pill perdu" data-filter="Perdu">✕ Perdu</span>
+          <span class="pill encours" data-filter="En cours">◷ En cours</span>
+          <span class="pill faste" data-filter="Faste">⚡ Faste</span>
+        </div>
+        <button class="advanced-toggle" id="advancedToggle">
+          <span class="arrow">▼</span> Filtres avancés
+        </button>
+        <div class="advanced-panel" id="advancedPanel">
+          <div class="advanced-grid">
+            <div class="filter-group">
+              <label>Client</label>
+              <input type="text" id="fClient" placeholder="Ex: EQUINIX">
+            </div>
+            <div class="filter-group">
+              <label>EG</label>
+              <input type="text" id="fEG" placeholder="Ex: BY">
+            </div>
+            <div class="filter-group">
+              <label>Architecte</label>
+              <input type="text" id="fArchitect" placeholder="Ex: RBA">
+            </div>
+            <div class="filter-group">
+              <label>Adresse</label>
+              <input type="text" id="fAdresse" placeholder="Ex: Paris">
+            </div>
+            <div class="filter-group">
+              <label>Montant min</label>
+              <input type="text" id="minMontant" placeholder="Ex: 100000">
+            </div>
+            <div class="filter-group">
+              <label>Montant max</label>
+              <input type="text" id="maxMontant" placeholder="Ex: 5000000">
+            </div>
+          </div>
+          <div class="advanced-actions">
+            <button id="applyAdvanced" style="background: var(--red); color: white;">Appliquer</button>
+            <button id="resetAdvanced" style="background: var(--gray-200);">Réinitialiser</button>
+            <button id="resetData" style="background: var(--rose-light); color: var(--rose);">⚠️ Reset données</button>
+          </div>
         </div>
       </div>
-
-      <!-- Advanced Filters -->
-      <div class="advanced-toggle" id="advancedToggle">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        Filtres avancés
-      </div>
-      <div class="advanced-panel" id="advancedPanel">
-        <div class="advanced-grid">
-          <div class="form-group">
-            <label class="form-label">Client</label>
-            <input type="text" class="form-input" id="fClient" placeholder="EQUINIX...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">EG</label>
-            <input type="text" class="form-input" id="fEG" placeholder="BY, VINCI...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Architecte</label>
-            <input type="text" class="form-input" id="fArchitect" placeholder="RBA...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Adresse</label>
-            <input type="text" class="form-input" id="fAdresse" placeholder="La Courneuve...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Montant min</label>
-            <input type="text" class="form-input" id="minMontant" placeholder="500k">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Montant max</label>
-            <input type="text" class="form-input" id="maxMontant" placeholder="2M">
-          </div>
-        </div>
-        <div class="advanced-actions">
-          <button class="btn btn-primary btn-sm" id="applyAdvanced">Appliquer</button>
-          <button class="btn btn-ghost btn-sm" id="resetAdvanced">Réinitialiser</button>
-          <button class="btn btn-ghost btn-sm" id="resetData">Données par défaut</button>
-        </div>
-      </div>
-
-      <!-- Stats -->
       <div class="stats-bar">
-        <span id="countLabel"><strong>0</strong> affaires</span>
-        <span id="statsDetail"></span>
+        <span><strong id="countDisplay">0</strong> affaires affichées</span>
+        <span id="statusStats"></span>
       </div>
-
-      <!-- List -->
-      <div class="list-container" id="listContainer"></div>
-
-      <!-- Total -->
+      <div class="list-container" id="listContainer">
+        <!-- List items will be rendered here -->
+      </div>
       <div class="total-bar">
-        <span>Total visible</span>
+        <span>Total</span>
         <strong id="totalAmount">0 €</strong>
       </div>
-    </aside>
+    </div>
   </main>
-
-  <!-- Mobile Menu Button -->
-  <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 
   <!-- Mobile Sidebar -->
   <div class="mobile-sidebar" id="mobileSidebar">
-    <div class="mobile-sidebar-backdrop" id="mobileBackdrop"></div>
+    <div class="mobile-backdrop" id="mobileBackdrop"></div>
     <div class="mobile-sidebar-content">
       <div class="mobile-header">
-        <span style="font-weight:600">Affaires</span>
+        <span style="font-weight:600;">Liste des affaires</span>
         <button class="btn-icon" id="mobileClose">✕</button>
       </div>
       <div class="search-section">
         <div class="search-box">
           <input type="text" class="search-input" id="mobileSearchInput" placeholder="Rechercher...">
         </div>
-        <div class="filter-pills" id="mobileFilterPills"></div>
+        <div class="filter-pills">
+          <span class="pill active" data-filter="Tous">Tous</span>
+          <span class="pill gagne" data-filter="Gagné">✓ Gagné</span>
+          <span class="pill perdu" data-filter="Perdu">✕ Perdu</span>
+          <span class="pill encours" data-filter="En cours">◷ En cours</span>
+          <span class="pill faste" data-filter="Faste">⚡ Faste</span>
+        </div>
       </div>
-      <div class="stats-bar">
-        <span id="mobileCountLabel"><strong>0</strong> affaires</span>
+      <div class="list-container" id="mobileListContainer">
+        <!-- Mobile list items will be rendered here -->
       </div>
-      <div class="list-container" id="mobileListContainer"></div>
       <div class="total-bar">
         <span>Total</span>
         <strong id="mobileTotalAmount">0 €</strong>
@@ -992,7 +1322,7 @@
   <div class="modal-overlay" id="modal">
     <div class="modal">
       <div class="modal-header">
-        <span class="modal-title" id="modalTitle">Ajouter une affaire</span>
+        <span class="modal-title" id="modalTitle">Nouvelle affaire</span>
         <button class="btn-icon" id="modalClose">✕</button>
       </div>
       <div class="modal-body">
@@ -1065,7 +1395,7 @@
           <div class="form-group full">
             <label class="form-label">Tags (Entrée pour ajouter)</label>
             <div class="tags-input-container" id="tagsContainer">
-              <input type="text" class="tags-input" id="mTagsInput" placeholder="urgent, prioritaire...">
+              <input type="text" class="tags-input" id="mTagsInput" placeholder="Ajouter un tag...">
             </div>
           </div>
           <div class="form-group full">
@@ -1074,7 +1404,7 @@
           </div>
           <div class="form-group full">
             <label class="form-label">Notes</label>
-            <textarea class="form-textarea" id="mNotes" placeholder="Notes supplémentaires..." style="min-height:60px;resize:vertical;"></textarea>
+            <textarea class="form-textarea" id="mNotes" placeholder="Notes supplémentaires..."></textarea>
           </div>
         </div>
       </div>
@@ -1093,7 +1423,7 @@
         <button class="btn-icon" id="confirmClose">✕</button>
       </div>
       <div class="modal-body">
-        <p id="confirmText">Êtes-vous sûr de vouloir supprimer cette affaire ?</p>
+        <p id="confirmText">Supprimer cette affaire ?</p>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" id="confirmNo">Annuler</button>
@@ -1114,6 +1444,17 @@
           <label class="form-label">Nom de l'onglet</label>
           <input type="text" class="form-input" id="tabNameInput" placeholder="Ex: Projets 2027, Rénovations...">
         </div>
+        <div class="form-group" style="margin-top: 12px;">
+          <label class="form-label">Couleur</label>
+          <div style="display: flex; gap: 8px; margin-top: 4px;">
+            <button type="button" class="color-btn" data-color="#3b82f6" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#3b82f6;cursor:pointer;"></button>
+            <button type="button" class="color-btn" data-color="#8b5cf6" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#8b5cf6;cursor:pointer;"></button>
+            <button type="button" class="color-btn" data-color="#22c55e" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#22c55e;cursor:pointer;"></button>
+            <button type="button" class="color-btn" data-color="#f59e0b" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#f59e0b;cursor:pointer;"></button>
+            <button type="button" class="color-btn" data-color="#f43f5e" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#f43f5e;cursor:pointer;"></button>
+            <button type="button" class="color-btn" data-color="#06b6d4" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#06b6d4;cursor:pointer;"></button>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" id="tabModalCancel">Annuler</button>
@@ -1122,14 +1463,37 @@
     </div>
   </div>
 
+  <!-- Duplicate Modal (Choose Target Tab) -->
+  <div class="modal-overlay" id="duplicateModal">
+    <div class="modal" style="max-width:400px">
+      <div class="modal-header">
+        <span class="modal-title">📋 Dupliquer vers...</span>
+        <button class="btn-icon" id="duplicateModalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 12px; color: var(--gray-500); font-size: 13px;">Choisissez l'onglet de destination :</p>
+        <div id="duplicateTabList" class="duplicate-tab-list">
+          <!-- Tabs will be rendered here -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="duplicateModalCancel">Annuler</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Help Modal -->
   <div class="modal-overlay" id="helpModal">
-    <div class="modal" style="max-width:420px">
+    <div class="modal" style="max-width:450px">
       <div class="modal-header">
-        <span class="modal-title">⌨️ Raccourcis clavier</span>
+        <span class="modal-title">⌨️ Raccourcis & Aide</span>
         <button class="btn-icon" id="helpClose">✕</button>
       </div>
       <div class="modal-body">
+        <div style="margin-bottom: 16px;">
+          <strong style="color: var(--red);">💡 Astuce :</strong> 
+          <span style="font-size: 13px;">Glissez-déposez les onglets pour les réorganiser !</span>
+        </div>
         <div style="display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13px;">
           <span class="kbd">N</span><span>Nouvelle affaire</span>
           <span class="kbd">R</span><span>Actualiser les données</span>
@@ -1209,6 +1573,16 @@
     const formatDateFR = v => { const t = parseDateISO(v); if (isNaN(t)) return v || '-'; const d = new Date(t); const pad = n => String(n).padStart(2,'0'); return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`; };
     const makeId = () => 'dc_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
 
+    /* Toast Notifications */
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
     /* Default Data */
     const defaultDataDC = [
       {affaires:"1&2 - PAR2", client:"COLT", eg:"BY", architect:"RBA", adresse:"Villebon-sur-Yvette", smac:"", datePrevisionnelle:"", statut:"Gagné", montant:"5 000 000 €", coords:[48.69185845097801, 2.219128539789481]},
@@ -1231,9 +1605,7 @@
     ];
 
     const defaultDataProj = [
-      {affaires:"Projet Alpha 2026", client:"CLIENT A", eg:"BY", architect:"Architecte X", adresse:"Paris 15e", smac:"PARIS", datePrevisionnelle:"2026-03-15", statut:"En cours", montant:"3 500 000 €", coords:[48.8400, 2.2900]},
-      {affaires:"Projet Beta 2026", client:"CLIENT B", eg:"VINCI", architect:"Architecte Y", adresse:"Nanterre", smac:"GENNEVILLIERS", datePrevisionnelle:"2026-06-01", statut:"En cours", montant:"2 100 000 €", coords:[48.8920, 2.2150]},
-      {affaires:"Projet Gamma 2026", client:"CLIENT C", eg:"BY-VINCI", architect:"Architecte Z", adresse:"Créteil", smac:"ANTONY", datePrevisionnelle:"2026-09-20", statut:"Faste", montant:"5 800 000 €", coords:[48.7900, 2.4550]}
+      {affaires:"Projet Alpha 2026", client:"CLIENT A", eg:"BY", architect:"Architecte X", adresse:"Paris 15e", smac:"PARIS", datePrevisionnelle:"2026-03-15", statut:"En cours", montant:"3 500 000 €", coords:[48.8400, 2.2900]}
     ];
 
     /* State */
@@ -1255,6 +1627,12 @@
     let tabModalMode = 'add';
     let renamingTabId = null;
     let currentTags = [];
+    let selectedTabColor = '#3b82f6';
+    let duplicatingItemId = null;
+
+    /* Drag & Drop State */
+    let draggedTab = null;
+    let dropTarget = null;
 
     /* Geocode */
     async function geocodeAddress(address) {
@@ -1307,18 +1685,15 @@
       const data = dataByTab[tabName];
       
       try {
-        // Vérifier si l'entrée existe
         const checkRes = await supabaseFetch(`affaires?tab=eq.${tabName}&select=id`);
         const existing = await checkRes.json();
         
         if (existing && existing.length > 0) {
-          // Update
           await supabaseFetch(`affaires?tab=eq.${tabName}`, {
             method: 'PATCH',
             body: JSON.stringify({ data: data })
           });
         } else {
-          // Insert
           await supabaseFetch('affaires', {
             method: 'POST',
             body: JSON.stringify({ tab: tabName, data: data })
@@ -1332,23 +1707,6 @@
       isSaving = false;
     }
 
-    function showSyncStatus(status) {
-      const el = document.getElementById('syncStatus');
-      if (!el) return;
-      if (status === 'saving') {
-        el.innerHTML = '🔄 Synchro...';
-        el.style.color = '#f59e0b';
-      } else if (status === 'saved') {
-        el.innerHTML = '✓ Synchronisé';
-        el.style.color = '#22c55e';
-        setTimeout(() => { el.innerHTML = '☁️ En ligne'; el.style.color = '#71717a'; }, 2000);
-      } else if (status === 'error') {
-        el.innerHTML = '⚠️ Erreur sync';
-        el.style.color = '#f43f5e';
-      }
-    }
-
-    /* Tabs Config - Save & Load */
     async function loadTabsConfig() {
       try {
         const res = await supabaseFetch(`affaires?tab=eq._tabs_config&select=data`);
@@ -1393,20 +1751,23 @@
       }
     }
 
-    /* Render Tabs */
+    /* Render Tabs with Drag & Drop */
     function renderTabs() {
       const wrapper = document.getElementById('tabsWrapper');
       if (!wrapper) return;
       
       wrapper.innerHTML = '';
       
-      tabs.forEach(tab => {
+      tabs.forEach((tab, index) => {
         const btn = document.createElement('button');
         btn.className = `tab-btn ${tab.id === currentTab ? 'active' : ''}`;
         btn.dataset.tab = tab.id;
+        btn.dataset.index = index;
+        btn.draggable = true;
         btn.innerHTML = `
-          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${tab.color};margin-right:6px;"></span>
-          ${escapeHTML(tab.name)}
+          <span class="drag-handle">⋮⋮</span>
+          <span class="tab-dot" style="background:${tab.color}"></span>
+          <span class="tab-name">${escapeHTML(tab.name)}</span>
           <span class="tab-count">${dataByTab[tab.id]?.length || 0}</span>
           <span class="tab-actions">
             <button class="tab-action-btn rename" title="Renommer">✏️</button>
@@ -1431,14 +1792,109 @@
         btn.querySelector('.delete').addEventListener('click', (e) => {
           e.stopPropagation();
           if (tabs.length <= 1) {
-            alert('Impossible de supprimer le dernier onglet.');
+            showToast('Impossible de supprimer le dernier onglet.', 'error');
             return;
           }
           if (confirm(`Supprimer l'onglet "${tab.name}" et toutes ses affaires ?`)) {
             deleteTab(tab.id);
           }
         });
+
+        // Drag & Drop Events
+        btn.addEventListener('dragstart', handleDragStart);
+        btn.addEventListener('dragend', handleDragEnd);
+        btn.addEventListener('dragover', handleDragOver);
+        btn.addEventListener('dragleave', handleDragLeave);
+        btn.addEventListener('drop', handleDrop);
       });
+    }
+
+    /* Drag & Drop Handlers */
+    function handleDragStart(e) {
+      draggedTab = this;
+      this.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', this.dataset.index);
+      
+      // Create a custom drag image
+      const ghost = this.cloneNode(true);
+      ghost.style.opacity = '0.8';
+      ghost.style.position = 'absolute';
+      ghost.style.top = '-1000px';
+      document.body.appendChild(ghost);
+      e.dataTransfer.setDragImage(ghost, 50, 20);
+      setTimeout(() => ghost.remove(), 0);
+    }
+
+    function handleDragEnd(e) {
+      this.classList.remove('dragging');
+      document.querySelectorAll('.tab-btn').forEach(t => {
+        t.classList.remove('drag-over', 'drag-over-left');
+      });
+      document.getElementById('dropIndicator').classList.remove('visible');
+      draggedTab = null;
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      
+      if (this === draggedTab) return;
+      
+      const rect = this.getBoundingClientRect();
+      const midX = rect.left + rect.width / 2;
+      const indicator = document.getElementById('dropIndicator');
+      
+      if (e.clientX < midX) {
+        this.classList.add('drag-over-left');
+        this.classList.remove('drag-over');
+        indicator.style.left = `${rect.left - 2}px`;
+      } else {
+        this.classList.add('drag-over');
+        this.classList.remove('drag-over-left');
+        indicator.style.left = `${rect.right - 1}px`;
+      }
+      
+      indicator.style.top = `${rect.top + rect.height / 2 - 16}px`;
+      indicator.classList.add('visible');
+    }
+
+    function handleDragLeave(e) {
+      this.classList.remove('drag-over', 'drag-over-left');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      
+      if (this === draggedTab) return;
+      
+      const fromIndex = parseInt(draggedTab.dataset.index);
+      let toIndex = parseInt(this.dataset.index);
+      
+      const rect = this.getBoundingClientRect();
+      const midX = rect.left + rect.width / 2;
+      
+      // Adjust index based on drop position
+      if (e.clientX > midX && toIndex < fromIndex) {
+        toIndex++;
+      } else if (e.clientX < midX && toIndex > fromIndex) {
+        toIndex--;
+      }
+      
+      // Reorder tabs
+      const [movedTab] = tabs.splice(fromIndex, 1);
+      tabs.splice(toIndex, 0, movedTab);
+      
+      // Save and re-render
+      saveTabsConfig();
+      renderTabs();
+      showToast('Onglets réorganisés !', 'success');
+    }
+
+    function switchTab(tabId) {
+      currentTab = tabId;
+      renderTabs();
+      applyFilters();
     }
 
     /* Tab Modal */
@@ -1449,14 +1905,25 @@
       const title = document.getElementById('tabModalTitle');
       const input = document.getElementById('tabNameInput');
       
+      // Reset color selection
+      document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.style.border = '2px solid transparent';
+      });
+      
       if (mode === 'add') {
         title.textContent = 'Nouvel onglet';
         input.value = '';
+        selectedTabColor = '#3b82f6';
       } else {
-        title.textContent = 'Renommer l\'onglet';
+        title.textContent = "Renommer l'onglet";
         const tab = tabs.find(t => t.id === tabId);
         input.value = tab?.name || '';
+        selectedTabColor = tab?.color || '#3b82f6';
       }
+      
+      // Highlight selected color
+      const selectedBtn = document.querySelector(`.color-btn[data-color="${selectedTabColor}"]`);
+      if (selectedBtn) selectedBtn.style.border = '2px solid var(--dark)';
       
       document.getElementById('tabModal').classList.add('open');
       input.focus();
@@ -1469,7 +1936,7 @@
     async function saveTabModal() {
       const name = document.getElementById('tabNameInput').value.trim();
       if (!name) {
-        alert('Veuillez entrer un nom pour l\'onglet.');
+        showToast("Veuillez entrer un nom pour l'onglet.", 'error');
         return;
       }
       
@@ -1489,7 +1956,7 @@
       const newTab = {
         id: makeTabId(),
         name: name,
-        color: `hsl(${Math.random() * 360}, 60%, 50%)`
+        color: selectedTabColor
       };
       tabs.push(newTab);
       dataByTab[newTab.id] = [];
@@ -1497,20 +1964,24 @@
       await saveToCloud(newTab.id);
       renderTabs();
       switchTab(newTab.id);
+      showToast(`Onglet "${name}" créé !`, 'success');
     }
 
     async function renameTab(tabId, newName) {
       const tab = tabs.find(t => t.id === tabId);
       if (tab) {
         tab.name = newName;
+        tab.color = selectedTabColor;
         await saveTabsConfig();
         renderTabs();
+        showToast('Onglet renommé !', 'success');
       }
     }
 
     async function deleteTab(tabId) {
       const idx = tabs.findIndex(t => t.id === tabId);
       if (idx > -1) {
+        const tabName = tabs[idx].name;
         tabs.splice(idx, 1);
         delete dataByTab[tabId];
         await deleteTabData(tabId);
@@ -1521,6 +1992,7 @@
         }
         renderTabs();
         applyFilters();
+        showToast(`Onglet "${tabName}" supprimé.`);
       }
     }
 
@@ -1545,477 +2017,325 @@
 
     /* Migrate data */
     function migrateData(data) {
-      return data.map(dc => {
-        const obj = {...dc};
-        if (obj.name && !obj.affaires) { obj.affaires = obj.name; delete obj.name; }
-        if (obj.smac && !obj.eg && /BY|VINCI|EIFFAGE/i.test(obj.smac)) { obj.eg = obj.smac; obj.smac = ''; }
-        obj.datePrevisionnelle = obj.datePrevisionnelle ?? '';
-        obj.smac = obj.smac ?? '';
-        obj.description = obj.description ?? '';
-        obj.tags = obj.tags ?? [];
-        obj.responsable = obj.responsable ?? '';
-        obj.link = obj.link ?? '';
-        obj.notes = obj.notes ?? '';
-        if (!obj.id) obj.id = makeId();
-        return obj;
-      });
-    }
-
-    /* Initialize Data */
-    async function initData() {
-      showSyncStatus('saving');
-      
-      // Load tabs config
-      const cloudTabs = await loadTabsConfig();
-      if (cloudTabs && Array.isArray(cloudTabs) && cloudTabs.length > 0) {
-        tabs = cloudTabs;
-      } else {
-        // Default tabs
-        tabs = [
-          { id: 'datacenter', name: 'Data-Centers', color: '#3b82f6' },
-          { id: 'projets', name: 'Projets Chiffrés 2026', color: '#8b5cf6' }
-        ];
-        await saveTabsConfig();
-      }
-      
-      // Load data for each tab
-      for (const tab of tabs) {
-        const cloudData = await loadFromCloud(tab.id);
-        if (cloudData && Array.isArray(cloudData) && cloudData.length > 0) {
-          dataByTab[tab.id] = migrateData(cloudData);
-        } else {
-          // Default data for initial tabs
-          if (tab.id === 'datacenter') {
-            dataByTab[tab.id] = migrateData(JSON.parse(JSON.stringify(defaultDataDC)));
-          } else if (tab.id === 'projets') {
-            dataByTab[tab.id] = migrateData(JSON.parse(JSON.stringify(defaultDataProj)));
-          } else {
-            dataByTab[tab.id] = [];
-          }
-          await saveToCloud(tab.id);
-        }
-      }
-      
-      currentTab = tabs[0]?.id || 'datacenter';
-      renderTabs();
-      showSyncStatus('saved');
+      return data.map(item => ({
+        id: item.id || makeId(),
+        affaires: item.affaires || '',
+        client: item.client || '',
+        description: item.description || '',
+        eg: item.eg || '',
+        architect: item.architect || '',
+        adresse: item.adresse || '',
+        smac: item.smac || '',
+        datePrevisionnelle: item.datePrevisionnelle || '',
+        statut: item.statut || 'En cours',
+        montant: item.montant || '-',
+        responsable: item.responsable || '',
+        coords: item.coords || [48.8566, 2.3522],
+        tags: item.tags || [],
+        link: item.link || '',
+        notes: item.notes || ''
+      }));
     }
 
     function updateTabCounts() {
-      // Re-render tabs to update counts
       renderTabs();
     }
 
-    /* Pin Icons */
-    const pinIcon = statut => {
-      const colors = { 'Gagné': '#22c55e', 'Perdu': '#f43f5e', 'En cours': '#f59e0b', 'Faste': '#3b82f6' };
-      const fill = colors[statut] || '#e10600';
-      return L.divIcon({
-        className: 'pin-icon',
-        html: `<svg class="pin-svg" viewBox="0 0 24 24"><path d="M12 2c-4.418 0-8 3.582-8 8 0 5.25 6.857 12 7.2 12 .343 0 6.8-6.75 6.8-12 0-4.418-3.582-8-8-8z" fill="${fill}" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>`,
-        iconSize: [28, 28], iconAnchor: [14, 26], popupAnchor: [0, -24]
-      });
-    };
+    /* Filter & Sort */
+    function applyFilters() {
+      const data = dataByTab[currentTab] || [];
+      const fClient = (document.getElementById('fClient')?.value || '').toLowerCase();
+      const fEG = (document.getElementById('fEG')?.value || '').toLowerCase();
+      const fArchitect = (document.getElementById('fArchitect')?.value || '').toLowerCase();
+      const fAdresse = (document.getElementById('fAdresse')?.value || '').toLowerCase();
+      const minM = parseMontant(document.getElementById('minMontant')?.value);
+      const maxM = parseMontant(document.getElementById('maxMontant')?.value);
 
-    /* Status HTML */
-    const statusClass = s => s === 'Gagné' ? 'gagne' : s === 'Perdu' ? 'perdu' : s === 'Faste' ? 'faste' : 'encours';
-    const statusIcon = s => s === 'Gagné' ? '✓' : s === 'Perdu' ? '✕' : s === 'Faste' ? '⚡' : '◷';
-
-    /* Duplicate to other tab */
-    async function duplicateToOtherTab(idx) {
-      const dc = currentList[idx];
-      if (!dc) return;
-      
-      const otherTabs = tabs.filter(t => t.id !== currentTab);
-      if (otherTabs.length === 0) {
-        alert('Créez d\'abord un autre onglet pour dupliquer.');
-        return;
-      }
-      
-      let targetTab;
-      if (otherTabs.length === 1) {
-        targetTab = otherTabs[0];
-      } else {
-        const choice = prompt(
-          'Vers quel onglet dupliquer ?\n\n' + 
-          otherTabs.map((t, i) => `${i + 1}. ${t.name}`).join('\n') +
-          '\n\nEntrez le numéro :'
-        );
-        const num = parseInt(choice);
-        if (num >= 1 && num <= otherTabs.length) {
-          targetTab = otherTabs[num - 1];
-        } else {
-          return;
+      let filtered = data.filter(item => {
+        if (currentFilter !== 'Tous' && item.statut !== currentFilter) return false;
+        if (currentQuery) {
+          const q = normalize(currentQuery);
+          const searchable = normalize(`${item.affaires} ${item.client} ${item.eg} ${item.architect} ${item.adresse} ${item.responsable} ${(item.tags||[]).join(' ')}`);
+          if (!searchable.includes(q)) return false;
         }
-      }
-      
-      // Créer une copie avec un nouvel ID
-      const copy = { ...dc, id: makeId() };
-      
-      // Ajouter à l'autre onglet
-      dataByTab[targetTab.id].push(copy);
-      await saveToCloud(targetTab.id);
-      
-      updateTabCounts();
-      alert(`✅ Affaire dupliquée vers "${targetTab.name}" !`);
+        if (fClient && !normalize(item.client).includes(fClient)) return false;
+        if (fEG && !normalize(item.eg).includes(fEG)) return false;
+        if (fArchitect && !normalize(item.architect).includes(fArchitect)) return false;
+        if (fAdresse && !normalize(item.adresse).includes(fAdresse)) return false;
+        const m = parseMontant(item.montant);
+        if (!isNaN(minM) && (isNaN(m) || m < minM)) return false;
+        if (!isNaN(maxM) && (isNaN(m) || m > maxM)) return false;
+        return true;
+      });
+
+      // Sort
+      filtered.sort((a, b) => {
+        switch (currentSort) {
+          case 'name': return (a.affaires || '').localeCompare(b.affaires || '');
+          case 'name-desc': return (b.affaires || '').localeCompare(a.affaires || '');
+          case 'amount-desc': return (parseMontant(b.montant) || 0) - (parseMontant(a.montant) || 0);
+          case 'amount-asc': return (parseMontant(a.montant) || 0) - (parseMontant(b.montant) || 0);
+          case 'date': return (parseDateISO(b.datePrevisionnelle) || 0) - (parseDateISO(a.datePrevisionnelle) || 0);
+          default: return 0;
+        }
+      });
+
+      currentList = filtered;
+      renderList(filtered);
+      renderMap(filtered);
+      updateStats(filtered, data);
     }
 
-    /* Render List */
-    function renderList() {
+    function updateStats(filtered, all) {
+      document.getElementById('countDisplay').textContent = filtered.length;
+      let total = 0;
+      filtered.forEach(item => {
+        const m = parseMontant(item.montant);
+        if (!isNaN(m)) total += m;
+      });
+      document.getElementById('totalAmount').textContent = nfEUR.format(total);
+      document.getElementById('mobileTotalAmount').textContent = nfEUR.format(total);
+
+      // Status stats
+      const stats = { 'Gagné': 0, 'Perdu': 0, 'En cours': 0, 'Faste': 0 };
+      all.forEach(item => { if (stats[item.statut] !== undefined) stats[item.statut]++; });
+      document.getElementById('statusStats').innerHTML = `
+        <span style="color:#22c55e">✓${stats['Gagné']}</span>
+        <span style="color:#f43f5e;margin-left:6px">✕${stats['Perdu']}</span>
+        <span style="color:#f59e0b;margin-left:6px">◷${stats['En cours']}</span>
+        <span style="color:#3b82f6;margin-left:6px">⚡${stats['Faste']}</span>
+      `;
+    }
+
+    function renderList(items) {
       const container = document.getElementById('listContainer');
       const mobileContainer = document.getElementById('mobileListContainer');
       
-      if (currentList.length === 0) {
-        const empty = `<div class="empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>Aucune affaire trouvée</p></div>`;
+      if (!items.length) {
+        const empty = '<div style="padding:40px;text-align:center;color:var(--gray-500)">Aucune affaire trouvée</div>';
         container.innerHTML = empty;
-        if (mobileContainer) mobileContainer.innerHTML = empty;
+        mobileContainer.innerHTML = empty;
         return;
       }
 
-      const html = currentList.map((dc, i) => {
-        const tagsHtml = (dc.tags || []).map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('');
+      const html = items.map((item, idx) => {
+        const statusClass = item.statut === 'Gagné' ? 'gagne' : item.statut === 'Perdu' ? 'perdu' : item.statut === 'Faste' ? 'faste' : 'encours';
+        const statusIcon = item.statut === 'Gagné' ? '✓' : item.statut === 'Perdu' ? '✕' : item.statut === 'Faste' ? '⚡' : '◷';
+        
         return `
-        <div class="list-item" data-idx="${i}">
-          <div class="list-item-header">
-            <span class="list-item-title">${escapeHTML(dc.affaires)}</span>
-            <span class="status ${statusClass(dc.statut)}">${statusIcon(dc.statut)} ${escapeHTML(dc.statut)}</span>
-          </div>
-          <div class="list-item-meta">
-            <span>${escapeHTML(dc.client)} · ${escapeHTML(dc.eg || '-')}</span>
-            <span>${escapeHTML(dc.adresse)}</span>
-            ${dc.responsable ? `<span class="responsable-badge">👤 ${escapeHTML(dc.responsable)}</span>` : ''}
-          </div>
-          ${dc.description ? `<div class="list-item-description">📋 ${escapeHTML(dc.description)}</div>` : ''}
-          ${tagsHtml ? `<div class="list-item-tags">${tagsHtml}</div>` : ''}
-          <div class="list-item-footer">
-            <span class="list-item-amount">${escapeHTML(displayMontant(dc.montant))}</span>
-            <div class="list-item-actions">
-              ${dc.link ? `<a href="${escapeHTML(dc.link)}" target="_blank" class="btn-icon" title="Document">📎</a>` : ''}
-              <button class="btn-icon duplicate" title="Dupliquer">📋</button>
-              <button class="btn-icon edit" title="Modifier">✏️</button>
-              <button class="btn-icon delete" title="Supprimer">🗑️</button>
+          <div class="list-item" data-id="${item.id}" data-idx="${idx}">
+            <div class="list-item-header">
+              <span class="list-item-title">${escapeHTML(item.affaires)}</span>
+              <span class="status ${statusClass}">${statusIcon} ${item.statut}</span>
+            </div>
+            <div class="list-item-meta">
+              <span>${escapeHTML(item.client)} · ${escapeHTML(item.eg)}</span>
+              <span>${escapeHTML(item.adresse)}</span>
+              ${item.responsable ? `<span class="responsable-badge">👤 ${escapeHTML(item.responsable)}</span>` : ''}
+            </div>
+            ${item.description ? `<div class="list-item-description">${escapeHTML(item.description)}</div>` : ''}
+            ${(item.tags && item.tags.length) ? `<div class="list-item-tags">${item.tags.map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('')}</div>` : ''}
+            <div class="list-item-footer">
+              <span class="list-item-amount">${displayMontant(item.montant)}</span>
+              <div class="list-item-actions">
+                ${item.link ? `<button class="btn-icon link" title="Ouvrir document">🔗</button>` : ''}
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
             </div>
           </div>
-        </div>`;
+        `;
       }).join('');
 
       container.innerHTML = html;
-      if (mobileContainer) mobileContainer.innerHTML = html;
+      mobileContainer.innerHTML = html;
 
-      // Events
-      [container, mobileContainer].filter(Boolean).forEach(cont => {
-        cont.querySelectorAll('.list-item').forEach(item => {
-          const idx = parseInt(item.dataset.idx);
-          item.addEventListener('click', e => {
-            if (e.target.closest('.duplicate')) { duplicateToOtherTab(idx); return; }
-            if (e.target.closest('.edit')) { openEdit(idx); return; }
-            if (e.target.closest('.delete')) { openDelete(idx); return; }
-            if (e.target.tagName === 'A') return;
-            const mk = markerByIndex.get(idx);
-            if (mk) { map.flyTo(mk.getLatLng(), Math.max(map.getZoom(), 12), { duration: 0.5 }); mk.openPopup(); }
+      // Add event listeners
+      [container, mobileContainer].forEach(c => {
+        c.querySelectorAll('.list-item').forEach(el => {
+          el.addEventListener('click', (e) => {
+            if (e.target.closest('.btn-icon')) return;
+            const item = currentList[parseInt(el.dataset.idx)];
+            if (item && map) {
+              map.flyTo(item.coords, 14, { duration: 0.8 });
+              const marker = markerByIndex.get(item.id);
+              if (marker) marker.openPopup();
+            }
+          });
+
+          el.querySelector('.edit')?.addEventListener('click', () => editItem(el.dataset.id));
+          el.querySelector('.delete')?.addEventListener('click', () => askDelete(el.dataset.id));
+          el.querySelector('.duplicate')?.addEventListener('click', () => duplicateItem(el.dataset.id));
+          el.querySelector('.link')?.addEventListener('click', () => {
+            const item = dataByTab[currentTab].find(i => i.id === el.dataset.id);
+            if (item?.link) window.open(item.link, '_blank');
           });
         });
       });
     }
 
-    /* Render Markers */
-    function renderMarkers() {
-      if (markerCluster) markerCluster.clearLayers();
+    /* Map Rendering */
+    function renderMap(items) {
+      if (!map || !markerCluster) return;
+      markerCluster.clearLayers();
       markerByIndex.clear();
 
-      currentList.forEach((dc, i) => {
-        const marker = L.marker(dc.coords, { icon: pinIcon(dc.statut) }).bindPopup(`
-          <strong>${escapeHTML(dc.affaires)}</strong><br>
-          Client: ${escapeHTML(dc.client)}<br>
-          ${dc.description ? `<em>Lot: ${escapeHTML(dc.description)}</em><br>` : ''}
-          EG: ${escapeHTML(dc.eg || '-')}<br>
-          Architecte: ${escapeHTML(dc.architect || '-')}<br>
-          Adresse: ${escapeHTML(dc.adresse)}<br>
-          SMAC: ${escapeHTML(dc.smac || '-')}<br>
-          Date: ${escapeHTML(formatDateFR(dc.datePrevisionnelle))}<br>
-          Statut: ${escapeHTML(dc.statut)}<br>
-          Montant: ${escapeHTML(displayMontant(dc.montant))}
-        `);
-        marker.myStatut = dc.statut;
-        if (markerCluster) markerCluster.addLayer(marker);
-        else marker.addTo(map);
-        markerByIndex.set(i, marker);
-      });
-    }
+      items.forEach(item => {
+        const lat = parseCoord(item.coords?.[0]);
+        const lng = parseCoord(item.coords?.[1]);
+        if (isNaN(lat) || isNaN(lng)) return;
 
-    /* Update Stats */
-    function updateStats() {
-      const gagne = currentList.filter(dc => dc.statut === 'Gagné').length;
-      const perdu = currentList.filter(dc => dc.statut === 'Perdu').length;
-      const encours = currentList.filter(dc => dc.statut === 'En cours').length;
-      const faste = currentList.filter(dc => dc.statut === 'Faste').length;
-      const total = currentList.reduce((sum, dc) => { const v = parseMontant(dc.montant); return Number.isFinite(v) ? sum + v : sum; }, 0);
-
-      const countLabel = document.getElementById('countLabel');
-      const mobileCountLabel = document.getElementById('mobileCountLabel');
-      const statsDetail = document.getElementById('statsDetail');
-      const totalEl = document.getElementById('totalAmount');
-      const mobileTotalEl = document.getElementById('mobileTotalAmount');
-
-      if (countLabel) countLabel.innerHTML = `<strong>${currentList.length}</strong> affaire${currentList.length > 1 ? 's' : ''}`;
-      if (mobileCountLabel) mobileCountLabel.innerHTML = `<strong>${currentList.length}</strong> affaire${currentList.length > 1 ? 's' : ''}`;
-      if (statsDetail) statsDetail.textContent = `✓${gagne} ✕${perdu} ◷${encours} ⚡${faste}`;
-      if (totalEl) totalEl.textContent = nfEUR.format(total);
-      if (mobileTotalEl) mobileTotalEl.textContent = nfEUR.format(total);
-    }
-
-    /* Sort function */
-    function sortList(list) {
-      const sorted = [...list];
-      switch (currentSort) {
-        case 'name':
-          sorted.sort((a, b) => normalize(a.affaires).localeCompare(normalize(b.affaires)));
-          break;
-        case 'name-desc':
-          sorted.sort((a, b) => normalize(b.affaires).localeCompare(normalize(a.affaires)));
-          break;
-        case 'montant-desc':
-          sorted.sort((a, b) => {
-            const ma = parseMontant(a.montant);
-            const mb = parseMontant(b.montant);
-            if (isNaN(ma) && isNaN(mb)) return 0;
-            if (isNaN(ma)) return 1;
-            if (isNaN(mb)) return -1;
-            return mb - ma;
-          });
-          break;
-        case 'montant-asc':
-          sorted.sort((a, b) => {
-            const ma = parseMontant(a.montant);
-            const mb = parseMontant(b.montant);
-            if (isNaN(ma) && isNaN(mb)) return 0;
-            if (isNaN(ma)) return 1;
-            if (isNaN(mb)) return -1;
-            return ma - mb;
-          });
-          break;
-        case 'date-desc':
-          sorted.sort((a, b) => {
-            const da = parseDateISO(a.datePrevisionnelle);
-            const db = parseDateISO(b.datePrevisionnelle);
-            if (isNaN(da) && isNaN(db)) return 0;
-            if (isNaN(da)) return 1;
-            if (isNaN(db)) return -1;
-            return db - da;
-          });
-          break;
-        case 'date-asc':
-          sorted.sort((a, b) => {
-            const da = parseDateISO(a.datePrevisionnelle);
-            const db = parseDateISO(b.datePrevisionnelle);
-            if (isNaN(da) && isNaN(db)) return 0;
-            if (isNaN(da)) return 1;
-            if (isNaN(db)) return -1;
-            return da - db;
-          });
-          break;
-      }
-      return sorted;
-    }
-
-    /* Filter & Search */
-    function applyFilters() {
-      let list = dataByTab[currentTab].filter(dc => currentFilter === 'Tous' || dc.statut === currentFilter);
-
-      if (currentQuery.trim()) {
-        const q = normalize(currentQuery);
-        list = list.filter(dc =>
-          normalize(dc.affaires).includes(q) ||
-          normalize(dc.client).includes(q) ||
-          normalize(dc.eg).includes(q) ||
-          normalize(dc.architect).includes(q) ||
-          normalize(dc.adresse).includes(q) ||
-          normalize(dc.smac).includes(q) ||
-          normalize(dc.statut).includes(q) ||
-          normalize(dc.description || '').includes(q) ||
-          normalize(dc.responsable || '').includes(q) ||
-          (dc.tags || []).some(t => normalize(t).includes(q))
-        );
-      }
-
-      // Advanced filters
-      const fClient = normalize(document.getElementById('fClient')?.value || '');
-      const fEG = normalize(document.getElementById('fEG')?.value || '');
-      const fArchitect = normalize(document.getElementById('fArchitect')?.value || '');
-      const fAdresse = normalize(document.getElementById('fAdresse')?.value || '');
-      const minV = parseMontant(document.getElementById('minMontant')?.value || '');
-      const maxV = parseMontant(document.getElementById('maxMontant')?.value || '');
-
-      if (fClient) list = list.filter(dc => normalize(dc.client).includes(fClient));
-      if (fEG) list = list.filter(dc => normalize(dc.eg).includes(fEG));
-      if (fArchitect) list = list.filter(dc => normalize(dc.architect).includes(fArchitect));
-      if (fAdresse) list = list.filter(dc => normalize(dc.adresse).includes(fAdresse));
-      if (!isNaN(minV) || !isNaN(maxV)) {
-        list = list.filter(dc => {
-          const v = parseMontant(dc.montant);
-          if (isNaN(v)) return false;
-          if (!isNaN(minV) && v < minV) return false;
-          if (!isNaN(maxV) && v > maxV) return false;
-          return true;
+        const color = item.statut === 'Gagné' ? '#22c55e' : item.statut === 'Perdu' ? '#f43f5e' : item.statut === 'Faste' ? '#3b82f6' : '#f59e0b';
+        
+        const icon = L.divIcon({
+          className: 'custom-marker',
+          html: `<div style="width:24px;height:24px;background:${color};border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
         });
-      }
 
-      currentList = sortList(list);
-      updateStats();
-      renderList();
-      renderMarkers();
-    }
-
-    /* Switch Tab */
-    function switchTab(tabName) {
-      currentTab = tabName;
-      currentFilter = 'Tous';
-      currentQuery = '';
-      
-      // Update UI
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === tabName);
+        const marker = L.marker([lat, lng], { icon });
+        marker.bindPopup(`
+          <div class="popup-content">
+            <div class="popup-title">${escapeHTML(item.affaires)}</div>
+            <div class="popup-client">${escapeHTML(item.client)} · ${escapeHTML(item.eg)}</div>
+            <div class="popup-amount">${displayMontant(item.montant)}</div>
+          </div>
+        `);
+        
+        markerCluster.addLayer(marker);
+        markerByIndex.set(item.id, marker);
       });
-      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      document.querySelector('.pill[data-filter="Tous"]')?.classList.add('active');
-      document.getElementById('searchInput').value = '';
-      
-      applyFilters();
     }
 
-    /* Modal Functions */
-    function openModal(title = 'Ajouter une affaire') {
-      document.getElementById('modalTitle').textContent = title;
+    /* CRUD Operations */
+    function openModal() {
       document.getElementById('modal').classList.add('open');
+      document.getElementById('mAffaires').focus();
     }
 
     function closeModal() {
       document.getElementById('modal').classList.remove('open');
       editingId = null;
-      clearModalForm();
     }
 
     function clearModalForm() {
-      ['mAffaires', 'mClient', 'mEG', 'mArchitect', 'mAdresse', 'mDate', 'mMontant', 'mLat', 'mLng', 'mDescription', 'mResponsable', 'mLink', 'mNotes'].forEach(id => {
+      editingId = null;
+      document.getElementById('modalTitle').textContent = 'Nouvelle affaire';
+      ['mAffaires', 'mClient', 'mDescription', 'mEG', 'mArchitect', 'mAdresse', 'mDate', 'mMontant', 'mResponsable', 'mLat', 'mLng', 'mLink', 'mNotes'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
       document.getElementById('mStatut').value = 'En cours';
       document.querySelectorAll('#mSmacChips .chip').forEach(c => c.classList.remove('active'));
       currentTags = [];
-      renderTags();
+      renderTagsInput();
     }
 
-    function renderTags() {
-      const container = document.getElementById('tagsContainer');
-      const input = document.getElementById('mTagsInput');
-      if (!container) return;
-      const tagsHtml = currentTags.map(t => `<span class="tag">${escapeHTML(t)} <span class="tag-remove" data-tag="${escapeHTML(t)}">×</span></span>`).join('');
-      container.innerHTML = tagsHtml + '<input type="text" class="tags-input" id="mTagsInput" placeholder="Ajouter un tag...">';
-      const newInput = document.getElementById('mTagsInput');
-      newInput.addEventListener('keydown', handleTagInput);
-      container.querySelectorAll('.tag-remove').forEach(btn => {
-        btn.addEventListener('click', () => {
-          currentTags = currentTags.filter(t => t !== btn.dataset.tag);
-          renderTags();
-        });
-      });
-    }
-
-    function handleTagInput(e) {
-      if (e.key === 'Enter' || e.key === ',') {
-        e.preventDefault();
-        const val = e.target.value.trim().toLowerCase();
-        if (val && !currentTags.includes(val)) {
-          currentTags.push(val);
-          renderTags();
-        }
-        e.target.value = '';
-      }
-    }
-
-    function getSmacSelection() {
-      return Array.from(document.querySelectorAll('#mSmacChips .chip.active')).map(c => c.dataset.value).join('/');
-    }
-
-    function setSmacSelection(val) {
-      const values = (val || '').split('/').map(v => v.trim().toUpperCase());
+    function editItem(id) {
+      const item = dataByTab[currentTab].find(i => i.id === id);
+      if (!item) return;
+      
+      editingId = id;
+      document.getElementById('modalTitle').textContent = 'Modifier l\'affaire';
+      document.getElementById('mAffaires').value = item.affaires || '';
+      document.getElementById('mClient').value = item.client || '';
+      document.getElementById('mDescription').value = item.description || '';
+      document.getElementById('mEG').value = item.eg || '';
+      document.getElementById('mArchitect').value = item.architect || '';
+      document.getElementById('mAdresse').value = item.adresse || '';
+      document.getElementById('mDate').value = item.datePrevisionnelle || '';
+      document.getElementById('mStatut').value = item.statut || 'En cours';
+      document.getElementById('mMontant').value = item.montant || '';
+      document.getElementById('mResponsable').value = item.responsable || '';
+      document.getElementById('mLat').value = item.coords?.[0] || '';
+      document.getElementById('mLng').value = item.coords?.[1] || '';
+      document.getElementById('mLink').value = item.link || '';
+      document.getElementById('mNotes').value = item.notes || '';
+      
       document.querySelectorAll('#mSmacChips .chip').forEach(c => {
-        c.classList.toggle('active', values.includes(c.dataset.value));
+        c.classList.toggle('active', c.dataset.value === item.smac);
       });
+      
+      currentTags = item.tags || [];
+      renderTagsInput();
+      
+      openModal();
     }
 
-    function openEdit(idx) {
-      const dc = currentList[idx];
-      if (!dc) return;
-      editingId = dc.id;
-      document.getElementById('mAffaires').value = dc.affaires || '';
-      document.getElementById('mClient').value = dc.client || '';
-      document.getElementById('mDescription').value = dc.description || '';
-      document.getElementById('mEG').value = dc.eg || '';
-      document.getElementById('mArchitect').value = dc.architect || '';
-      document.getElementById('mAdresse').value = dc.adresse || '';
-      document.getElementById('mDate').value = dc.datePrevisionnelle || '';
-      document.getElementById('mStatut').value = dc.statut || 'En cours';
-      document.getElementById('mMontant').value = dc.montant || '';
-      document.getElementById('mLat').value = dc.coords?.[0] || '';
-      document.getElementById('mLng').value = dc.coords?.[1] || '';
-      document.getElementById('mResponsable').value = dc.responsable || '';
-      document.getElementById('mLink').value = dc.link || '';
-      document.getElementById('mNotes').value = dc.notes || '';
-      currentTags = [...(dc.tags || [])];
-      renderTags();
-      setSmacSelection(dc.smac);
-      openModal('Modifier l\'affaire');
+    function duplicateItem(id) {
+      const item = dataByTab[currentTab].find(i => i.id === id);
+      if (!item) return;
+      
+      duplicatingItemId = id;
+      openDuplicateModal();
     }
 
-    function saveModal() {
-      const affaires = document.getElementById('mAffaires').value.trim();
-      const client = document.getElementById('mClient').value.trim();
-      const lat = parseCoord(document.getElementById('mLat').value);
-      const lng = parseCoord(document.getElementById('mLng').value);
+    function openDuplicateModal() {
+      const item = dataByTab[currentTab].find(i => i.id === duplicatingItemId);
+      if (!item) return;
+      
+      const container = document.getElementById('duplicateTabList');
+      container.innerHTML = '';
+      
+      tabs.forEach(tab => {
+        const isCurrent = tab.id === currentTab;
+        const btn = document.createElement('button');
+        btn.className = `duplicate-tab-option ${isCurrent ? 'current' : ''}`;
+        btn.innerHTML = `
+          <span class="tab-dot" style="background: ${tab.color}"></span>
+          <div class="tab-info">
+            <div class="tab-name">${escapeHTML(tab.name)}</div>
+            <div class="tab-count">${dataByTab[tab.id]?.length || 0} affaires</div>
+          </div>
+          ${isCurrent ? '<span class="current-badge">Onglet actuel</span>' : ''}
+        `;
+        btn.addEventListener('click', () => performDuplicate(tab.id));
+        container.appendChild(btn);
+      });
+      
+      document.getElementById('duplicateModal').classList.add('open');
+    }
 
-      if (!affaires || !client || isNaN(lat) || isNaN(lng)) {
-        alert('Veuillez remplir les champs obligatoires (Affaires, Client, Lat, Lng)');
-        return;
-      }
+    function closeDuplicateModal() {
+      document.getElementById('duplicateModal').classList.remove('open');
+      duplicatingItemId = null;
+    }
 
-      const data = {
-        affaires,
-        client,
-        description: document.getElementById('mDescription').value.trim(),
-        eg: document.getElementById('mEG').value.trim(),
-        architect: document.getElementById('mArchitect').value.trim(),
-        adresse: document.getElementById('mAdresse').value.trim(),
-        smac: getSmacSelection(),
-        datePrevisionnelle: document.getElementById('mDate').value,
-        statut: document.getElementById('mStatut').value,
-        montant: document.getElementById('mMontant').value.trim() || '-',
-        coords: [lat, lng],
-        responsable: document.getElementById('mResponsable').value.trim(),
-        tags: [...currentTags],
-        link: document.getElementById('mLink').value.trim(),
-        notes: document.getElementById('mNotes').value.trim()
+    async function performDuplicate(targetTabId) {
+      const item = dataByTab[currentTab].find(i => i.id === duplicatingItemId);
+      if (!item) return;
+      
+      const newItem = { 
+        ...item, 
+        id: makeId(), 
+        affaires: item.affaires + ' (copie)' 
       };
-
-      if (editingId) {
-        const idx = dataByTab[currentTab].findIndex(dc => dc.id === editingId);
-        if (idx > -1) { dataByTab[currentTab][idx] = { ...dataByTab[currentTab][idx], ...data }; }
-      } else {
-        dataByTab[currentTab].push({ id: makeId(), ...data });
-      }
-
-      persist();
+      
+      dataByTab[targetTabId].push(newItem);
+      
+      // Save to cloud
+      await saveToCloud(targetTabId);
+      
       updateTabCounts();
-      closeModal();
-      applyFilters();
+      
+      if (targetTabId === currentTab) {
+        applyFilters();
+      }
+      
+      closeDuplicateModal();
+      
+      const targetTab = tabs.find(t => t.id === targetTabId);
+      showToast(`Affaire dupliquée vers "${targetTab.name}" !`, 'success');
     }
 
-    /* Delete */
-    function openDelete(idx) {
-      deletingIdx = idx;
-      const dc = currentList[idx];
-      document.getElementById('confirmText').textContent = `Supprimer "${dc.affaires}" ?`;
+    function askDelete(id) {
+      const item = dataByTab[currentTab].find(i => i.id === id);
+      if (!item) return;
+      
+      deletingIdx = id;
+      document.getElementById('confirmText').textContent = `Supprimer "${item.affaires}" ?`;
       document.getElementById('confirmModal').classList.add('open');
     }
 
@@ -2025,164 +2345,211 @@
     }
 
     function confirmDelete() {
-      if (deletingIdx !== null) {
-        const dc = currentList[deletingIdx];
-        const realIdx = dataByTab[currentTab].findIndex(d => d.id === dc.id);
-        if (realIdx > -1) dataByTab[currentTab].splice(realIdx, 1);
+      if (!deletingIdx) return;
+      
+      const idx = dataByTab[currentTab].findIndex(i => i.id === deletingIdx);
+      if (idx > -1) {
+        dataByTab[currentTab].splice(idx, 1);
         persist();
         updateTabCounts();
-        closeConfirm();
         applyFilters();
+        showToast('Affaire supprimée.');
+      }
+      closeConfirm();
+    }
+
+    function saveModal() {
+      const affaires = document.getElementById('mAffaires').value.trim();
+      const client = document.getElementById('mClient').value.trim();
+      const lat = parseCoord(document.getElementById('mLat').value);
+      const lng = parseCoord(document.getElementById('mLng').value);
+
+      if (!affaires || !client) {
+        showToast('Affaires et Client sont obligatoires.', 'error');
+        return;
+      }
+      if (isNaN(lat) || isNaN(lng)) {
+        showToast('Coordonnées invalides.', 'error');
+        return;
+      }
+
+      const smacChip = document.querySelector('#mSmacChips .chip.active');
+      
+      const itemData = {
+        id: editingId || makeId(),
+        affaires,
+        client,
+        description: document.getElementById('mDescription').value.trim(),
+        eg: document.getElementById('mEG').value.trim(),
+        architect: document.getElementById('mArchitect').value.trim(),
+        adresse: document.getElementById('mAdresse').value.trim(),
+        smac: smacChip?.dataset.value || '',
+        datePrevisionnelle: document.getElementById('mDate').value,
+        statut: document.getElementById('mStatut').value,
+        montant: document.getElementById('mMontant').value.trim() || '-',
+        responsable: document.getElementById('mResponsable').value.trim(),
+        coords: [lat, lng],
+        tags: currentTags,
+        link: document.getElementById('mLink').value.trim(),
+        notes: document.getElementById('mNotes').value.trim()
+      };
+
+      if (editingId) {
+        const idx = dataByTab[currentTab].findIndex(i => i.id === editingId);
+        if (idx > -1) dataByTab[currentTab][idx] = itemData;
+      } else {
+        dataByTab[currentTab].push(itemData);
+      }
+
+      persist();
+      updateTabCounts();
+      applyFilters();
+      closeModal();
+      showToast(editingId ? 'Affaire modifiée !' : 'Affaire créée !', 'success');
+    }
+
+    /* Tags Input */
+    function renderTagsInput() {
+      const container = document.getElementById('tagsContainer');
+      const input = document.getElementById('mTagsInput');
+      container.innerHTML = '';
+      currentTags.forEach(tag => {
+        const span = document.createElement('span');
+        span.className = 'tag';
+        span.textContent = tag;
+        span.onclick = () => {
+          currentTags = currentTags.filter(t => t !== tag);
+          renderTagsInput();
+        };
+        container.appendChild(span);
+      });
+      container.appendChild(input);
+    }
+
+    function handleTagInput(e) {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        const val = e.target.value.trim().replace(',', '');
+        if (val && !currentTags.includes(val)) {
+          currentTags.push(val);
+          renderTagsInput();
+        }
+        e.target.value = '';
       }
     }
 
-    /* Export Excel */
-    async function exportExcel() {
-      if (!window.XLSX) { await injectJS(CDN.sheetJS); }
-      if (!window.XLSX) { alert('Impossible de charger la bibliothèque Excel'); return; }
-
-      const tabLabel = currentTab === 'datacenter' ? 'Data-Centers' : 'Projets 2026';
-      const head = ['Affaires', 'Client', 'EG', 'Architecte', 'Adresse', 'Date', 'SMAC', 'Statut', 'Montant (€)'];
-      const rows = currentList.map(dc => [dc.affaires, dc.client, dc.eg, dc.architect, dc.adresse, formatDateFR(dc.datePrevisionnelle), dc.smac, dc.statut, dc.montant]);
-      const aoa = [`SMAC — ${tabLabel}`, `Export du ${formatDateStamp()}`, [], head, ...rows];
+    /* Export Functions */
+    function exportExcel() {
+      if (typeof XLSX === 'undefined') {
+        showToast('Chargement en cours...', 'error');
+        return;
+      }
       
+      const data = currentList.map(item => ({
+        'Affaires': item.affaires,
+        'Client': item.client,
+        'Description': item.description,
+        'EG': item.eg,
+        'Architecte': item.architect,
+        'Adresse': item.adresse,
+        'SMAC': item.smac,
+        'Date': formatDateFR(item.datePrevisionnelle),
+        'Statut': item.statut,
+        'Montant': item.montant,
+        'Responsable': item.responsable,
+        'Tags': (item.tags || []).join(', '),
+        'Latitude': item.coords?.[0],
+        'Longitude': item.coords?.[1]
+      }));
+      
+      const ws = XLSX.utils.json_to_sheet(data);
       const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.aoa_to_sheet(aoa);
-      ws['!cols'] = head.map(() => ({ wch: 18 }));
-      XLSX.utils.book_append_sheet(wb, ws, tabLabel);
-      XLSX.writeFile(wb, `SMAC_${tabLabel.replace(/\s/g,'_')}_${formatDateStamp()}.xlsx`);
+      XLSX.utils.book_append_sheet(wb, ws, 'Affaires');
+      XLSX.writeFile(wb, `SMAC_Export_${formatDateStamp()}.xlsx`);
+      showToast('Export Excel téléchargé !', 'success');
     }
 
-    /* Export PDF */
-    async function exportPDF() {
-      if (!window.jspdf) { await injectJS(CDN.jsPDF); }
-      if (!window.jspdf?.jsPDF) { alert('Impossible de charger la bibliothèque PDF'); return; }
-      await injectJS(CDN.autoTable);
-
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
-      const tabLabel = currentTab === 'datacenter' ? 'Data-Centers' : 'Projets Chiffrés 2026';
-
+    function exportPDF() {
+      if (typeof jspdf === 'undefined' || typeof jspdf.jsPDF === 'undefined') {
+        showToast('Chargement en cours...', 'error');
+        return;
+      }
+      
+      const { jsPDF } = jspdf;
+      const doc = new jsPDF();
+      
       doc.setFontSize(18);
       doc.setTextColor(225, 6, 0);
-      doc.text('SMAC', 40, 40);
-      doc.setTextColor(0);
-      doc.setFontSize(14);
-      doc.text(tabLabel, 100, 40);
-      doc.setFontSize(10);
-      doc.text(`Export du ${formatDateStamp()}`, 40, 58);
-
-      const formatMontantPDF = m => {
-        const n = parseMontant(m);
-        if (!Number.isFinite(n)) return m || '-';
-        return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' €';
-      };
-
-      const head = ['Affaires', 'Client', 'EG', 'Architecte', 'Adresse', 'Date', 'SMAC', 'Statut', 'Montant'];
-      const rows = currentList.map(dc => [dc.affaires, dc.client, dc.eg, dc.architect, dc.adresse, formatDateFR(dc.datePrevisionnelle), dc.smac, dc.statut, formatMontantPDF(dc.montant)]);
+      doc.text('SMAC - Cartographie des affaires', 14, 20);
       
-      const total = currentList.reduce((sum, dc) => { const v = parseMontant(dc.montant); return Number.isFinite(v) ? sum + v : sum; }, 0);
-      const totalFormatted = Math.round(total).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' €';
-      rows.push(['', '', '', '', '', '', '', '', totalFormatted]);
-
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(`Export du ${new Date().toLocaleDateString('fr-FR')}`, 14, 28);
+      
+      const tableData = currentList.map(item => [
+        item.affaires,
+        item.client,
+        item.statut,
+        displayMontant(item.montant),
+        item.adresse
+      ]);
+      
       doc.autoTable({
-        startY: 75,
-        head: [head],
-        body: rows,
-        styles: { fontSize: 9, cellPadding: 4 },
-        headStyles: { fillColor: [225, 6, 0] },
-        columnStyles: { 8: { halign: 'right' } }
+        startY: 35,
+        head: [['Affaires', 'Client', 'Statut', 'Montant', 'Adresse']],
+        body: tableData,
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { fillColor: [225, 6, 0] }
       });
-
-      doc.save(`SMAC_${tabLabel.replace(/\s/g,'_')}_${formatDateStamp()}.pdf`);
+      
+      doc.save(`SMAC_Export_${formatDateStamp()}.pdf`);
+      showToast('Export PDF téléchargé !', 'success');
     }
 
-    /* Init App */
+    /* Initialize */
     document.addEventListener('DOMContentLoaded', async () => {
-      await initData();
+      // Load CSS
+      await Promise.all([
+        injectCSS(CDN.leafletCSS),
+        injectCSS(CDN.clusterCSS),
+        injectCSS(CDN.clusterDefaultCSS)
+      ]);
 
-      // Load Leaflet
-      await injectCSS(CDN.leafletCSS);
-      const okLeaflet = await injectJS(CDN.leafletJS);
-      if (!okLeaflet || !window.L) { alert('Erreur chargement Leaflet'); return; }
+      // Load JS
+      await injectJS(CDN.leafletJS);
+      await injectJS(CDN.clusterJS);
 
-      // Init Map
-      map = L.map('map', {
-        tap: true,
-        touchZoom: true,
-        dragging: true
-      }).setView([48.85, 2.35], 10);
-      
-      // Fix iOS map rendering
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 100);
-      
-      // Fix on orientation change
-      window.addEventListener('resize', () => {
-        setTimeout(() => map.invalidateSize(), 100);
-      });
-      
+      // Load tabs config from cloud
+      const cloudTabs = await loadTabsConfig();
+      if (cloudTabs && Array.isArray(cloudTabs) && cloudTabs.length > 0) {
+        tabs = cloudTabs;
+        currentTab = tabs[0]?.id || 'datacenter';
+      }
+
+      // Load data for each tab
+      for (const tab of tabs) {
+        const cloudData = await loadFromCloud(tab.id);
+        if (cloudData && Array.isArray(cloudData)) {
+          dataByTab[tab.id] = migrateData(cloudData);
+        } else {
+          dataByTab[tab.id] = migrateData(tab.id === 'datacenter' ? defaultDataDC : defaultDataProj);
+        }
+      }
+
+      renderTabs();
+
+      // Initialize map
+      map = L.map('map').setView([48.8566, 2.3522], 10);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
       }).addTo(map);
-      L.control.scale({ imperial: false }).addTo(map);
 
-      // Load Cluster
-      await injectCSS(CDN.clusterCSS);
-      await injectCSS(CDN.clusterDefaultCSS);
-      const okCluster = await injectJS(CDN.clusterJS);
-
-      if (okCluster && L.markerClusterGroup) {
-        markerCluster = L.markerClusterGroup({
-          iconCreateFunction: cluster => {
-            const markers = cluster.getAllChildMarkers();
-            const counts = { 'Gagné': 0, 'Perdu': 0, 'En cours': 0, 'Faste': 0 };
-            markers.forEach(m => { if (counts[m.myStatut] !== undefined) counts[m.myStatut]++; });
-            let dominant = 'En cours', max = -1;
-            Object.entries(counts).forEach(([k, v]) => { if (v > max) { max = v; dominant = k; } });
-            const cls = dominant === 'Gagné' ? 'cluster-green' : dominant === 'Perdu' ? 'cluster-red' : dominant === 'Faste' ? 'cluster-blue' : 'cluster-orange';
-            return L.divIcon({
-              html: `<div class="cluster-circle ${cls}">${cluster.getChildCount()}</div>`,
-              className: 'cluster-icon',
-              iconSize: [40, 40]
-            });
-          }
-        });
-        map.addLayer(markerCluster);
-      }
-
-      // SMAC Sites
-      const smacSites = [
-        { name: 'SMAC Villepinte', pos: [48.97514713280083, 2.4984242351062305], colorClass: 'red' },
-        { name: 'SMAC Gennevilliers', pos: [48.92782648602185, 2.3153713903404656], colorClass: 'red' },
-        { name: 'SMAC Antony', pos: [48.74018378617779, 2.3117610821607255], colorClass: 'red' },
-        { name: 'SMAC Paris', pos: [48.82503578677804, 2.374718960277167], colorClass: 'red' },
-        { name: 'FASTE', pos: [48.61241797846606, 2.4224383394035933], colorClass: 'blue' }
-      ];
-
-      smacSites.forEach(s => {
-        L.marker(s.pos, {
-          icon: L.divIcon({
-            html: `<span class="house-marker ${s.colorClass}">🏠</span>`,
-            className: '',
-            iconSize: [22, 22],
-            iconAnchor: [11, 11]
-          }),
-          zIndexOffset: 1200
-        }).addTo(map).bindPopup(`<strong>${s.name}</strong>`);
+      markerCluster = L.markerClusterGroup({
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        maxClusterRadius: 50
       });
-
-      // HQ
-      L.marker([48.818642, 2.250865], {
-        icon: L.divIcon({
-          html: '<span class="house-marker">🏢</span>',
-          className: '',
-          iconSize: [22, 22],
-          iconAnchor: [11, 11]
-        }),
-        zIndexOffset: 1300
-      }).addTo(map).bindPopup('<strong>SMAC — Siège social</strong>');
+      map.addLayer(markerCluster);
 
       // Legend
       const legend = L.control({ position: 'bottomright' });
@@ -2202,12 +2569,8 @@
       // Initial render
       applyFilters();
 
-      // Add Tab Button
-      document.getElementById('addTabBtn')?.addEventListener('click', () => {
-        openTabModal('add');
-      });
-
-      // Tab Modal Events
+      // Event Listeners
+      document.getElementById('addTabBtn')?.addEventListener('click', () => openTabModal('add'));
       document.getElementById('tabModalClose')?.addEventListener('click', closeTabModal);
       document.getElementById('tabModalCancel')?.addEventListener('click', closeTabModal);
       document.getElementById('tabModalSave')?.addEventListener('click', saveTabModal);
@@ -2215,13 +2578,27 @@
         if (e.key === 'Enter') saveTabModal();
       });
 
-      // Search Events
-      const searchInput = document.getElementById('searchInput');
-      const debounce = (fn, delay) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); }; };
-      const doSearch = debounce(() => { currentQuery = searchInput?.value || ''; applyFilters(); }, 200);
-      searchInput?.addEventListener('input', doSearch);
+      // Color buttons
+      document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.color-btn').forEach(b => b.style.border = '2px solid transparent');
+          btn.style.border = '2px solid var(--dark)';
+          selectedTabColor = btn.dataset.color;
+        });
+      });
 
-      // Sort Select
+      // Search
+      const searchInput = document.getElementById('searchInput');
+      const mobileSearchInput = document.getElementById('mobileSearchInput');
+      const debounce = (fn, delay) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); }; };
+      const doSearch = debounce(() => { 
+        currentQuery = searchInput?.value || mobileSearchInput?.value || ''; 
+        applyFilters(); 
+      }, 200);
+      searchInput?.addEventListener('input', doSearch);
+      mobileSearchInput?.addEventListener('input', doSearch);
+
+      // Sort
       document.getElementById('sortSelect')?.addEventListener('change', (e) => {
         currentSort = e.target.value;
         applyFilters();
@@ -2258,31 +2635,41 @@
           await saveToCloud(currentTab);
           updateTabCounts();
           applyFilters();
+          showToast('Données réinitialisées.');
         }
       });
 
-      // Share Button - copie le lien
+      // Share
       document.getElementById('shareBtn')?.addEventListener('click', () => {
         const shareUrl = window.location.href.split('?')[0];
         if (navigator.clipboard) {
           navigator.clipboard.writeText(shareUrl).then(() => {
-            alert('✅ Lien copié !\n\nPartagez ce lien avec vos collègues :\n\n' + shareUrl + '\n\nTout le monde verra les mêmes données en temps réel !');
+            showToast('Lien copié !', 'success');
           });
-        } else {
-          prompt('Copiez ce lien :', shareUrl);
         }
       });
 
-      // Refresh Button - recharge depuis Supabase
+      // Refresh
       document.getElementById('refreshBtn')?.addEventListener('click', async () => {
+        const btn = document.getElementById('refreshBtn');
+        btn.classList.add('refreshing');
         showSyncStatus('saving');
-        const cloudDC = await loadFromCloud('datacenter');
-        const cloudProj = await loadFromCloud('projets');
-        if (cloudDC && Array.isArray(cloudDC)) dataByTab.datacenter = migrateData(cloudDC);
-        if (cloudProj && Array.isArray(cloudProj)) dataByTab.projets = migrateData(cloudProj);
-        updateTabCounts();
+        
+        const cloudTabs = await loadTabsConfig();
+        if (cloudTabs && Array.isArray(cloudTabs)) tabs = cloudTabs;
+        
+        for (const tab of tabs) {
+          const cloudData = await loadFromCloud(tab.id);
+          if (cloudData && Array.isArray(cloudData)) {
+            dataByTab[tab.id] = migrateData(cloudData);
+          }
+        }
+        
+        renderTabs();
         applyFilters();
         showSyncStatus('saved');
+        btn.classList.remove('refreshing');
+        showToast('Données actualisées !', 'success');
       });
 
       // Modal
@@ -2301,6 +2688,10 @@
       document.getElementById('confirmNo')?.addEventListener('click', closeConfirm);
       document.getElementById('confirmYes')?.addEventListener('click', confirmDelete);
 
+      // Duplicate Modal
+      document.getElementById('duplicateModalClose')?.addEventListener('click', closeDuplicateModal);
+      document.getElementById('duplicateModalCancel')?.addEventListener('click', closeDuplicateModal);
+
       // Export
       document.getElementById('exportExcel')?.addEventListener('click', exportExcel);
       document.getElementById('exportPdf')?.addEventListener('click', exportPDF);
@@ -2316,14 +2707,14 @@
         document.getElementById('mobileSidebar').classList.remove('open');
       });
 
-      // ESC key and keyboard shortcuts
+      // Keyboard shortcuts
       document.addEventListener('keydown', e => {
-        // Ignore if in input
         if (e.target.matches('input, textarea, select')) {
           if (e.key === 'Escape') {
             closeModal();
             closeConfirm();
             closeTabModal();
+            closeDuplicateModal();
             document.getElementById('helpModal')?.classList.remove('open');
             document.getElementById('mobileSidebar')?.classList.remove('open');
           }
@@ -2335,6 +2726,7 @@
             closeModal();
             closeConfirm();
             closeTabModal();
+            closeDuplicateModal();
             document.getElementById('helpModal')?.classList.remove('open');
             document.getElementById('mobileSidebar')?.classList.remove('open');
             break;
@@ -2387,10 +2779,10 @@
         document.getElementById('helpModal').classList.remove('open');
       });
 
-      // Geocode button
+      // Geocode
       document.getElementById('geocodeBtn')?.addEventListener('click', async () => {
         const address = document.getElementById('mAdresse').value;
-        if (!address) { alert('Entrez d\'abord une adresse'); return; }
+        if (!address) { showToast("Entrez d'abord une adresse", 'error'); return; }
         const btn = document.getElementById('geocodeBtn');
         btn.textContent = '⏳';
         btn.disabled = true;
@@ -2399,9 +2791,10 @@
           document.getElementById('mLat').value = coords.lat.toFixed(6);
           document.getElementById('mLng').value = coords.lng.toFixed(6);
           btn.textContent = '✅';
+          showToast('Coordonnées trouvées !', 'success');
         } else {
           btn.textContent = '❌';
-          alert('Adresse non trouvée');
+          showToast('Adresse non trouvée', 'error');
         }
         setTimeout(() => { btn.textContent = '📍 Géoloc'; btn.disabled = false; }, 2000);
       });
