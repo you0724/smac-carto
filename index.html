@@ -1,12 +1,13 @@
 
 <!DOCTYPE html>
-<html lang="fr"><head>
-  <meta charset="UTF-8">
+<!-- saved from url=(0039)https://pn2beprix.github.io/smac-carto/ -->
+<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
   <title>Cartographie SMAC</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="./Cartographie SMAC mdp_files/css2" rel="stylesheet">
   <style>
     :root {
       --red: #e10600;
@@ -1265,7 +1266,7 @@
       gap: 6px;
     }
   </style>
-</head>
+<link rel="stylesheet" href="./Cartographie SMAC mdp_files/leaflet.css"><link rel="stylesheet" href="./Cartographie SMAC mdp_files/MarkerCluster.css"><link rel="stylesheet" href="./Cartographie SMAC mdp_files/MarkerCluster.Default.css"></head>
 <body>
 
   <!-- Toast Container -->
@@ -1308,9 +1309,29 @@
 
   <!-- TABS with Drag & Drop -->
   <div class="tabs-container">
-    <div class="tabs-wrapper" id="tabsWrapper">
-      <!-- Tabs will be rendered here -->
-    </div>
+    <div class="tabs-wrapper" id="tabsWrapper"><button class="tab-btn active  " data-tab="datacenter" data-index="0" draggable="true">
+          <span class="drag-handle">⋮⋮</span>
+          <span class="tab-dot" style="background:#3b82f6"></span>
+          <span class="tab-name">Data-Centers</span>
+          
+          <span class="tab-count">19</span>
+          <span class="tab-actions">
+            <button class="tab-action-btn lock " title="Protéger">🔒</button>
+            <button class="tab-action-btn rename" title="Renommer">✏️</button>
+            <button class="tab-action-btn delete" title="Supprimer">✕</button>
+          </span>
+        </button><button class="tab-btn  locked protected" data-tab="projets" data-index="1" draggable="true">
+          <span class="drag-handle">⋮⋮</span>
+          <span class="tab-dot" style="background:#8b5cf6"></span>
+          <span class="tab-name">Projets Chiffrés 2026</span>
+          <span class="lock-icon">🔒</span>
+          <span class="tab-count">1</span>
+          <span class="tab-actions">
+            <button class="tab-action-btn lock has-password" title="Retirer la protection">🔓</button>
+            <button class="tab-action-btn rename" title="Renommer">✏️</button>
+            <button class="tab-action-btn delete" title="Supprimer">✕</button>
+          </span>
+        </button></div>
     <div class="drop-indicator" id="dropIndicator"></div>
     <button class="add-tab-btn" id="addTabBtn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -1320,7 +1341,13 @@
 
   <!-- MAIN -->
   <main>
-    <div id="map"></div>
+    <div id="map" class="leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0"><div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(0px, 0px, 0px);"><div class="leaflet-pane leaflet-tile-pane"><div class="leaflet-layer " style="z-index: 1; opacity: 1;"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(0px, 0px, 0px) scale(1);"><img alt="" src="./Cartographie SMAC mdp_files/351.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(374px, 25px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/352.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(374px, 281px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/351(1).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(118px, 25px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/351(2).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(630px, 25px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/352(1).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(118px, 281px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/352(2).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(630px, 281px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/350.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(374px, -231px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/353.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(374px, 537px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/350(1).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(118px, -231px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/350(2).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(630px, -231px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/353(1).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(118px, 537px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/353(2).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(630px, 537px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/351(3).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-138px, 25px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/351(4).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(886px, 25px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/352(3).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-138px, 281px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/352(4).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(886px, 281px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/350(3).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-138px, -231px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/350(4).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(886px, -231px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/353(3).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-138px, 537px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/353(4).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(886px, 537px, 0px); opacity: 1;"></div></div></div><div class="leaflet-pane leaflet-overlay-pane"></div><div class="leaflet-pane leaflet-shadow-pane"></div><div class="leaflet-pane leaflet-marker-pane"><div class="leaflet-marker-icon custom-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(657px, 228px, 0px); z-index: 228;"><div style="width:24px;height:24px;background:#f59e0b;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div></div><div class="leaflet-marker-icon custom-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(510px, 306px, 0px); z-index: 306;"><div style="width:24px;height:24px;background:#22c55e;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div></div><div class="leaflet-marker-icon marker-cluster marker-cluster-small leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; transform: translate3d(591px, 267px, 0px); z-index: 267;"><div><span>3</span></div></div><div class="leaflet-marker-icon marker-cluster marker-cluster-small leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; transform: translate3d(558px, 286px, 0px); z-index: 286;"><div><span>2</span></div></div><div class="leaflet-marker-icon custom-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(709px, 230px, 0px); z-index: 230;"><div style="width:24px;height:24px;background:#f59e0b;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div></div><div class="leaflet-marker-icon custom-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(632px, 669px, 0px); z-index: 669;"><div style="width:24px;height:24px;background:#3b82f6;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div></div><div class="leaflet-marker-icon marker-cluster marker-cluster-small leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; transform: translate3d(461px, 549px, 0px); z-index: 549;"><div><span>2</span></div></div><div class="leaflet-marker-icon marker-cluster marker-cluster-small leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; transform: translate3d(449px, 432px, 0px); z-index: 432;"><div><span>4</span></div></div><div class="leaflet-marker-icon marker-cluster marker-cluster-small leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; transform: translate3d(632px, 457px, 0px); z-index: 457;"><div><span>3</span></div></div><div class="leaflet-marker-icon custom-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(574px, 354px, 0px); z-index: 354;"><div style="width:24px;height:24px;background:#22c55e;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div></div></div><div class="leaflet-pane leaflet-tooltip-pane"></div><div class="leaflet-pane leaflet-popup-pane"></div><div class="leaflet-proxy leaflet-zoom-animated" style="transform: translate3d(132785px, 90185px, 0px) scale(512);"></div></div><div class="leaflet-control-container"><div class="leaflet-top leaflet-left"><div class="leaflet-control-zoom leaflet-bar leaflet-control"><a class="leaflet-control-zoom-in" href="https://pn2beprix.github.io/smac-carto/#" title="Zoom in" role="button" aria-label="Zoom in" aria-disabled="false"><span aria-hidden="true">+</span></a><a class="leaflet-control-zoom-out" href="https://pn2beprix.github.io/smac-carto/#" title="Zoom out" role="button" aria-label="Zoom out" aria-disabled="false"><span aria-hidden="true">−</span></a></div></div><div class="leaflet-top leaflet-right"></div><div class="leaflet-bottom leaflet-left"></div><div class="leaflet-bottom leaflet-right"><div class="legend leaflet-control">
+          <div class="legend-title">Statut</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#22c55e"></span> Gagné</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#f43f5e"></span> Perdu</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span> En cours</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span> Faste</div>
+        </div><div class="leaflet-control-attribution leaflet-control"><a href="https://leafletjs.com/" title="A JavaScript library for interactive maps"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" class="leaflet-attribution-flag"><path fill="#4C7BE1" d="M0 0h12v4H0z"></path><path fill="#FFD500" d="M0 4h12v3H0z"></path><path fill="#E0BC00" d="M0 7h12v1H0z"></path></svg> Leaflet</a> <span aria-hidden="true">|</span> © OpenStreetMap</div></div></div></div>
     <div class="sidebar">
       <div class="search-section">
         <div class="search-box">
@@ -1378,15 +1405,455 @@
         </div>
       </div>
       <div class="stats-bar">
-        <span><strong id="countDisplay">0</strong> affaires affichées</span>
-        <span id="statusStats"></span>
+        <span><strong id="countDisplay">19</strong> affaires affichées</span>
+        <span id="statusStats">
+        <span style="color:#22c55e">✓6</span>
+        <span style="color:#f43f5e;margin-left:6px">✕2</span>
+        <span style="color:#f59e0b;margin-left:6px">◷10</span>
+        <span style="color:#3b82f6;margin-left:6px">⚡1</span>
+      </span>
       </div>
       <div class="list-container" id="listContainer">
-        <!-- List items will be rendered here -->
-      </div>
+          <div class="list-item" data-id="dc_1767782424344_b4dmpu" data-idx="0">
+            <div class="list-item-header">
+              <span class="list-item-title">1&amp;2 - PAR2</span>
+              <span class="status gagne">✓ Gagné</span>
+            </div>
+            <div class="list-item-meta">
+              <span>COLT · BY</span>
+              <span>Villebon-sur-Yvette</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">5 000 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767783496738_gxdjiy" data-idx="1">
+            <div class="list-item-header">
+              <span class="list-item-title">Data center PAR 15 Dugny</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>Digital · BY</span>
+              <span>1 Avenue du 2ème DB</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">1 762 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767783665882_h3x2aj" data-idx="2">
+            <div class="list-item-header">
+              <span class="list-item-title">DATA CENTER VSG Bardage</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>GOODMAN · Mercury</span>
+              <span>34 Rue Louis Armand, Villeneuve-Saint-Georges, 94190, France</span>
+              <span class="responsable-badge">👤 Maxime</span>
+            </div>
+            <div class="list-item-description">Bardage</div>
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">11 685 363&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767783749178_075yoa" data-idx="3">
+            <div class="list-item-header">
+              <span class="list-item-title">DATA CENTER VSG Etancheité</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>GOODMAN · Mercury</span>
+              <span>34 Rue Louis Armand, Villeneuve-Saint-Georges, 94190, France</span>
+              <span class="responsable-badge">👤 Maxime</span>
+            </div>
+            <div class="list-item-description">Etanchéité</div>
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">7 573 840&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767969607910_t33kfl" data-idx="4">
+            <div class="list-item-header">
+              <span class="list-item-title">DATA HILLS 3</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>HILLS · Vinci</span>
+              <span>Aulnay-sous-Bois</span>
+              <span class="responsable-badge">👤 Richad</span>
+            </div>
+            <div class="list-item-description">Façade/Couverture</div>
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">2 250 786&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_2vsynb" data-idx="5">
+            <div class="list-item-header">
+              <span class="list-item-title">DATA VELIZY</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>Nation Data Center · BY</span>
+              <span>Vélizy-Villacoublay</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">2 275 398&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_1ddfqs" data-idx="6">
+            <div class="list-item-header">
+              <span class="list-item-title">Global Switch - Est</span>
+              <span class="status gagne">✓ Gagné</span>
+            </div>
+            <div class="list-item-meta">
+              <span>GLOBAL SWITCH · BY</span>
+              <span>Clichy</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">410 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_lmizhn" data-idx="7">
+            <div class="list-item-header">
+              <span class="list-item-title">Interxion PAR 10 &amp; 11</span>
+              <span class="status perdu">✕ Perdu</span>
+            </div>
+            <div class="list-item-meta">
+              <span>INTERXION · BY</span>
+              <span>La Courneuve</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">-</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_p25gp8" data-idx="8">
+            <div class="list-item-header">
+              <span class="list-item-title">Interxion PAR7</span>
+              <span class="status gagne">✓ Gagné</span>
+            </div>
+            <div class="list-item-meta">
+              <span>INTERXION · BY</span>
+              <span>La Courneuve</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">1 500 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_zuksre" data-idx="9">
+            <div class="list-item-header">
+              <span class="list-item-title">PA10</span>
+              <span class="status gagne">✓ Gagné</span>
+            </div>
+            <div class="list-item-meta">
+              <span>EQUINIX · BY</span>
+              <span>Saint-Denis</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">14 541&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_bluynv" data-idx="10">
+            <div class="list-item-header">
+              <span class="list-item-title">PA14</span>
+              <span class="status perdu">✕ Perdu</span>
+            </div>
+            <div class="list-item-meta">
+              <span>EQUINIX · BY</span>
+              <span>Aubervilliers</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">2 945 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_9glssy" data-idx="11">
+            <div class="list-item-header">
+              <span class="list-item-title">PA15</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>EQUINIX · BY</span>
+              <span>Meudon</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">7 079 169&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_km8rig" data-idx="12">
+            <div class="list-item-header">
+              <span class="list-item-title">PAR01</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>GOODMAN · BY</span>
+              <span>Tremblay-en-France</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">2 511 133&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_lg29xn" data-idx="13">
+            <div class="list-item-header">
+              <span class="list-item-title">PAR03</span>
+              <span class="status gagne">✓ Gagné</span>
+            </div>
+            <div class="list-item-meta">
+              <span>MICROSOFT · BY</span>
+              <span>Vélizy-Villacoublay</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">913 057&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_ob8dto" data-idx="14">
+            <div class="list-item-header">
+              <span class="list-item-title">PAR1</span>
+              <span class="status faste">⚡ Faste</span>
+            </div>
+            <div class="list-item-meta">
+              <span>NTT DATA · BY-VINCI</span>
+              <span>Le Coudray-Montceaux</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">11 500 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_3chsce" data-idx="15">
+            <div class="list-item-header">
+              <span class="list-item-title">PAR3</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>DATA4 · BY</span>
+              <span>Nozay</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">2 630 346&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_115ak0" data-idx="16">
+            <div class="list-item-header">
+              <span class="list-item-title">PASS2</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>EQUINIX · VINCI</span>
+              <span>Meudon</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">570 213&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_uckr9t" data-idx="17">
+            <div class="list-item-header">
+              <span class="list-item-title">SEGRO BONNEUIL</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>SEGRO · BY-VINCI</span>
+              <span>Bonneuil-sur-Marne</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">2 000 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_p6qzoa" data-idx="18">
+            <div class="list-item-header">
+              <span class="list-item-title">Telehouse</span>
+              <span class="status gagne">✓ Gagné</span>
+            </div>
+            <div class="list-item-meta">
+              <span>TELEHOUSE · VINCI</span>
+              <span>Paris 13e</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">495 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        </div>
       <div class="total-bar">
         <span>Total</span>
-        <strong id="totalAmount">0 €</strong>
+        <strong id="totalAmount">63 115 846&nbsp;€</strong>
       </div>
     </div>
   </main>
@@ -1412,11 +1879,446 @@
         </div>
       </div>
       <div class="list-container" id="mobileListContainer">
-        <!-- Mobile list items will be rendered here -->
-      </div>
+          <div class="list-item" data-id="dc_1767782424344_b4dmpu" data-idx="0">
+            <div class="list-item-header">
+              <span class="list-item-title">1&amp;2 - PAR2</span>
+              <span class="status gagne">✓ Gagné</span>
+            </div>
+            <div class="list-item-meta">
+              <span>COLT · BY</span>
+              <span>Villebon-sur-Yvette</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">5 000 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767783496738_gxdjiy" data-idx="1">
+            <div class="list-item-header">
+              <span class="list-item-title">Data center PAR 15 Dugny</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>Digital · BY</span>
+              <span>1 Avenue du 2ème DB</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">1 762 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767783665882_h3x2aj" data-idx="2">
+            <div class="list-item-header">
+              <span class="list-item-title">DATA CENTER VSG Bardage</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>GOODMAN · Mercury</span>
+              <span>34 Rue Louis Armand, Villeneuve-Saint-Georges, 94190, France</span>
+              <span class="responsable-badge">👤 Maxime</span>
+            </div>
+            <div class="list-item-description">Bardage</div>
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">11 685 363&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767783749178_075yoa" data-idx="3">
+            <div class="list-item-header">
+              <span class="list-item-title">DATA CENTER VSG Etancheité</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>GOODMAN · Mercury</span>
+              <span>34 Rue Louis Armand, Villeneuve-Saint-Georges, 94190, France</span>
+              <span class="responsable-badge">👤 Maxime</span>
+            </div>
+            <div class="list-item-description">Etanchéité</div>
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">7 573 840&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767969607910_t33kfl" data-idx="4">
+            <div class="list-item-header">
+              <span class="list-item-title">DATA HILLS 3</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>HILLS · Vinci</span>
+              <span>Aulnay-sous-Bois</span>
+              <span class="responsable-badge">👤 Richad</span>
+            </div>
+            <div class="list-item-description">Façade/Couverture</div>
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">2 250 786&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_2vsynb" data-idx="5">
+            <div class="list-item-header">
+              <span class="list-item-title">DATA VELIZY</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>Nation Data Center · BY</span>
+              <span>Vélizy-Villacoublay</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">2 275 398&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_1ddfqs" data-idx="6">
+            <div class="list-item-header">
+              <span class="list-item-title">Global Switch - Est</span>
+              <span class="status gagne">✓ Gagné</span>
+            </div>
+            <div class="list-item-meta">
+              <span>GLOBAL SWITCH · BY</span>
+              <span>Clichy</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">410 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_lmizhn" data-idx="7">
+            <div class="list-item-header">
+              <span class="list-item-title">Interxion PAR 10 &amp; 11</span>
+              <span class="status perdu">✕ Perdu</span>
+            </div>
+            <div class="list-item-meta">
+              <span>INTERXION · BY</span>
+              <span>La Courneuve</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">-</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_p25gp8" data-idx="8">
+            <div class="list-item-header">
+              <span class="list-item-title">Interxion PAR7</span>
+              <span class="status gagne">✓ Gagné</span>
+            </div>
+            <div class="list-item-meta">
+              <span>INTERXION · BY</span>
+              <span>La Courneuve</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">1 500 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_zuksre" data-idx="9">
+            <div class="list-item-header">
+              <span class="list-item-title">PA10</span>
+              <span class="status gagne">✓ Gagné</span>
+            </div>
+            <div class="list-item-meta">
+              <span>EQUINIX · BY</span>
+              <span>Saint-Denis</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">14 541&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_bluynv" data-idx="10">
+            <div class="list-item-header">
+              <span class="list-item-title">PA14</span>
+              <span class="status perdu">✕ Perdu</span>
+            </div>
+            <div class="list-item-meta">
+              <span>EQUINIX · BY</span>
+              <span>Aubervilliers</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">2 945 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_9glssy" data-idx="11">
+            <div class="list-item-header">
+              <span class="list-item-title">PA15</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>EQUINIX · BY</span>
+              <span>Meudon</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">7 079 169&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_km8rig" data-idx="12">
+            <div class="list-item-header">
+              <span class="list-item-title">PAR01</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>GOODMAN · BY</span>
+              <span>Tremblay-en-France</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">2 511 133&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_lg29xn" data-idx="13">
+            <div class="list-item-header">
+              <span class="list-item-title">PAR03</span>
+              <span class="status gagne">✓ Gagné</span>
+            </div>
+            <div class="list-item-meta">
+              <span>MICROSOFT · BY</span>
+              <span>Vélizy-Villacoublay</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">913 057&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_ob8dto" data-idx="14">
+            <div class="list-item-header">
+              <span class="list-item-title">PAR1</span>
+              <span class="status faste">⚡ Faste</span>
+            </div>
+            <div class="list-item-meta">
+              <span>NTT DATA · BY-VINCI</span>
+              <span>Le Coudray-Montceaux</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">11 500 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_3chsce" data-idx="15">
+            <div class="list-item-header">
+              <span class="list-item-title">PAR3</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>DATA4 · BY</span>
+              <span>Nozay</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">2 630 346&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_115ak0" data-idx="16">
+            <div class="list-item-header">
+              <span class="list-item-title">PASS2</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>EQUINIX · VINCI</span>
+              <span>Meudon</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">570 213&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_uckr9t" data-idx="17">
+            <div class="list-item-header">
+              <span class="list-item-title">SEGRO BONNEUIL</span>
+              <span class="status encours">◷ En cours</span>
+            </div>
+            <div class="list-item-meta">
+              <span>SEGRO · BY-VINCI</span>
+              <span>Bonneuil-sur-Marne</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">2 000 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        
+          <div class="list-item" data-id="dc_1767782424344_p6qzoa" data-idx="18">
+            <div class="list-item-header">
+              <span class="list-item-title">Telehouse</span>
+              <span class="status gagne">✓ Gagné</span>
+            </div>
+            <div class="list-item-meta">
+              <span>TELEHOUSE · VINCI</span>
+              <span>Paris 13e</span>
+              
+            </div>
+            
+            
+            <div class="list-item-footer">
+              <span class="list-item-amount">495 000&nbsp;€</span>
+              <div class="list-item-actions">
+                
+                <button class="btn-icon duplicate" title="Dupliquer">📋</button>
+                <button class="btn-icon edit" title="Modifier">✏️</button>
+                <button class="btn-icon delete" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>
+        </div>
       <div class="total-bar">
         <span>Total</span>
-        <strong id="mobileTotalAmount">0 €</strong>
+        <strong id="mobileTotalAmount">63 115 846&nbsp;€</strong>
       </div>
     </div>
   </div>
@@ -1432,11 +2334,11 @@
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label">Affaires *</label>
-            <input type="text" class="form-input" id="mAffaires" required>
+            <input type="text" class="form-input" id="mAffaires" required="">
           </div>
           <div class="form-group">
             <label class="form-label">Client *</label>
-            <input type="text" class="form-input" id="mClient" required>
+            <input type="text" class="form-input" id="mClient" required="">
           </div>
           <div class="form-group full">
             <label class="form-label">Description / Lot</label>
@@ -1475,7 +2377,7 @@
             <select class="form-select" id="mStatut">
               <option>Gagné</option>
               <option>Perdu</option>
-              <option selected>En cours</option>
+              <option selected="">En cours</option>
               <option>Faste</option>
             </select>
           </div>
@@ -1687,7 +2589,7 @@
   <div class="modal-overlay" id="helpModal">
     <div class="modal" style="max-width:450px">
       <div class="modal-header">
-        <span class="modal-title">⌨️ Raccourcis & Aide</span>
+        <span class="modal-title">⌨️ Raccourcis &amp; Aide</span>
         <button class="btn-icon" id="helpClose">✕</button>
       </div>
       <div class="modal-body">
@@ -1822,6 +2724,20 @@
 
     /* Protection Modal Functions */
     function openSetPasswordModal(tabId) {
+      // Demander le code maître avant de permettre la protection
+      const masterCodeInput = prompt('🔐 Code de gestion requis pour protéger cet onglet :');
+      
+      if (!masterCodeInput) {
+        showToast('Protection annulée.', 'info');
+        return;
+      }
+      
+      if (masterCodeInput !== MASTER_CODE) {
+        showToast('❌ Code de gestion incorrect. Protection refusée.', 'error');
+        return;
+      }
+      
+      // Code maître correct, on peut continuer
       protectingTabId = tabId;
       document.getElementById('newPasswordInput').value = '';
       document.getElementById('confirmPasswordInput').value = '';
@@ -1902,6 +2818,20 @@
 
     /* Remove Protection Modal Functions */
     function openRemoveProtectionModal(tabId) {
+      // Demander le code maître avant de permettre de retirer la protection
+      const masterCodeInput = prompt('🔐 Code de gestion requis pour retirer la protection :');
+      
+      if (!masterCodeInput) {
+        showToast('Retrait de protection annulé.', 'info');
+        return;
+      }
+      
+      if (masterCodeInput !== MASTER_CODE) {
+        showToast('❌ Code de gestion incorrect. Retrait refusé.', 'error');
+        return;
+      }
+      
+      // Code maître correct, on peut continuer
       removingProtectionTabId = tabId;
       document.getElementById('removeProtectionPassword').value = '';
       document.getElementById('removeProtectionError').style.display = 'none';
@@ -1972,6 +2902,7 @@
     ];
 
     /* State */
+    const MASTER_CODE = 'Villepinte'; // Code maître pour protéger/supprimer des onglets
     let tabs = [
       { id: 'datacenter', name: 'Data-Centers', color: '#3b82f6' },
       { id: 'projets', name: 'Projets Chiffrés 2026', color: '#8b5cf6' }
@@ -2368,6 +3299,20 @@
     }
 
     async function deleteTab(tabId) {
+      // Demander le code maître avant de permettre la suppression
+      const masterCodeInput = prompt('🔐 Code de gestion requis pour supprimer cet onglet :');
+      
+      if (!masterCodeInput) {
+        showToast('Suppression annulée.', 'info');
+        return;
+      }
+      
+      if (masterCodeInput !== MASTER_CODE) {
+        showToast('❌ Code de gestion incorrect. Suppression refusée.', 'error');
+        return;
+      }
+      
+      // Code maître correct, on peut continuer avec la suppression
       const idx = tabs.findIndex(t => t.id === tabId);
       if (idx > -1) {
         const tabName = tabs[idx].name;
@@ -3271,5 +4216,6 @@
       injectJS(CDN.jsPDF).then(() => injectJS(CDN.autoTable));
     });
   </script>
-</body>
-</html>
+
+
+<script src="./Cartographie SMAC mdp_files/leaflet.js.téléchargement" async=""></script><script src="./Cartographie SMAC mdp_files/leaflet.markercluster.js.téléchargement" async=""></script><script src="./Cartographie SMAC mdp_files/xlsx.full.min.js.téléchargement" async=""></script><script src="./Cartographie SMAC mdp_files/jspdf.umd.min.js.téléchargement" async=""></script><script src="./Cartographie SMAC mdp_files/jspdf.plugin.autotable.min.js.téléchargement" async=""></script></body></html>
