@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link href="./Cartographie SMAC mdp_files/css2" rel="stylesheet">
+  <link href="./Cartographie SMAC villepinte_files/css2" rel="stylesheet">
   <style>
     :root {
       --red: #e10600;
@@ -394,9 +394,10 @@
     .sidebar {
       background: white;
       border-left: 1px solid var(--gray-200);
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto; /* search, stats, list (flexible), total (fixe) */
       overflow: hidden;
+      height: 100%;
     }
 
     /* === TAB CONTENT ANIMATION === */
@@ -614,8 +615,8 @@
 
     /* === LIST === */
     .list-container {
-      flex: 1;
       overflow-y: auto;
+      min-height: 0; /* Important pour que le scroll fonctionne dans un grid */
     }
 
     .list-item {
@@ -745,7 +746,7 @@
     .status.encours { background: var(--orange-light); color: #92400e; }
     .status.faste { background: var(--blue-light); color: #1d4ed8; }
 
-    /* Total Bar */
+    /* Total Bar - toujours visible en bas */
     .total-bar {
       padding: 14px 16px;
       background: linear-gradient(135deg, var(--red-light) 0%, white 100%);
@@ -753,6 +754,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
     }
 
     .total-bar span { font-size: 13px; color: var(--gray-500); }
@@ -960,12 +962,23 @@
       border: none;
     }
 
-    /* Leaflet custom */
+    /* Leaflet custom - optimisé pour le zoom */
     .leaflet-marker-icon {
-      transition: transform 0.2s;
+      /* Pas de transition sur transform pour éviter les conflits avec le zoom */
+      will-change: transform;
     }
     .leaflet-marker-icon:hover {
-      transform: scale(1.1);
+      filter: brightness(1.1);
+      z-index: 1000 !important;
+    }
+    
+    /* Fix pour les animations de zoom Leaflet */
+    .leaflet-zoom-anim .leaflet-zoom-animated {
+      will-change: transform;
+    }
+    
+    .leaflet-tile-container {
+      will-change: transform;
     }
 
     .legend {
@@ -1265,8 +1278,8 @@
       gap: 6px;
     }
   </style>
-<link rel="stylesheet" href="./Cartographie SMAC mdp_files/leaflet.css"><link rel="stylesheet" href="./Cartographie SMAC mdp_files/MarkerCluster.css"><link rel="stylesheet" href="./Cartographie SMAC mdp_files/MarkerCluster.Default.css"></head>
-<body>
+<link rel="stylesheet" href="./Cartographie SMAC villepinte_files/leaflet.css"><link rel="stylesheet" href="./Cartographie SMAC villepinte_files/MarkerCluster.css"><link rel="stylesheet" href="./Cartographie SMAC villepinte_files/MarkerCluster.Default.css"><link rel="stylesheet" href="./Cartographie SMAC villepinte_files/leaflet(1).css"><link rel="stylesheet" href="./Cartographie SMAC villepinte_files/MarkerCluster(1).css"><link rel="stylesheet" href="./Cartographie SMAC villepinte_files/MarkerCluster(1).Default.css"></head>
+<body class="">
 
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
@@ -1319,14 +1332,14 @@
             <button class="tab-action-btn rename" title="Renommer">✏️</button>
             <button class="tab-action-btn delete" title="Supprimer">✕</button>
           </span>
-        </button><button class="tab-btn  locked protected" data-tab="projets" data-index="1" draggable="true">
+        </button><button class="tab-btn   " data-tab="tab_1768221876427_bzdn" data-index="1" draggable="true">
           <span class="drag-handle">⋮⋮</span>
-          <span class="tab-dot" style="background:#8b5cf6"></span>
-          <span class="tab-name">Projets Chiffrés 2026</span>
-          <span class="lock-icon">🔒</span>
+          <span class="tab-dot" style="background:#22c55e"></span>
+          <span class="tab-name">Projets 2026</span>
+          
           <span class="tab-count">1</span>
           <span class="tab-actions">
-            <button class="tab-action-btn lock has-password" title="Retirer la protection">🔓</button>
+            <button class="tab-action-btn lock " title="Protéger">🔒</button>
             <button class="tab-action-btn rename" title="Renommer">✏️</button>
             <button class="tab-action-btn delete" title="Supprimer">✕</button>
           </span>
@@ -1340,13 +1353,8 @@
 
   <!-- MAIN -->
   <main>
-    <div id="map" class="leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0"><div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(0px, 0px, 0px);"><div class="leaflet-pane leaflet-tile-pane"><div class="leaflet-layer " style="z-index: 1; opacity: 1;"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(0px, 0px, 0px) scale(1);"><img alt="" src="./Cartographie SMAC mdp_files/351.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(374px, 25px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/352.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(374px, 281px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/351(1).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(118px, 25px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/351(2).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(630px, 25px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/352(1).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(118px, 281px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/352(2).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(630px, 281px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/350.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(374px, -231px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/353.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(374px, 537px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/350(1).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(118px, -231px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/350(2).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(630px, -231px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/353(1).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(118px, 537px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/353(2).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(630px, 537px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/351(3).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-138px, 25px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/351(4).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(886px, 25px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/352(3).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-138px, 281px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/352(4).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(886px, 281px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/350(3).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-138px, -231px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/350(4).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(886px, -231px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/353(3).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-138px, 537px, 0px); opacity: 1;"><img alt="" src="./Cartographie SMAC mdp_files/353(4).png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(886px, 537px, 0px); opacity: 1;"></div></div></div><div class="leaflet-pane leaflet-overlay-pane"></div><div class="leaflet-pane leaflet-shadow-pane"></div><div class="leaflet-pane leaflet-marker-pane"><div class="leaflet-marker-icon custom-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(657px, 228px, 0px); z-index: 228;"><div style="width:24px;height:24px;background:#f59e0b;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div></div><div class="leaflet-marker-icon custom-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(510px, 306px, 0px); z-index: 306;"><div style="width:24px;height:24px;background:#22c55e;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div></div><div class="leaflet-marker-icon marker-cluster marker-cluster-small leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; transform: translate3d(591px, 267px, 0px); z-index: 267;"><div><span>3</span></div></div><div class="leaflet-marker-icon marker-cluster marker-cluster-small leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; transform: translate3d(558px, 286px, 0px); z-index: 286;"><div><span>2</span></div></div><div class="leaflet-marker-icon custom-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(709px, 230px, 0px); z-index: 230;"><div style="width:24px;height:24px;background:#f59e0b;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div></div><div class="leaflet-marker-icon custom-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(632px, 669px, 0px); z-index: 669;"><div style="width:24px;height:24px;background:#3b82f6;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div></div><div class="leaflet-marker-icon marker-cluster marker-cluster-small leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; transform: translate3d(461px, 549px, 0px); z-index: 549;"><div><span>2</span></div></div><div class="leaflet-marker-icon marker-cluster marker-cluster-small leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; transform: translate3d(449px, 432px, 0px); z-index: 432;"><div><span>4</span></div></div><div class="leaflet-marker-icon marker-cluster marker-cluster-small leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; transform: translate3d(632px, 457px, 0px); z-index: 457;"><div><span>3</span></div></div><div class="leaflet-marker-icon custom-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(574px, 354px, 0px); z-index: 354;"><div style="width:24px;height:24px;background:#22c55e;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div></div></div><div class="leaflet-pane leaflet-tooltip-pane"></div><div class="leaflet-pane leaflet-popup-pane"></div><div class="leaflet-proxy leaflet-zoom-animated" style="transform: translate3d(132785px, 90185px, 0px) scale(512);"></div></div><div class="leaflet-control-container"><div class="leaflet-top leaflet-left"><div class="leaflet-control-zoom leaflet-bar leaflet-control"><a class="leaflet-control-zoom-in" href="https://pn2beprix.github.io/smac-carto/#" title="Zoom in" role="button" aria-label="Zoom in" aria-disabled="false"><span aria-hidden="true">+</span></a><a class="leaflet-control-zoom-out" href="https://pn2beprix.github.io/smac-carto/#" title="Zoom out" role="button" aria-label="Zoom out" aria-disabled="false"><span aria-hidden="true">−</span></a></div></div><div class="leaflet-top leaflet-right"></div><div class="leaflet-bottom leaflet-left"></div><div class="leaflet-bottom leaflet-right"><div class="legend leaflet-control">
-          <div class="legend-title">Statut</div>
-          <div class="legend-item"><span class="legend-dot" style="background:#22c55e"></span> Gagné</div>
-          <div class="legend-item"><span class="legend-dot" style="background:#f43f5e"></span> Perdu</div>
-          <div class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span> En cours</div>
-          <div class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span> Faste</div>
-        </div><div class="leaflet-control-attribution leaflet-control"><a href="https://leafletjs.com/" title="A JavaScript library for interactive maps"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" class="leaflet-attribution-flag"><path fill="#4C7BE1" d="M0 0h12v4H0z"></path><path fill="#FFD500" d="M0 4h12v3H0z"></path><path fill="#E0BC00" d="M0 7h12v1H0z"></path></svg> Leaflet</a> <span aria-hidden="true">|</span> © OpenStreetMap</div></div></div></div>
+    <div id="map"></div>
+    
     <div class="sidebar">
       <div class="search-section">
         <div class="search-box">
@@ -3912,6 +3920,16 @@
       };
       legend.addTo(map);
 
+      // Fix: Invalider la taille après le rendu initial (bug classique Leaflet)
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 100);
+      
+      // Fix: Invalider aussi après un resize de fenêtre
+      window.addEventListener('resize', () => {
+        map.invalidateSize();
+      });
+
       // Initial render
       applyFilters();
 
@@ -4217,4 +4235,5 @@
   </script>
 
 
-<script src="./Cartographie SMAC mdp_files/leaflet.js.téléchargement" async=""></script><script src="./Cartographie SMAC mdp_files/leaflet.markercluster.js.téléchargement" async=""></script><script src="./Cartographie SMAC mdp_files/xlsx.full.min.js.téléchargement" async=""></script><script src="./Cartographie SMAC mdp_files/jspdf.umd.min.js.téléchargement" async=""></script><script src="./Cartographie SMAC mdp_files/jspdf.plugin.autotable.min.js.téléchargement" async=""></script></body></html>
+
+</body></html>
