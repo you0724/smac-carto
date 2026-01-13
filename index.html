@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <!-- saved from url=(0039)https://pn2beprix.github.io/smac-carto/ -->
 <html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -2680,6 +2681,12 @@
 
     const nfEUR = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
     const displayMontant = m => { const n = parseMontant(m); return Number.isFinite(n) ? nfEUR.format(n) : (m || '-'); };
+    // Version PDF sans espaces insécables ni caractères spéciaux
+    const displayMontantPDF = m => { 
+      const n = parseMontant(m); 
+      if (!Number.isFinite(n)) return m || '-';
+      return n.toLocaleString('fr-FR').replace(/\s/g, ' ') + ' EUR';
+    };
     const formatDateStamp = () => { const d = new Date(); const pad = n => String(n).padStart(2,'0'); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
     const parseCoord = v => { const s = String(v ?? '').trim().replace(',', '.'); return parseFloat(s) || NaN; };
     const parseDateISO = v => { const d = new Date(v); return Number.isFinite(d.getTime()) ? d.getTime() : NaN; };
@@ -3830,7 +3837,8 @@
       }
       
       const { jsPDF } = jspdf;
-      const doc = new jsPDF();
+      // Mode paysage pour 8 colonnes
+      const doc = new jsPDF('landscape');
       
       doc.setFontSize(18);
       doc.setTextColor(225, 6, 0);
@@ -3838,25 +3846,51 @@
       
       doc.setFontSize(10);
       doc.setTextColor(100);
-      doc.text(`Export du ${new Date().toLocaleDateString('fr-FR')}`, 14, 28);
+      const currentTabObj = tabs.find(t => t.id === currentTab);
+      doc.text(`Onglet: ${currentTabObj?.name || currentTab} | Export du ${new Date().toLocaleDateString('fr-FR')} | ${currentList.length} affaire(s)`, 14, 28);
       
       const tableData = currentList.map(item => [
-        item.affaires,
-        item.client,
-        item.statut,
-        displayMontant(item.montant),
-        item.adresse
+        item.affaires || '-',
+        item.adresse || '-',
+        item.eg || '-',
+        item.architect || '-',
+        item.client || '-',
+        item.description || '-',
+        displayMontantPDF(item.montant),
+        formatDateFR(item.datePrevisionnelle) || '-'
       ]);
       
       doc.autoTable({
         startY: 35,
-        head: [['Affaires', 'Client', 'Statut', 'Montant', 'Adresse']],
+        head: [['Affaire', 'Ville', 'EG', 'Archi', 'Client', 'Prestation', 'Montant', 'Date prév.']],
         body: tableData,
         styles: { fontSize: 8, cellPadding: 2 },
-        headStyles: { fillColor: [225, 6, 0] }
+        headStyles: { fillColor: [225, 6, 0], textColor: 255, fontStyle: 'bold' },
+        alternateRowStyles: { fillColor: [250, 250, 250] },
+        columnStyles: {
+          0: { cellWidth: 35 },  // Affaire
+          1: { cellWidth: 35 },  // Ville
+          2: { cellWidth: 20 },  // EG
+          3: { cellWidth: 30 },  // Archi
+          4: { cellWidth: 30 },  // Client
+          5: { cellWidth: 40 },  // Prestation
+          6: { cellWidth: 28, halign: 'right' },  // Montant
+          7: { cellWidth: 25 }   // Date
+        }
       });
       
-      doc.save(`SMAC_Export_${formatDateStamp()}.pdf`);
+      // Total en bas
+      const finalY = doc.lastAutoTable.finalY + 10;
+      let total = 0;
+      currentList.forEach(item => {
+        const m = parseMontant(item.montant);
+        if (!isNaN(m)) total += m;
+      });
+      doc.setFontSize(12);
+      doc.setTextColor(225, 6, 0);
+      doc.text(`Total: ${total.toLocaleString('fr-FR').replace(/\s/g, ' ')} EUR`, 250, finalY, { align: 'right' });
+      
+      doc.save(`SMAC_${currentTabObj?.name || 'Export'}_${formatDateStamp()}.pdf`);
       showToast('Export PDF téléchargé !', 'success');
     }
 
