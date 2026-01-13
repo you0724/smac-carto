@@ -1381,7 +1381,7 @@
         <div class="advanced-panel" id="advancedPanel">
           <div class="advanced-grid">
             <div class="filter-group">
-              <label>Client</label>
+              <label>MOA</label>
               <input type="text" id="fClient" placeholder="Ex: EQUINIX">
             </div>
             <div class="filter-group">
@@ -1389,7 +1389,7 @@
               <input type="text" id="fEG" placeholder="Ex: BY">
             </div>
             <div class="filter-group">
-              <label>Architecte</label>
+              <label>MOE</label>
               <input type="text" id="fArchitect" placeholder="Ex: RBA">
             </div>
             <div class="filter-group">
@@ -2345,7 +2345,7 @@
             <input type="text" class="form-input" id="mAffaires" required="">
           </div>
           <div class="form-group">
-            <label class="form-label">Client *</label>
+            <label class="form-label">MOA *</label>
             <input type="text" class="form-input" id="mClient" required="">
           </div>
           <div class="form-group full">
@@ -2357,7 +2357,7 @@
             <input type="text" class="form-input" id="mEG" placeholder="BY, VINCI...">
           </div>
           <div class="form-group">
-            <label class="form-label">Architecte</label>
+            <label class="form-label">MOE</label>
             <input type="text" class="form-input" id="mArchitect">
           </div>
           <div class="form-group full">
@@ -3808,10 +3808,10 @@
       
       const data = currentList.map(item => ({
         'Affaires': item.affaires,
-        'Client': item.client,
+        'MOA': item.client,
         'Description': item.description,
         'EG': item.eg,
-        'Architecte': item.architect,
+        'MOE': item.architect,
         'Adresse': item.adresse,
         'SMAC': item.smac,
         'Date': formatDateFR(item.datePrevisionnelle),
@@ -3862,7 +3862,7 @@
       
       doc.autoTable({
         startY: 35,
-        head: [['Affaire', 'Ville', 'EG', 'Archi', 'Client', 'Prestation', 'Montant', 'Date prév.']],
+        head: [['Affaire', 'Ville', 'EG', 'MOE', 'MOA', 'Prestation', 'Montant', 'Date prév.']],
         body: tableData,
         styles: { fontSize: 8, cellPadding: 2 },
         headStyles: { fillColor: [225, 6, 0], textColor: 255, fontStyle: 'bold' },
