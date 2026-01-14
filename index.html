@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <!-- saved from url=(0039)https://pn2beprix.github.io/smac-carto/ -->
 <html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -1532,6 +1533,52 @@
     .popup-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
     .popup-client { font-size: 12px; color: var(--gray-500); }
     .popup-amount { font-weight: 600; color: var(--theme-color); margin-top: 4px; }
+
+    /* House markers (Agences SMAC) */
+    .house-marker {
+      font-size: 24px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .house-marker:hover {
+      transform: scale(1.1);
+    }
+    .house-marker.red {
+      filter: drop-shadow(0 2px 4px rgba(0.9,0,0,0.4)) brightness(0.9) sepia(1) saturate(10) hue-rotate(-35deg);
+    }
+    .house-marker.blue {
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)) sepia(1) saturate(3) hue-rotate(180deg) brightness(1.1);
+    }
+
+    .smac-popup {
+      text-align: center;
+    }
+    .smac-popup-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--red);
+      margin-bottom: 4px;
+    }
+    .smac-popup-subtitle {
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-bottom: 8px;
+    }
+    .smac-popup-btn {
+      padding: 6px 12px;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+    .smac-popup-btn:hover {
+      background: var(--red-dark);
+    }
 
     /* Mobile */
     .mobile-menu-btn {
@@ -4937,6 +4984,68 @@
       window.itineraryMode = () => itineraryMode;
       window.addItineraryStop = addItineraryStop;
 
+      // SMAC Sites (Agences)
+      const smacSites = [
+        { id: 'smac-villepinte', name: 'SMAC Villepinte', type: 'Agence', pos: [48.97514713280083, 2.4984242351062305], colorClass: 'red', icon: '🏠' },
+        { id: 'smac-gennevilliers', name: 'SMAC Gennevilliers', type: 'Agence', pos: [48.92782648602185, 2.3153713903404656], colorClass: 'red', icon: '🏠' },
+        { id: 'smac-antony', name: 'SMAC Antony', type: 'Agence', pos: [48.74018378617779, 2.3117610821607255], colorClass: 'red', icon: '🏠' },
+        { id: 'smac-paris', name: 'SMAC Paris', type: 'Agence', pos: [48.82503578677804, 2.374718960277167], colorClass: 'red', icon: '🏠' },
+        { id: 'faste', name: 'FASTE', type: 'Site', pos: [48.61241797846606, 2.4224383394035933], colorClass: 'blue', icon: '🏠' },
+        { id: 'smac-siege', name: 'SMAC — Siège social', type: 'Siège', pos: [48.818642, 2.250865], colorClass: '', icon: '🏢' }
+      ];
+
+      // Function to add SMAC site to itinerary
+      window.addSmacSiteToItinerary = (siteId) => {
+        const site = smacSites.find(s => s.id === siteId);
+        if (!site) return;
+        
+        if (itineraryStops.find(s => s.id === siteId)) {
+          showToast('Ce site est déjà dans l\'itinéraire', 'error');
+          return;
+        }
+        
+        itineraryStops.push({
+          id: siteId,
+          name: site.name,
+          lat: site.pos[0],
+          lng: site.pos[1]
+        });
+        updateItineraryUI();
+        showToast(`${site.name} ajouté à l'itinéraire`, 'success');
+        
+        // Open itinerary panel if not open
+        if (!itineraryMode) {
+          itineraryMode = true;
+          toggleItineraryBtn.classList.add('active');
+          itineraryPanel.classList.add('open');
+        }
+      };
+
+      // Add SMAC site markers
+      smacSites.forEach(site => {
+        const marker = L.marker(site.pos, {
+          icon: L.divIcon({
+            html: `<span class="house-marker ${site.colorClass}">${site.icon}</span>`,
+            className: '',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+          }),
+          zIndexOffset: site.type === 'Siège' ? 1300 : 1200
+        });
+        
+        marker.bindPopup(`
+          <div class="smac-popup">
+            <div class="smac-popup-title">${site.name}</div>
+            <div class="smac-popup-subtitle">${site.type}</div>
+            <button class="smac-popup-btn" onclick="window.addSmacSiteToItinerary('${site.id}')">
+              🚗 Ajouter à l'itinéraire
+            </button>
+          </div>
+        `);
+        
+        marker.addTo(map);
+      });
+
       // Legend
       const legend = L.control({ position: 'bottomright' });
       legend.onAdd = () => {
@@ -4947,6 +5056,9 @@
           <div class="legend-item"><span class="legend-dot" style="background:#f43f5e"></span> Perdu</div>
           <div class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span> En cours</div>
           <div class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span> Faste</div>
+          <div class="legend-title" style="margin-top:8px;">Sites SMAC</div>
+          <div class="legend-item"><span style="font-size:14px;">🏢</span> Siège</div>
+          <div class="legend-item"><span style="font-size:14px;">🏠</span> Agences</div>
         `;
         return div;
       };
