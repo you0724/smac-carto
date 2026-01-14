@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <!-- saved from url=(0039)https://pn2beprix.github.io/smac-carto/ -->
 <html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -1333,8 +1332,97 @@
       color: var(--dark);
     }
 
+    .stats-config-btn {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--gray-500);
+      padding: 4px;
+      margin-right: 8px;
+      transition: transform 0.2s;
+    }
+
+    .stats-config-btn:hover {
+      color: var(--dark);
+      transform: rotate(45deg);
+    }
+
+    .stats-config-panel {
+      background: var(--gray-50);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .stats-config-panel.open {
+      display: block;
+      animation: slideIn 0.2s ease;
+    }
+
+    .stats-config-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .stats-config-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .stats-config-item:last-child {
+      border-bottom: none;
+    }
+
+    .stats-config-label {
+      font-size: 12px;
+      color: var(--gray-700);
+    }
+
+    .stats-toggle {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      background: var(--gray-300);
+      border-radius: 11px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .stats-toggle.active {
+      background: var(--green);
+    }
+
+    .stats-toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .stats-toggle.active::after {
+      transform: translateX(18px);
+    }
+
     .stats-section {
       margin-bottom: 20px;
+    }
+
+    .stats-section.hidden {
+      display: none;
     }
 
     .stats-section-title {
@@ -1524,6 +1612,178 @@
       color: var(--gray-500);
     }
 
+    /* Forecast (Prévisions) */
+    .forecast-container {
+      text-align: center;
+    }
+
+    .forecast-main {
+      padding: 16px;
+      background: linear-gradient(135deg, var(--theme-color-light), transparent);
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .forecast-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--theme-color);
+    }
+
+    .forecast-label {
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    .forecast-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .forecast-detail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: var(--gray-50);
+      border-radius: 6px;
+    }
+
+    .forecast-detail-label {
+      font-size: 12px;
+      color: var(--gray-600);
+    }
+
+    .forecast-detail-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    /* Comparison (Comparaison) */
+    .comparison-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .comparison-period {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      background: var(--gray-50);
+      border-radius: 8px;
+    }
+
+    .comparison-period-label {
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-bottom: 4px;
+    }
+
+    .comparison-period-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .comparison-period-count {
+      font-size: 10px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .comparison-vs {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .comparison-arrow {
+      font-size: 20px;
+      transition: transform 0.3s;
+    }
+
+    .comparison-arrow.up {
+      color: var(--green);
+      transform: rotate(-90deg);
+    }
+
+    .comparison-arrow.down {
+      color: var(--rose);
+      transform: rotate(90deg);
+    }
+
+    .comparison-percent {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: var(--gray-200);
+    }
+
+    .comparison-percent.up {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .comparison-percent.down {
+      background: var(--rose-light);
+      color: var(--rose);
+    }
+
+    /* Conversion */
+    .conversion-container {
+      text-align: center;
+    }
+
+    .conversion-gauge {
+      position: relative;
+      width: 160px;
+      height: 100px;
+      margin: 0 auto 16px;
+    }
+
+    .conversion-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .conversion-value {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .conversion-details {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .conversion-detail {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--gray-600);
+    }
+
+    .conversion-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
     /* Map Popup */
     .leaflet-popup-content-wrapper {
       border-radius: var(--radius);
@@ -1545,7 +1805,7 @@
       transform: scale(1.1);
     }
     .house-marker.red {
-      filter: drop-shadow(0 2px 4px rgba(0.9,0,0,0.4)) brightness(0.9) sepia(1) saturate(10) hue-rotate(-35deg);
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)) brightness(0.9) sepia(1) saturate(10) hue-rotate(-35deg);
     }
     .house-marker.blue {
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)) sepia(1) saturate(3) hue-rotate(180deg) brightness(1.1);
@@ -1971,7 +2231,39 @@
     <div class="stats-panel" id="statsPanel">
       <div class="stats-header">
         <span class="stats-title">📊 Statistiques</span>
-        <button class="stats-close" id="statsClose">✕</button>
+        <div>
+          <button class="stats-config-btn" id="statsConfigBtn" title="Configurer l'affichage">⚙️</button>
+          <button class="stats-close" id="statsClose">✕</button>
+        </div>
+      </div>
+      
+      <!-- Configuration Panel -->
+      <div class="stats-config-panel" id="statsConfigPanel">
+        <div class="stats-config-title">Afficher / Masquer</div>
+        <div class="stats-config-item">
+          <span class="stats-config-label">🎯 Répartition par statut</span>
+          <div class="stats-toggle active" data-section="pieSection"></div>
+        </div>
+        <div class="stats-config-item">
+          <span class="stats-config-label">💰 Montants par statut</span>
+          <div class="stats-toggle active" data-section="barSection"></div>
+        </div>
+        <div class="stats-config-item">
+          <span class="stats-config-label">📈 Évolution mensuelle</span>
+          <div class="stats-toggle active" data-section="timelineSection"></div>
+        </div>
+        <div class="stats-config-item">
+          <span class="stats-config-label">🔮 Prévisions CA</span>
+          <div class="stats-toggle active" data-section="forecastSection"></div>
+        </div>
+        <div class="stats-config-item">
+          <span class="stats-config-label">📊 Comparaison périodes</span>
+          <div class="stats-toggle active" data-section="comparisonSection"></div>
+        </div>
+        <div class="stats-config-item">
+          <span class="stats-config-label">🎯 Taux de conversion</span>
+          <div class="stats-toggle active" data-section="conversionSection"></div>
+        </div>
       </div>
       
       <div class="stats-summary">
@@ -1985,7 +2277,7 @@
         </div>
       </div>
       
-      <div class="stats-section">
+      <div class="stats-section" id="pieSection">
         <div class="stats-section-title">🎯 Répartition par statut</div>
         <div class="stats-chart-container">
           <div class="pie-chart" id="pieChart">
@@ -2009,7 +2301,7 @@
         </div>
       </div>
       
-      <div class="stats-section">
+      <div class="stats-section" id="barSection">
         <div class="stats-section-title">💰 Montants par statut</div>
         <div class="stats-chart-container">
           <div class="bar-chart" id="barChart">
@@ -2018,7 +2310,7 @@
         </div>
       </div>
       
-      <div class="stats-section">
+      <div class="stats-section" id="timelineSection">
         <div class="stats-section-title">📈 Évolution mensuelle</div>
         <div class="stats-chart-container">
           <div class="timeline-chart" id="timelineChart">
@@ -2026,6 +2318,83 @@
           </div>
           <div class="timeline-labels" id="timelineLabels">
             <!-- Labels will be generated by JS -->
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-section" id="forecastSection">
+        <div class="stats-section-title">🔮 Prévisions CA</div>
+        <div class="stats-chart-container">
+          <div class="forecast-container">
+            <div class="forecast-main">
+              <div class="forecast-value" id="forecastValue">0 €</div>
+              <div class="forecast-label">CA prévisionnel (En cours)</div>
+            </div>
+            <div class="forecast-details">
+              <div class="forecast-detail">
+                <span class="forecast-detail-label">Affaires en cours</span>
+                <span class="forecast-detail-value" id="forecastCount">0</span>
+              </div>
+              <div class="forecast-detail">
+                <span class="forecast-detail-label">Montant moyen</span>
+                <span class="forecast-detail-value" id="forecastAvg">0 €</span>
+              </div>
+              <div class="forecast-detail">
+                <span class="forecast-detail-label">CA potentiel (avec taux)</span>
+                <span class="forecast-detail-value" id="forecastPotential">0 €</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-section" id="comparisonSection">
+        <div class="stats-section-title">📊 Comparaison périodes</div>
+        <div class="stats-chart-container">
+          <div class="comparison-container">
+            <div class="comparison-period">
+              <div class="comparison-period-label">Ce mois</div>
+              <div class="comparison-period-value" id="compCurrentMonth">0 €</div>
+              <div class="comparison-period-count" id="compCurrentCount">0 affaires</div>
+            </div>
+            <div class="comparison-vs">
+              <div class="comparison-arrow" id="compArrow">→</div>
+              <div class="comparison-percent" id="compPercent">0%</div>
+            </div>
+            <div class="comparison-period">
+              <div class="comparison-period-label">Mois dernier</div>
+              <div class="comparison-period-value" id="compLastMonth">0 €</div>
+              <div class="comparison-period-count" id="compLastCount">0 affaires</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-section" id="conversionSection">
+        <div class="stats-section-title">🎯 Taux de conversion</div>
+        <div class="stats-chart-container">
+          <div class="conversion-container">
+            <div class="conversion-gauge">
+              <svg viewBox="0 0 100 60" class="conversion-svg">
+                <path d="M10,50 A40,40 0 0,1 90,50" fill="none" stroke="#e5e5e5" stroke-width="8" stroke-linecap="round"/>
+                <path id="conversionArc" d="M10,50 A40,40 0 0,1 90,50" fill="none" stroke="#22c55e" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 126"/>
+              </svg>
+              <div class="conversion-value" id="conversionRate">0%</div>
+            </div>
+            <div class="conversion-details">
+              <div class="conversion-detail">
+                <span class="conversion-dot" style="background:#22c55e"></span>
+                <span>Gagné: <strong id="convGagne">0</strong></span>
+              </div>
+              <div class="conversion-detail">
+                <span class="conversion-dot" style="background:#f43f5e"></span>
+                <span>Perdu: <strong id="convPerdu">0</strong></span>
+              </div>
+              <div class="conversion-detail">
+                <span class="conversion-dot" style="background:#f59e0b"></span>
+                <span>En cours: <strong id="convEncours">0</strong></span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -3926,6 +4295,15 @@
       
       // Update timeline
       updateTimeline();
+      
+      // Update forecast (prévisions)
+      updateForecast(encours, gagne, perdu);
+      
+      // Update comparison (comparaison périodes)
+      updateComparison();
+      
+      // Update conversion rate
+      updateConversion(gagne, perdu, encours);
     }
 
     function formatMontantShort(value) {
@@ -4052,6 +4430,111 @@
       
       // Generate labels
       labelsContainer.innerHTML = values.map(v => `<span class="timeline-label">${v.label}</span>`).join('');
+    }
+
+    /* Forecast (Prévisions CA) */
+    function updateForecast(encours, gagne, perdu) {
+      // Calculate total amount of "En cours" deals
+      const encoursItems = currentList.filter(i => i.statut === 'En cours');
+      const encoursTotal = encoursItems.reduce((sum, item) => {
+        const val = parseMontant(item.montant);
+        return Number.isFinite(val) ? sum + val : sum;
+      }, 0);
+      
+      // Calculate average
+      const encoursAvg = encours > 0 ? encoursTotal / encours : 0;
+      
+      // Calculate conversion rate for potential forecast
+      const decided = gagne + perdu;
+      const conversionRate = decided > 0 ? gagne / decided : 0.5; // Default to 50% if no data
+      const potentialCA = encoursTotal * conversionRate;
+      
+      // Update UI
+      document.getElementById('forecastValue').textContent = formatMontantShort(encoursTotal);
+      document.getElementById('forecastCount').textContent = encours;
+      document.getElementById('forecastAvg').textContent = formatMontantShort(encoursAvg);
+      document.getElementById('forecastPotential').textContent = formatMontantShort(potentialCA) + ` (${Math.round(conversionRate * 100)}%)`;
+    }
+
+    /* Comparison (Comparaison périodes) */
+    function updateComparison() {
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+      
+      // Filter items by month based on datePrevisionnelle
+      const currentMonthItems = currentList.filter(item => {
+        if (!item.datePrevisionnelle) return false;
+        const d = new Date(item.datePrevisionnelle);
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+      });
+      
+      const lastMonthItems = currentList.filter(item => {
+        if (!item.datePrevisionnelle) return false;
+        const d = new Date(item.datePrevisionnelle);
+        const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+        const lastYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+        return d.getMonth() === lastMonth && d.getFullYear() === lastYear;
+      });
+      
+      // Calculate totals
+      const currentTotal = currentMonthItems.reduce((sum, item) => {
+        const val = parseMontant(item.montant);
+        return Number.isFinite(val) ? sum + val : sum;
+      }, 0);
+      
+      const lastTotal = lastMonthItems.reduce((sum, item) => {
+        const val = parseMontant(item.montant);
+        return Number.isFinite(val) ? sum + val : sum;
+      }, 0);
+      
+      // Calculate percentage change
+      let percentChange = 0;
+      let isUp = true;
+      if (lastTotal > 0) {
+        percentChange = ((currentTotal - lastTotal) / lastTotal) * 100;
+        isUp = percentChange >= 0;
+      } else if (currentTotal > 0) {
+        percentChange = 100;
+        isUp = true;
+      }
+      
+      // Update UI
+      document.getElementById('compCurrentMonth').textContent = formatMontantShort(currentTotal);
+      document.getElementById('compCurrentCount').textContent = `${currentMonthItems.length} affaire${currentMonthItems.length > 1 ? 's' : ''}`;
+      document.getElementById('compLastMonth').textContent = formatMontantShort(lastTotal);
+      document.getElementById('compLastCount').textContent = `${lastMonthItems.length} affaire${lastMonthItems.length > 1 ? 's' : ''}`;
+      
+      const arrow = document.getElementById('compArrow');
+      const percent = document.getElementById('compPercent');
+      
+      arrow.className = 'comparison-arrow ' + (isUp ? 'up' : 'down');
+      percent.className = 'comparison-percent ' + (isUp ? 'up' : 'down');
+      percent.textContent = (isUp ? '+' : '') + Math.round(percentChange) + '%';
+    }
+
+    /* Conversion Rate (Taux de conversion) */
+    function updateConversion(gagne, perdu, encours) {
+      const decided = gagne + perdu;
+      const rate = decided > 0 ? (gagne / decided) * 100 : 0;
+      
+      // Update gauge (arc length based on rate)
+      // Full arc is about 126 units (half circle)
+      const arcLength = (rate / 100) * 126;
+      const conversionArc = document.getElementById('conversionArc');
+      conversionArc.setAttribute('stroke-dasharray', `${arcLength} 126`);
+      
+      // Color based on rate
+      let strokeColor = '#f43f5e'; // red for low
+      if (rate >= 60) strokeColor = '#22c55e'; // green for high
+      else if (rate >= 40) strokeColor = '#f59e0b'; // orange for medium
+      conversionArc.setAttribute('stroke', strokeColor);
+      
+      // Update values
+      document.getElementById('conversionRate').textContent = Math.round(rate) + '%';
+      document.getElementById('convGagne').textContent = gagne;
+      document.getElementById('convPerdu').textContent = perdu;
+      document.getElementById('convEncours').textContent = encours;
     }
 
     /* Tab Modal */
@@ -5338,6 +5821,39 @@
       });
       document.getElementById('statsClose')?.addEventListener('click', () => {
         document.getElementById('statsPanel').classList.remove('open');
+      });
+
+      // Stats configuration
+      document.getElementById('statsConfigBtn')?.addEventListener('click', () => {
+        document.getElementById('statsConfigPanel').classList.toggle('open');
+      });
+
+      // Load saved stats preferences
+      const savedStatsPrefs = JSON.parse(localStorage.getItem('smac_stats_prefs') || '{}');
+      document.querySelectorAll('.stats-toggle').forEach(toggle => {
+        const sectionId = toggle.dataset.section;
+        const section = document.getElementById(sectionId);
+        
+        // Apply saved preference
+        if (savedStatsPrefs[sectionId] === false) {
+          toggle.classList.remove('active');
+          if (section) section.classList.add('hidden');
+        }
+        
+        // Toggle click handler
+        toggle.addEventListener('click', () => {
+          toggle.classList.toggle('active');
+          const isActive = toggle.classList.contains('active');
+          
+          if (section) {
+            section.classList.toggle('hidden', !isActive);
+          }
+          
+          // Save preference
+          const prefs = JSON.parse(localStorage.getItem('smac_stats_prefs') || '{}');
+          prefs[sectionId] = isActive;
+          localStorage.setItem('smac_stats_prefs', JSON.stringify(prefs));
+        });
       });
 
       // Help modal
