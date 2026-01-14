@@ -1784,6 +1784,193 @@
       border-radius: 50%;
     }
 
+    /* Client Ranking */
+    .ranking-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ranking-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--gray-50);
+      border-radius: 8px;
+      transition: transform 0.2s;
+    }
+
+    .ranking-item:hover {
+      transform: translateX(4px);
+    }
+
+    .ranking-position {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--gray-300);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .ranking-position.gold {
+      background: linear-gradient(135deg, #ffd700, #ffb800);
+    }
+
+    .ranking-position.silver {
+      background: linear-gradient(135deg, #c0c0c0, #a8a8a8);
+    }
+
+    .ranking-position.bronze {
+      background: linear-gradient(135deg, #cd7f32, #b8722e);
+    }
+
+    .ranking-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ranking-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ranking-count {
+      font-size: 10px;
+      color: var(--gray-500);
+    }
+
+    .ranking-amount {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--theme-color);
+      flex-shrink: 0;
+    }
+
+    /* Objectives */
+    .objectives-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .objective-item {
+      background: var(--gray-50);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .objective-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .objective-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .objective-values {
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    .objective-values span {
+      font-weight: 600;
+      color: var(--theme-color);
+    }
+
+    .objective-bar {
+      height: 12px;
+      background: var(--gray-200);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .objective-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.5s ease;
+      background: linear-gradient(90deg, var(--theme-color), var(--green));
+    }
+
+    .objective-fill.warning {
+      background: linear-gradient(90deg, var(--orange), var(--orange));
+    }
+
+    .objective-fill.danger {
+      background: linear-gradient(90deg, var(--rose), var(--rose));
+    }
+
+    .objective-fill.success {
+      background: linear-gradient(90deg, var(--green), #16a34a);
+    }
+
+    .objective-percent {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .objective-edit-btn {
+      background: none;
+      border: none;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--gray-400);
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .objective-edit-btn:hover {
+      background: var(--gray-200);
+      color: var(--gray-700);
+    }
+
+    .objective-input-group {
+      display: none;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .objective-input-group.open {
+      display: flex;
+    }
+
+    .objective-input {
+      flex: 1;
+      padding: 6px 10px;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .objective-save-btn {
+      padding: 6px 12px;
+      background: var(--theme-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
     /* Map Popup */
     .leaflet-popup-content-wrapper {
       border-radius: var(--radius);
@@ -2264,6 +2451,14 @@
           <span class="stats-config-label">🎯 Taux de conversion</span>
           <div class="stats-toggle active" data-section="conversionSection"></div>
         </div>
+        <div class="stats-config-item">
+          <span class="stats-config-label">🏆 Classement clients</span>
+          <div class="stats-toggle active" data-section="rankingSection"></div>
+        </div>
+        <div class="stats-config-item">
+          <span class="stats-config-label">🎯 Objectifs CA</span>
+          <div class="stats-toggle active" data-section="objectivesSection"></div>
+        </div>
       </div>
       
       <div class="stats-summary">
@@ -2393,6 +2588,76 @@
               <div class="conversion-detail">
                 <span class="conversion-dot" style="background:#f59e0b"></span>
                 <span>En cours: <strong id="convEncours">0</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-section" id="rankingSection">
+        <div class="stats-section-title">🏆 Classement clients (CA cumulé)</div>
+        <div class="stats-chart-container">
+          <div class="ranking-list" id="rankingList">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-section" id="objectivesSection">
+        <div class="stats-section-title">🎯 Objectifs CA</div>
+        <div class="stats-chart-container">
+          <div class="objectives-container">
+            <div class="objective-item">
+              <div class="objective-header">
+                <span class="objective-label">📅 Ce mois</span>
+                <div>
+                  <span class="objective-values"><span id="objMonthCurrent">0 €</span> / <span id="objMonthTarget">0 €</span></span>
+                  <button class="objective-edit-btn" data-target="month">✏️</button>
+                </div>
+              </div>
+              <div class="objective-bar">
+                <div class="objective-fill" id="objMonthFill" style="width: 0%"></div>
+              </div>
+              <div class="objective-percent" id="objMonthPercent">0%</div>
+              <div class="objective-input-group" id="objMonthInput">
+                <input type="text" class="objective-input" id="objMonthValue" placeholder="Ex: 500000">
+                <button class="objective-save-btn" data-period="month">OK</button>
+              </div>
+            </div>
+            
+            <div class="objective-item">
+              <div class="objective-header">
+                <span class="objective-label">📊 Ce trimestre</span>
+                <div>
+                  <span class="objective-values"><span id="objQuarterCurrent">0 €</span> / <span id="objQuarterTarget">0 €</span></span>
+                  <button class="objective-edit-btn" data-target="quarter">✏️</button>
+                </div>
+              </div>
+              <div class="objective-bar">
+                <div class="objective-fill" id="objQuarterFill" style="width: 0%"></div>
+              </div>
+              <div class="objective-percent" id="objQuarterPercent">0%</div>
+              <div class="objective-input-group" id="objQuarterInput">
+                <input type="text" class="objective-input" id="objQuarterValue" placeholder="Ex: 1500000">
+                <button class="objective-save-btn" data-period="quarter">OK</button>
+              </div>
+            </div>
+            
+            <div class="objective-item">
+              <div class="objective-header">
+                <span class="objective-label">📆 Cette année</span>
+                <div>
+                  <span class="objective-values"><span id="objYearCurrent">0 €</span> / <span id="objYearTarget">0 €</span></span>
+                  <button class="objective-edit-btn" data-target="year">✏️</button>
+                </div>
+              </div>
+              <div class="objective-bar">
+                <div class="objective-fill" id="objYearFill" style="width: 0%"></div>
+              </div>
+              <div class="objective-percent" id="objYearPercent">0%</div>
+              <div class="objective-input-group" id="objYearInput">
+                <input type="text" class="objective-input" id="objYearValue" placeholder="Ex: 6000000">
+                <button class="objective-save-btn" data-period="year">OK</button>
               </div>
             </div>
           </div>
@@ -4304,6 +4569,12 @@
       
       // Update conversion rate
       updateConversion(gagne, perdu, encours);
+      
+      // Update client ranking
+      updateClientRanking();
+      
+      // Update objectives
+      updateObjectives();
     }
 
     function formatMontantShort(value) {
@@ -4535,6 +4806,132 @@
       document.getElementById('convGagne').textContent = gagne;
       document.getElementById('convPerdu').textContent = perdu;
       document.getElementById('convEncours').textContent = encours;
+    }
+
+    /* Client Ranking (Classement clients par CA) */
+    function updateClientRanking() {
+      const container = document.getElementById('rankingList');
+      
+      // Group by client and sum amounts
+      const clientTotals = {};
+      currentList.forEach(item => {
+        const client = item.client || 'Non défini';
+        const amount = parseMontant(item.montant);
+        if (!clientTotals[client]) {
+          clientTotals[client] = { total: 0, count: 0 };
+        }
+        if (Number.isFinite(amount)) {
+          clientTotals[client].total += amount;
+        }
+        clientTotals[client].count++;
+      });
+      
+      // Convert to array and sort by total
+      const sorted = Object.entries(clientTotals)
+        .map(([name, data]) => ({ name, ...data }))
+        .sort((a, b) => b.total - a.total)
+        .slice(0, 5); // Top 5
+      
+      if (sorted.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:var(--gray-500);font-size:12px;padding:20px;">Aucune donnée</div>';
+        return;
+      }
+      
+      container.innerHTML = sorted.map((client, index) => {
+        const positionClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+        return `
+          <div class="ranking-item">
+            <div class="ranking-position ${positionClass}">${index + 1}</div>
+            <div class="ranking-info">
+              <div class="ranking-name">${escapeHTML(client.name)}</div>
+              <div class="ranking-count">${client.count} affaire${client.count > 1 ? 's' : ''}</div>
+            </div>
+            <div class="ranking-amount">${formatMontantShort(client.total)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* Objectives (Objectifs CA) */
+    function updateObjectives() {
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+      
+      // Calculate current quarter (0-3)
+      const currentQuarter = Math.floor(currentMonth / 3);
+      
+      // Get saved objectives
+      const savedObjectives = JSON.parse(localStorage.getItem('smac_objectives') || '{}');
+      
+      // Calculate amounts for each period (based on "Gagné" deals)
+      let monthTotal = 0;
+      let quarterTotal = 0;
+      let yearTotal = 0;
+      
+      currentList.forEach(item => {
+        if (item.statut !== 'Gagné') return;
+        if (!item.datePrevisionnelle) return;
+        
+        const d = new Date(item.datePrevisionnelle);
+        const amount = parseMontant(item.montant);
+        if (!Number.isFinite(amount)) return;
+        
+        // Same year
+        if (d.getFullYear() === currentYear) {
+          yearTotal += amount;
+          
+          // Same quarter
+          const itemQuarter = Math.floor(d.getMonth() / 3);
+          if (itemQuarter === currentQuarter) {
+            quarterTotal += amount;
+          }
+          
+          // Same month
+          if (d.getMonth() === currentMonth) {
+            monthTotal += amount;
+          }
+        }
+      });
+      
+      // Update month objective
+      updateObjectiveUI('Month', monthTotal, savedObjectives.month || 0);
+      
+      // Update quarter objective
+      updateObjectiveUI('Quarter', quarterTotal, savedObjectives.quarter || 0);
+      
+      // Update year objective
+      updateObjectiveUI('Year', yearTotal, savedObjectives.year || 0);
+    }
+
+    function updateObjectiveUI(period, current, target) {
+      const currentEl = document.getElementById(`obj${period}Current`);
+      const targetEl = document.getElementById(`obj${period}Target`);
+      const fillEl = document.getElementById(`obj${period}Fill`);
+      const percentEl = document.getElementById(`obj${period}Percent`);
+      
+      currentEl.textContent = formatMontantShort(current);
+      targetEl.textContent = target > 0 ? formatMontantShort(target) : 'Non défini';
+      
+      let percent = 0;
+      if (target > 0) {
+        percent = Math.min((current / target) * 100, 150); // Cap at 150%
+      }
+      
+      fillEl.style.width = Math.min(percent, 100) + '%';
+      percentEl.textContent = Math.round(percent) + '%';
+      
+      // Color based on progress
+      fillEl.classList.remove('success', 'warning', 'danger');
+      if (percent >= 100) {
+        fillEl.classList.add('success');
+      } else if (percent >= 70) {
+        // Default gradient color
+      } else if (percent >= 40) {
+        fillEl.classList.add('warning');
+      } else if (target > 0) {
+        fillEl.classList.add('danger');
+      }
     }
 
     /* Tab Modal */
@@ -5853,6 +6250,40 @@
           const prefs = JSON.parse(localStorage.getItem('smac_stats_prefs') || '{}');
           prefs[sectionId] = isActive;
           localStorage.setItem('smac_stats_prefs', JSON.stringify(prefs));
+        });
+      });
+
+      // Objectives edit buttons
+      document.querySelectorAll('.objective-edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.dataset.target;
+          const inputGroup = document.getElementById(`obj${target.charAt(0).toUpperCase() + target.slice(1)}Input`);
+          inputGroup.classList.toggle('open');
+        });
+      });
+
+      // Objectives save buttons
+      document.querySelectorAll('.objective-save-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const period = btn.dataset.period;
+          const inputEl = document.getElementById(`obj${period.charAt(0).toUpperCase() + period.slice(1)}Value`);
+          const value = parseMontant(inputEl.value);
+          
+          if (Number.isFinite(value) && value > 0) {
+            const objectives = JSON.parse(localStorage.getItem('smac_objectives') || '{}');
+            objectives[period] = value;
+            localStorage.setItem('smac_objectives', JSON.stringify(objectives));
+            
+            // Close input and update
+            const inputGroup = document.getElementById(`obj${period.charAt(0).toUpperCase() + period.slice(1)}Input`);
+            inputGroup.classList.remove('open');
+            inputEl.value = '';
+            
+            updateObjectives();
+            showToast('Objectif enregistré !', 'success');
+          } else {
+            showToast('Montant invalide', 'error');
+          }
         });
       });
 
