@@ -38,6 +38,11 @@
       --shadow: 0 1px 2px rgba(0,0,0,0.05);
       --shadow-md: 0 2px 4px rgba(0,0,0,0.06);
       --shadow-lg: 0 4px 8px rgba(0,0,0,0.08);
+      
+      /* Dynamic theme colors - will be overridden by JS */
+      --theme-color: #e10600;
+      --theme-color-light: rgba(225, 6, 0, 0.1);
+      --theme-color-dark: #b30500;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -84,9 +89,10 @@
     .logo-text {
       font-size: 20px;
       font-weight: 700;
-      color: var(--red);
+      color: var(--theme-color);
       letter-spacing: -0.3px;
       text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+      transition: color 0.3s ease;
     }
 
     .logo-subtitle {
@@ -164,10 +170,11 @@
     }
 
     .tab-btn.active {
-      color: var(--red);
-      background: rgba(255, 245, 245, 0.5);
-      border-color: rgba(225, 6, 0, 0.3);
-      box-shadow: 0 2px 10px rgba(225, 6, 0, 0.15);
+      color: var(--theme-color);
+      background: var(--theme-color-light);
+      border-color: var(--theme-color);
+      box-shadow: 0 2px 10px var(--theme-color-light);
+      transition: all 0.3s ease;
     }
 
     .tab-btn.active::after {
@@ -178,8 +185,9 @@
       transform: translateX(-50%);
       width: 40px;
       height: 2px;
-      background: var(--red);
+      background: var(--theme-color);
       border-radius: 3px 3px 0 0;
+      transition: background 0.3s ease;
     }
 
     /* Drag states */
@@ -204,7 +212,7 @@
       position: absolute;
       width: 3px;
       height: 32px;
-      background: var(--red);
+      background: var(--theme-color);
       border-radius: 2px;
       opacity: 0;
       transition: opacity 0.2s;
@@ -321,9 +329,9 @@
       gap: 6px;
     }
     .add-tab-btn:hover { 
-      border-color: var(--red); 
-      color: var(--red); 
-      background: var(--red-light);
+      border-color: var(--theme-color); 
+      color: var(--theme-color); 
+      background: var(--theme-color-light);
       transform: scale(1.02);
     }
 
@@ -357,11 +365,12 @@
     }
 
     .btn-primary { 
-      background: var(--red); 
-      color: white; 
+      background: var(--theme-color); 
+      color: white;
+      transition: background 0.3s ease;
     }
     .btn-primary:hover { 
-      background: var(--red-dark);
+      background: var(--theme-color-dark);
     }
 
     .btn-secondary {
@@ -1263,6 +1272,257 @@
       color: var(--gray-500);
     }
 
+    /* Statistics Panel */
+    .stats-panel {
+      position: absolute;
+      top: 124px;
+      right: 430px;
+      z-index: 1000;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      padding: 20px;
+      width: 380px;
+      max-height: calc(100vh - 150px);
+      overflow-y: auto;
+      display: none;
+    }
+
+    .stats-panel.open {
+      display: block;
+      animation: slideIn 0.2s ease;
+    }
+
+    @media (max-width: 1024px) {
+      .stats-panel {
+        right: 10px;
+        width: calc(100% - 20px);
+        max-width: 380px;
+      }
+    }
+
+    .stats-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .stats-title {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stats-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--gray-500);
+      padding: 4px;
+    }
+
+    .stats-close:hover {
+      color: var(--dark);
+    }
+
+    .stats-section {
+      margin-bottom: 20px;
+    }
+
+    .stats-section-title {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--gray-700);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stats-summary {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stats-card {
+      background: var(--gray-50);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stats-card-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--theme-color);
+    }
+
+    .stats-card-label {
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .stats-chart-container {
+      background: var(--gray-50);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .pie-chart {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 16px;
+      position: relative;
+    }
+
+    .pie-chart svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .pie-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .pie-center-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .pie-center-label {
+      font-size: 10px;
+      color: var(--gray-500);
+    }
+
+    .pie-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .pie-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--gray-700);
+    }
+
+    .pie-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bar-label {
+      font-size: 11px;
+      color: var(--gray-600);
+      width: 60px;
+      flex-shrink: 0;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 20px;
+      background: var(--gray-200);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 6px;
+    }
+
+    .bar-value {
+      font-size: 10px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .timeline-chart {
+      height: 150px;
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      padding: 10px 0;
+    }
+
+    .timeline-bar {
+      flex: 1;
+      background: var(--theme-color);
+      border-radius: 3px 3px 0 0;
+      min-height: 4px;
+      position: relative;
+      cursor: pointer;
+      transition: opacity 0.2s, background 0.3s;
+    }
+
+    .timeline-bar:hover {
+      opacity: 0.8;
+    }
+
+    .timeline-bar:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--dark);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    .timeline-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    .timeline-label {
+      font-size: 9px;
+      color: var(--gray-500);
+    }
+
     /* Map Popup */
     .leaflet-popup-content-wrapper {
       border-radius: var(--radius);
@@ -1271,7 +1531,7 @@
     .popup-content { font-family: 'DM Sans', sans-serif; }
     .popup-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
     .popup-client { font-size: 12px; color: var(--gray-500); }
-    .popup-amount { font-weight: 600; color: var(--red); margin-top: 4px; }
+    .popup-amount { font-weight: 600; color: var(--theme-color); margin-top: 4px; }
 
     /* Mobile */
     .mobile-menu-btn {
@@ -1581,6 +1841,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         Ajouter
       </button>
+      <button class="btn btn-ghost btn-sm" id="statsBtn" title="Statistiques">📊</button>
       <button class="btn btn-ghost btn-sm" id="shareBtn" title="Partager">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
       </button>
@@ -1656,6 +1917,70 @@
       <div class="itinerary-result" id="itineraryResult">
         <div class="itinerary-result-title">📍 Résultat</div>
         <div class="itinerary-result-info" id="itineraryInfo"></div>
+      </div>
+    </div>
+    
+    <!-- Statistics Panel -->
+    <div class="stats-panel" id="statsPanel">
+      <div class="stats-header">
+        <span class="stats-title">📊 Statistiques</span>
+        <button class="stats-close" id="statsClose">✕</button>
+      </div>
+      
+      <div class="stats-summary">
+        <div class="stats-card">
+          <div class="stats-card-value" id="statsTotalAffaires">0</div>
+          <div class="stats-card-label">Affaires</div>
+        </div>
+        <div class="stats-card">
+          <div class="stats-card-value" id="statsTotalMontant">0 €</div>
+          <div class="stats-card-label">Montant total</div>
+        </div>
+      </div>
+      
+      <div class="stats-section">
+        <div class="stats-section-title">🎯 Répartition par statut</div>
+        <div class="stats-chart-container">
+          <div class="pie-chart" id="pieChart">
+            <svg viewBox="0 0 100 100">
+              <circle id="pieGagne" cx="50" cy="50" r="40" fill="none" stroke="#22c55e" stroke-width="20" stroke-dasharray="0 251.2"/>
+              <circle id="piePerdu" cx="50" cy="50" r="40" fill="none" stroke="#f43f5e" stroke-width="20" stroke-dasharray="0 251.2"/>
+              <circle id="pieEncours" cx="50" cy="50" r="40" fill="none" stroke="#f59e0b" stroke-width="20" stroke-dasharray="0 251.2"/>
+              <circle id="pieFaste" cx="50" cy="50" r="40" fill="none" stroke="#3b82f6" stroke-width="20" stroke-dasharray="0 251.2"/>
+            </svg>
+            <div class="pie-center">
+              <div class="pie-center-value" id="pieCenterValue">0</div>
+              <div class="pie-center-label">affaires</div>
+            </div>
+          </div>
+          <div class="pie-legend">
+            <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#22c55e"></span> Gagné (<span id="legendGagne">0</span>)</div>
+            <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#f43f5e"></span> Perdu (<span id="legendPerdu">0</span>)</div>
+            <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#f59e0b"></span> En cours (<span id="legendEncours">0</span>)</div>
+            <div class="pie-legend-item"><span class="pie-legend-dot" style="background:#3b82f6"></span> Faste (<span id="legendFaste">0</span>)</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-section">
+        <div class="stats-section-title">💰 Montants par statut</div>
+        <div class="stats-chart-container">
+          <div class="bar-chart" id="barChart">
+            <!-- Bars will be generated by JS -->
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-section">
+        <div class="stats-section-title">📈 Évolution mensuelle</div>
+        <div class="stats-chart-container">
+          <div class="timeline-chart" id="timelineChart">
+            <!-- Timeline bars will be generated by JS -->
+          </div>
+          <div class="timeline-labels" id="timelineLabels">
+            <!-- Labels will be generated by JS -->
+          </div>
+        </div>
       </div>
     </div>
     
@@ -3504,8 +3829,182 @@
 
     function switchTab(tabId) {
       currentTab = tabId;
+      updateThemeColor();
       renderTabs();
       applyFilters();
+    }
+
+    /* Theme Color System */
+    function updateThemeColor() {
+      const tab = tabs.find(t => t.id === currentTab);
+      const color = tab?.color || '#e10600';
+      
+      // Convert hex to RGB for light version
+      const r = parseInt(color.slice(1, 3), 16);
+      const g = parseInt(color.slice(3, 5), 16);
+      const b = parseInt(color.slice(5, 7), 16);
+      
+      // Darken color for hover states
+      const darken = (c) => Math.max(0, c - 30);
+      const darkColor = `rgb(${darken(r)}, ${darken(g)}, ${darken(b)})`;
+      
+      document.documentElement.style.setProperty('--theme-color', color);
+      document.documentElement.style.setProperty('--theme-color-light', `rgba(${r}, ${g}, ${b}, 0.15)`);
+      document.documentElement.style.setProperty('--theme-color-dark', darkColor);
+    }
+
+    /* Advanced Statistics Functions */
+    function updateAdvancedStats() {
+      const total = currentList.length;
+      const gagne = currentList.filter(i => i.statut === 'Gagné').length;
+      const perdu = currentList.filter(i => i.statut === 'Perdu').length;
+      const encours = currentList.filter(i => i.statut === 'En cours').length;
+      const faste = currentList.filter(i => i.statut === 'Faste').length;
+      
+      // Calculate total amount
+      const totalMontant = currentList.reduce((sum, item) => {
+        const val = parseMontant(item.montant);
+        return Number.isFinite(val) ? sum + val : sum;
+      }, 0);
+      
+      // Update summary cards
+      document.getElementById('statsTotalAffaires').textContent = total;
+      document.getElementById('statsTotalMontant').textContent = formatMontantShort(totalMontant);
+      
+      // Update pie chart
+      updatePieChart(gagne, perdu, encours, faste, total);
+      
+      // Update bar chart
+      updateBarChart();
+      
+      // Update timeline
+      updateTimeline();
+    }
+
+    function formatMontantShort(value) {
+      if (value >= 1000000) return (value / 1000000).toFixed(1) + ' M€';
+      if (value >= 1000) return (value / 1000).toFixed(0) + ' K€';
+      return value.toFixed(0) + ' €';
+    }
+
+    function updatePieChart(gagne, perdu, encours, faste, total) {
+      const circumference = 2 * Math.PI * 40; // ~251.2
+      
+      // Update legend
+      document.getElementById('legendGagne').textContent = gagne;
+      document.getElementById('legendPerdu').textContent = perdu;
+      document.getElementById('legendEncours').textContent = encours;
+      document.getElementById('legendFaste').textContent = faste;
+      document.getElementById('pieCenterValue').textContent = total;
+      
+      if (total === 0) {
+        document.getElementById('pieGagne').setAttribute('stroke-dasharray', '0 251.2');
+        document.getElementById('piePerdu').setAttribute('stroke-dasharray', '0 251.2');
+        document.getElementById('pieEncours').setAttribute('stroke-dasharray', '0 251.2');
+        document.getElementById('pieFaste').setAttribute('stroke-dasharray', '0 251.2');
+        return;
+      }
+      
+      // Calculate percentages
+      const pGagne = (gagne / total) * circumference;
+      const pPerdu = (perdu / total) * circumference;
+      const pEncours = (encours / total) * circumference;
+      const pFaste = (faste / total) * circumference;
+      
+      // Set stroke-dasharray and stroke-dashoffset for each segment
+      let offset = 0;
+      
+      document.getElementById('pieGagne').setAttribute('stroke-dasharray', `${pGagne} ${circumference}`);
+      document.getElementById('pieGagne').setAttribute('stroke-dashoffset', -offset);
+      offset += pGagne;
+      
+      document.getElementById('piePerdu').setAttribute('stroke-dasharray', `${pPerdu} ${circumference}`);
+      document.getElementById('piePerdu').setAttribute('stroke-dashoffset', -offset);
+      offset += pPerdu;
+      
+      document.getElementById('pieEncours').setAttribute('stroke-dasharray', `${pEncours} ${circumference}`);
+      document.getElementById('pieEncours').setAttribute('stroke-dashoffset', -offset);
+      offset += pEncours;
+      
+      document.getElementById('pieFaste').setAttribute('stroke-dasharray', `${pFaste} ${circumference}`);
+      document.getElementById('pieFaste').setAttribute('stroke-dashoffset', -offset);
+    }
+
+    function updateBarChart() {
+      const container = document.getElementById('barChart');
+      
+      const statuts = ['Gagné', 'Perdu', 'En cours', 'Faste'];
+      const colors = { 'Gagné': '#22c55e', 'Perdu': '#f43f5e', 'En cours': '#f59e0b', 'Faste': '#3b82f6' };
+      
+      const amounts = {};
+      let maxAmount = 0;
+      
+      statuts.forEach(s => {
+        amounts[s] = currentList.filter(i => i.statut === s).reduce((sum, item) => {
+          const val = parseMontant(item.montant);
+          return Number.isFinite(val) ? sum + val : sum;
+        }, 0);
+        if (amounts[s] > maxAmount) maxAmount = amounts[s];
+      });
+      
+      container.innerHTML = statuts.map(s => {
+        const percent = maxAmount > 0 ? (amounts[s] / maxAmount) * 100 : 0;
+        return `
+          <div class="bar-item">
+            <span class="bar-label">${s}</span>
+            <div class="bar-track">
+              <div class="bar-fill" style="width: ${percent}%; background: ${colors[s]};">
+                ${percent > 20 ? `<span class="bar-value">${formatMontantShort(amounts[s])}</span>` : ''}
+              </div>
+            </div>
+            ${percent <= 20 && amounts[s] > 0 ? `<span style="font-size:10px;color:var(--gray-600);">${formatMontantShort(amounts[s])}</span>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateTimeline() {
+      const container = document.getElementById('timelineChart');
+      const labelsContainer = document.getElementById('timelineLabels');
+      
+      // Group by month
+      const monthlyData = {};
+      const now = new Date();
+      
+      // Create last 6 months
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        monthlyData[key] = { montant: 0, count: 0, label: d.toLocaleDateString('fr-FR', { month: 'short' }) };
+      }
+      
+      // Fill with data based on datePrevisionnelle
+      currentList.forEach(item => {
+        if (item.datePrevisionnelle) {
+          const d = new Date(item.datePrevisionnelle);
+          const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+          if (monthlyData[key]) {
+            const val = parseMontant(item.montant);
+            if (Number.isFinite(val)) {
+              monthlyData[key].montant += val;
+              monthlyData[key].count++;
+            }
+          }
+        }
+      });
+      
+      // Find max for scaling
+      const values = Object.values(monthlyData);
+      const maxMontant = Math.max(...values.map(v => v.montant), 1);
+      
+      // Generate bars
+      container.innerHTML = values.map((v, i) => {
+        const height = (v.montant / maxMontant) * 100;
+        return `<div class="timeline-bar" style="height: ${Math.max(height, 4)}%;" data-tooltip="${v.label}: ${formatMontantShort(v.montant)} (${v.count})"></div>`;
+      }).join('');
+      
+      // Generate labels
+      labelsContainer.innerHTML = values.map(v => `<span class="timeline-label">${v.label}</span>`).join('');
     }
 
     /* Tab Modal */
@@ -3720,6 +4219,9 @@
         <span style="color:#f59e0b;margin-left:6px">◷${stats['En cours']}</span>
         <span style="color:#3b82f6;margin-left:6px">⚡${stats['Faste']}</span>
       `;
+      
+      // Update advanced stats panel
+      updateAdvancedStats();
     }
 
     function renderList(items) {
@@ -4450,6 +4952,9 @@
       };
       legend.addTo(map);
 
+      // Initialize theme color
+      updateThemeColor();
+
       // Initial render
       applyFilters();
 
@@ -4712,6 +5217,15 @@
             document.querySelector('.pill[data-filter="Faste"]')?.click();
             break;
         }
+      });
+
+      // Statistics panel
+      document.getElementById('statsBtn')?.addEventListener('click', () => {
+        document.getElementById('statsPanel').classList.toggle('open');
+        updateAdvancedStats();
+      });
+      document.getElementById('statsClose')?.addEventListener('click', () => {
+        document.getElementById('statsPanel').classList.remove('open');
       });
 
       // Help modal
