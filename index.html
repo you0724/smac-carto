@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <!-- saved from url=(0039)https://pn2beprix.github.io/smac-carto/ -->
 <html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -1040,6 +1039,230 @@
     .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; margin: 4px 0; }
     .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
 
+    /* Map Controls Custom */
+    .map-controls {
+      position: absolute;
+      top: 124px;
+      left: 10px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .map-control-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+
+    .map-control-btn:hover {
+      background: var(--gray-100);
+      transform: scale(1.05);
+    }
+
+    .map-control-btn.active {
+      background: var(--red);
+      color: white;
+    }
+
+    .map-control-btn.active:hover {
+      background: var(--red-dark);
+    }
+
+    /* Itinerary Panel */
+    .itinerary-panel {
+      position: absolute;
+      top: 124px;
+      left: 60px;
+      z-index: 1000;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      padding: 16px;
+      width: 280px;
+      max-height: 400px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .itinerary-panel.open {
+      display: block;
+      animation: slideIn 0.2s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .itinerary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .itinerary-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--dark);
+    }
+
+    .itinerary-close {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: var(--gray-500);
+    }
+
+    .itinerary-close:hover {
+      color: var(--dark);
+    }
+
+    .itinerary-help {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+      padding: 8px;
+      background: var(--gray-50);
+      border-radius: 6px;
+    }
+
+    .itinerary-stops {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .itinerary-stop {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: var(--gray-50);
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .itinerary-stop-number {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--red);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .itinerary-stop-name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .itinerary-stop-remove {
+      background: none;
+      border: none;
+      color: var(--gray-400);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .itinerary-stop-remove:hover {
+      color: var(--rose);
+    }
+
+    .itinerary-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .itinerary-actions button {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .itinerary-calc {
+      background: var(--red);
+      color: white;
+    }
+
+    .itinerary-calc:hover {
+      background: var(--red-dark);
+    }
+
+    .itinerary-calc:disabled {
+      background: var(--gray-300);
+      cursor: not-allowed;
+    }
+
+    .itinerary-clear {
+      background: var(--gray-200);
+      color: var(--gray-700);
+    }
+
+    .itinerary-clear:hover {
+      background: var(--gray-300);
+    }
+
+    .itinerary-result {
+      margin-top: 12px;
+      padding: 12px;
+      background: var(--green-light);
+      border-radius: 8px;
+      display: none;
+    }
+
+    .itinerary-result.visible {
+      display: block;
+    }
+
+    .itinerary-result-title {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--green);
+      margin-bottom: 4px;
+    }
+
+    .itinerary-result-info {
+      font-size: 13px;
+      color: var(--dark);
+    }
+
+    .itinerary-result-info span {
+      font-weight: 600;
+    }
+
+    /* Layer toggle style */
+    .layer-indicator {
+      font-size: 10px;
+      margin-top: 2px;
+      color: var(--gray-500);
+    }
+
     /* Map Popup */
     .leaflet-popup-content-wrapper {
       border-radius: var(--radius);
@@ -1403,6 +1626,39 @@
   <!-- MAIN -->
   <main>
     <div id="map"></div>
+    
+    <!-- Map Controls -->
+    <div class="map-controls">
+      <button class="map-control-btn" id="toggleLayerBtn" title="Basculer Plan/Satellite">
+        🗺️
+      </button>
+      <button class="map-control-btn" id="toggleItineraryBtn" title="Calculer un itinéraire">
+        🚗
+      </button>
+    </div>
+    
+    <!-- Itinerary Panel -->
+    <div class="itinerary-panel" id="itineraryPanel">
+      <div class="itinerary-header">
+        <span class="itinerary-title">🚗 Itinéraire</span>
+        <button class="itinerary-close" id="itineraryClose">✕</button>
+      </div>
+      <div class="itinerary-help">
+        Cliquez sur les marqueurs de la carte pour ajouter des étapes à votre itinéraire.
+      </div>
+      <div class="itinerary-stops" id="itineraryStops">
+        <!-- Stops will be added here -->
+      </div>
+      <div class="itinerary-actions">
+        <button class="itinerary-clear" id="itineraryClear">Effacer</button>
+        <button class="itinerary-calc" id="itineraryCalc" disabled>Calculer</button>
+      </div>
+      <div class="itinerary-result" id="itineraryResult">
+        <div class="itinerary-result-title">📍 Résultat</div>
+        <div class="itinerary-result-info" id="itineraryInfo"></div>
+      </div>
+    </div>
+    
     <div class="sidebar">
       <div class="search-section">
         <div class="search-box">
@@ -3555,11 +3811,17 @@
         });
 
         const marker = L.marker([lat, lng], { icon });
+        marker.itemData = item; // Store item data for itinerary
+        
         marker.bindPopup(`
           <div class="popup-content">
             <div class="popup-title">${escapeHTML(item.affaires)}</div>
             <div class="popup-client">${escapeHTML(item.client)} · ${escapeHTML(item.eg)}</div>
             <div class="popup-amount">${displayMontant(item.montant)}</div>
+            <button onclick="if(window.itineraryMode && window.itineraryMode()){window.addItineraryStop(${JSON.stringify(item).replace(/"/g, '&quot;')})}" 
+                    style="margin-top:8px;padding:6px 10px;background:#e10600;color:white;border:none;border-radius:4px;font-size:11px;cursor:pointer;width:100%;">
+              🚗 Ajouter à l'itinéraire
+            </button>
           </div>
         `);
         
@@ -3986,9 +4248,19 @@
 
       // Initialize map
       map = L.map('map').setView([48.8566, 2.3522], 10);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      
+      // Define tile layers
+      const planLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
-      }).addTo(map);
+      });
+      
+      const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '© Esri'
+      });
+      
+      // Add default layer
+      planLayer.addTo(map);
+      let currentLayer = 'plan';
 
       markerCluster = L.markerClusterGroup({
         spiderfyOnMaxZoom: true,
@@ -3996,6 +4268,172 @@
         maxClusterRadius: 50
       });
       map.addLayer(markerCluster);
+
+      // Layer toggle functionality
+      const toggleLayerBtn = document.getElementById('toggleLayerBtn');
+      toggleLayerBtn.addEventListener('click', () => {
+        if (currentLayer === 'plan') {
+          map.removeLayer(planLayer);
+          satelliteLayer.addTo(map);
+          currentLayer = 'satellite';
+          toggleLayerBtn.innerHTML = '🛰️';
+          toggleLayerBtn.title = 'Basculer vers Plan';
+          showToast('Vue satellite activée', 'success');
+        } else {
+          map.removeLayer(satelliteLayer);
+          planLayer.addTo(map);
+          currentLayer = 'plan';
+          toggleLayerBtn.innerHTML = '🗺️';
+          toggleLayerBtn.title = 'Basculer vers Satellite';
+          showToast('Vue plan activée', 'success');
+        }
+      });
+
+      // Itinerary functionality
+      let itineraryMode = false;
+      let itineraryStops = [];
+      let routingControl = null;
+      let routeLine = null;
+
+      const toggleItineraryBtn = document.getElementById('toggleItineraryBtn');
+      const itineraryPanel = document.getElementById('itineraryPanel');
+      const itineraryClose = document.getElementById('itineraryClose');
+      const itineraryStopsContainer = document.getElementById('itineraryStops');
+      const itineraryCalcBtn = document.getElementById('itineraryCalc');
+      const itineraryClearBtn = document.getElementById('itineraryClear');
+      const itineraryResult = document.getElementById('itineraryResult');
+      const itineraryInfo = document.getElementById('itineraryInfo');
+
+      function updateItineraryUI() {
+        itineraryStopsContainer.innerHTML = '';
+        itineraryStops.forEach((stop, index) => {
+          const div = document.createElement('div');
+          div.className = 'itinerary-stop';
+          div.innerHTML = `
+            <span class="itinerary-stop-number">${index + 1}</span>
+            <span class="itinerary-stop-name">${stop.name}</span>
+            <button class="itinerary-stop-remove" data-index="${index}">✕</button>
+          `;
+          itineraryStopsContainer.appendChild(div);
+        });
+
+        // Add remove listeners
+        document.querySelectorAll('.itinerary-stop-remove').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const idx = parseInt(e.target.dataset.index);
+            itineraryStops.splice(idx, 1);
+            updateItineraryUI();
+            clearRoute();
+          });
+        });
+
+        // Enable/disable calc button
+        itineraryCalcBtn.disabled = itineraryStops.length < 2;
+      }
+
+      function addItineraryStop(item) {
+        if (itineraryStops.find(s => s.id === item.id)) {
+          showToast('Cette affaire est déjà dans l\'itinéraire', 'error');
+          return;
+        }
+        itineraryStops.push({
+          id: item.id,
+          name: item.affaires,
+          lat: item.coords[0],
+          lng: item.coords[1]
+        });
+        updateItineraryUI();
+        showToast(`${item.affaires} ajouté à l'itinéraire`, 'success');
+      }
+
+      function clearRoute() {
+        if (routeLine) {
+          map.removeLayer(routeLine);
+          routeLine = null;
+        }
+        itineraryResult.classList.remove('visible');
+      }
+
+      function clearItinerary() {
+        itineraryStops = [];
+        updateItineraryUI();
+        clearRoute();
+      }
+
+      async function calculateRoute() {
+        if (itineraryStops.length < 2) return;
+
+        clearRoute();
+        itineraryCalcBtn.textContent = '⏳ Calcul...';
+        itineraryCalcBtn.disabled = true;
+
+        try {
+          // Build waypoints string for OSRM
+          const coords = itineraryStops.map(s => `${s.lng},${s.lat}`).join(';');
+          const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
+          
+          const response = await fetch(url);
+          const data = await response.json();
+
+          if (data.code === 'Ok' && data.routes && data.routes[0]) {
+            const route = data.routes[0];
+            const distance = (route.distance / 1000).toFixed(1);
+            const duration = Math.round(route.duration / 60);
+
+            // Draw route on map
+            routeLine = L.geoJSON(route.geometry, {
+              style: {
+                color: '#e10600',
+                weight: 4,
+                opacity: 0.8
+              }
+            }).addTo(map);
+
+            // Fit bounds to route
+            map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
+
+            // Show result
+            itineraryInfo.innerHTML = `
+              <div>Distance: <span>${distance} km</span></div>
+              <div>Durée estimée: <span>${duration} min</span></div>
+              <div style="font-size:11px;color:var(--gray-500);margin-top:4px;">${itineraryStops.length} étapes</div>
+            `;
+            itineraryResult.classList.add('visible');
+            showToast('Itinéraire calculé !', 'success');
+          } else {
+            showToast('Impossible de calculer l\'itinéraire', 'error');
+          }
+        } catch (error) {
+          console.error('Routing error:', error);
+          showToast('Erreur lors du calcul', 'error');
+        }
+
+        itineraryCalcBtn.textContent = 'Calculer';
+        itineraryCalcBtn.disabled = itineraryStops.length < 2;
+      }
+
+      // Toggle itinerary panel
+      toggleItineraryBtn.addEventListener('click', () => {
+        itineraryMode = !itineraryMode;
+        toggleItineraryBtn.classList.toggle('active', itineraryMode);
+        itineraryPanel.classList.toggle('open', itineraryMode);
+        if (itineraryMode) {
+          showToast('Mode itinéraire activé - Cliquez sur les marqueurs', 'info');
+        }
+      });
+
+      itineraryClose.addEventListener('click', () => {
+        itineraryMode = false;
+        toggleItineraryBtn.classList.remove('active');
+        itineraryPanel.classList.remove('open');
+      });
+
+      itineraryClearBtn.addEventListener('click', clearItinerary);
+      itineraryCalcBtn.addEventListener('click', calculateRoute);
+
+      // Store reference for marker clicks
+      window.itineraryMode = () => itineraryMode;
+      window.addItineraryStop = addItineraryStop;
 
       // Legend
       const legend = L.control({ position: 'bottomright' });
