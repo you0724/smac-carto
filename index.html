@@ -7,21 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link href="./Cartographie SMAC villepinte_files/css2" rel="stylesheet">
+  <link href="./Cartographie SMAC mdp_files/css2" rel="stylesheet">
   <style>
     :root {
       --red: #e10600;
       --red-dark: #c70500;
-      --red-light: #fff0f0;
+      --red-light: #fff5f5;
       --dark: #1a1a1a;
       --gray-50: #fafafa;
-      --gray-100: #f4f4f5;
-      --gray-200: #e4e4e7;
-      --gray-300: #d4d4d8;
-      --gray-500: #71717a;
-      --gray-700: #3f3f46;
-      --gray-800: #27272a;
-      --gray-900: #18181b;
+      --gray-100: #f5f5f5;
+      --gray-200: #e5e5e5;
+      --gray-300: #d4d4d4;
+      --gray-500: #737373;
+      --gray-700: #404040;
+      --gray-800: #262626;
+      --gray-900: #171717;
       --green: #22c55e;
       --green-light: #dcfce7;
       --orange: #f59e0b;
@@ -34,38 +34,46 @@
       --purple-light: #ede9fe;
       --cyan: #06b6d4;
       --cyan-light: #cffafe;
-      --radius: 10px;
+      --radius: 8px;
       --radius-sm: 6px;
-      --shadow: 0 1px 3px rgba(0,0,0,0.08);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-      --shadow-lg: 0 10px 40px rgba(0,0,0,0.15);
+      --shadow: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 4px rgba(0,0,0,0.06);
+      --shadow-lg: 0 4px 8px rgba(0,0,0,0.08);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { 
       height: 100%; 
       height: -webkit-fill-available;
+      overflow: hidden;
     }
     body {
       font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--gray-50);
+      background: #e5e5e5;
       color: var(--dark);
       line-height: 1.5;
       min-height: 100vh;
       min-height: -webkit-fill-available;
+      overflow: hidden;
     }
 
     /* === HEADER === */
     header {
-      background: white;
-      border-bottom: 1px solid var(--gray-200);
-      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
+      position: fixed;
       top: 0;
-      z-index: 100;
+      left: 0;
+      right: 0;
+      height: 56px;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     }
 
     .logo {
@@ -75,16 +83,18 @@
     }
 
     .logo-text {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 700;
       color: var(--red);
-      letter-spacing: 1px;
+      letter-spacing: -0.3px;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
     }
 
     .logo-subtitle {
-      font-size: 13px;
-      color: var(--gray-500);
-      font-weight: 500;
+      font-size: 12px;
+      color: var(--gray-700);
+      font-weight: 600;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
     }
 
     .header-actions {
@@ -95,14 +105,28 @@
 
     /* === TABS with Drag & Drop === */
     .tabs-container {
-      background: white;
-      border-bottom: 1px solid var(--gray-200);
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(25px) saturate(180%);
+      -webkit-backdrop-filter: blur(25px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
       padding: 0 24px;
       display: flex;
       gap: 0;
       align-items: center;
       overflow-x: auto;
-      position: relative;
+      position: fixed;
+      top: 56px;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      height: 56px;
+    }
+
+    @media (max-width: 1024px) {
+      .tabs-container {
+        right: 0;
+      }
     }
 
     .tabs-wrapper {
@@ -113,31 +137,38 @@
     }
 
     .tab-btn {
-      padding: 12px 20px;
-      border: none;
-      background: transparent;
+      padding: 10px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       font-family: inherit;
       font-size: 14px;
       font-weight: 600;
-      color: var(--gray-500);
+      color: var(--gray-700);
       cursor: grab;
       position: relative;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       gap: 8px;
       user-select: none;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
     }
 
     .tab-btn:hover {
       color: var(--dark);
-      background: var(--gray-100);
+      background: rgba(255, 255, 255, 0.4);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-1px);
     }
 
     .tab-btn.active {
       color: var(--red);
-      background: var(--red-light);
+      background: rgba(255, 245, 245, 0.5);
+      border-color: rgba(225, 6, 0, 0.3);
+      box-shadow: 0 2px 10px rgba(225, 6, 0, 0.15);
     }
 
     .tab-btn.active::after {
@@ -147,7 +178,7 @@
       left: 50%;
       transform: translateX(-50%);
       width: 40px;
-      height: 3px;
+      height: 2px;
       background: var(--red);
       border-radius: 3px 3px 0 0;
     }
@@ -283,7 +314,7 @@
       font-weight: 500;
       color: var(--gray-500);
       cursor: pointer;
-      margin-left: 8px;
+      margin-left: auto;
       white-space: nowrap;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
@@ -312,16 +343,18 @@
       gap: 6px;
       padding: 8px 14px;
       border: none;
-      border-radius: var(--radius-sm);
+      border-radius: 8px;
       font-family: inherit;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
     .btn:active {
-      transform: scale(0.97);
+      transform: scale(0.98);
     }
 
     .btn-primary { 
@@ -330,25 +363,25 @@
     }
     .btn-primary:hover { 
       background: var(--red-dark);
-      box-shadow: 0 4px 12px rgba(225, 6, 0, 0.3);
     }
 
     .btn-secondary {
-      background: white;
+      background: rgba(255, 255, 255, 0.6);
       color: var(--dark);
-      border: 1px solid var(--gray-300);
+      border: 1px solid rgba(229, 229, 229, 0.8);
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
     }
     .btn-secondary:hover { 
-      background: var(--gray-100);
-      border-color: var(--gray-400);
+      background: rgba(255, 255, 255, 0.8);
     }
 
     .btn-ghost {
       background: transparent;
-      color: var(--gray-500);
+      color: var(--gray-700);
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
     }
     .btn-ghost:hover { 
-      background: var(--gray-100); 
+      background: rgba(245, 245, 245, 0.4); 
       color: var(--dark); 
     }
 
@@ -368,15 +401,21 @@
     main {
       display: grid;
       grid-template-columns: 1fr 420px;
-      height: calc(100vh - 118px);
-      height: calc(100dvh - 118px);
+      height: 100vh;
+      height: 100dvh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
     }
 
     @media (max-width: 1024px) {
       main { 
         grid-template-columns: 1fr; 
-        height: calc(100vh - 110px);
-        height: calc(100dvh - 110px);
+        height: 100vh;
+        height: 100dvh;
       }
       .sidebar { display: none; }
     }
@@ -386,19 +425,24 @@
       width: 100%;
       height: 100%;
       min-height: 300px;
-      background: var(--gray-100);
+      background: #e5e5e5;
       position: relative;
-      z-index: 1;
+      z-index: 0;
+      overflow: hidden;
     }
 
     /* === SIDEBAR === */
     .sidebar {
-      background: white;
-      border-left: 1px solid var(--gray-200);
-      display: grid;
-      grid-template-rows: auto auto 1fr auto; /* search, stats, list (flexible), total (fixe) */
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-left: 1px solid rgba(229, 229, 229, 0.6);
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
-      height: 100%;
+      z-index: 10;
+      position: relative;
+      padding-top: 112px;
     }
 
     /* === TAB CONTENT ANIMATION === */
@@ -418,7 +462,7 @@
     /* === SEARCH & FILTERS === */
     .search-section {
       padding: 16px;
-      border-bottom: 1px solid var(--gray-200);
+      border-bottom: 1px solid rgba(229, 229, 229, 0.6);
     }
 
     .search-box {
@@ -429,17 +473,17 @@
     .search-input {
       flex: 1;
       padding: 10px 14px;
-      border: 1px solid var(--gray-200);
+      border: 1px solid rgba(229, 229, 229, 0.8);
       border-radius: var(--radius-sm);
       font-family: inherit;
       font-size: 14px;
-      background: var(--gray-50);
+      background: rgba(250, 250, 250, 0.5);
       transition: all 0.2s;
     }
     .search-input:focus {
       outline: none;
       border-color: var(--red);
-      background: white;
+      background: rgba(255, 255, 255, 0.9);
       box-shadow: 0 0 0 3px rgba(225, 6, 0, 0.1);
     }
 
@@ -616,8 +660,8 @@
 
     /* === LIST === */
     .list-container {
+      flex: 1;
       overflow-y: auto;
-      min-height: 0; /* Important pour que le scroll fonctionne dans un grid */
     }
 
     .list-item {
@@ -651,7 +695,7 @@
     }
 
     .list-item:hover { 
-      background: var(--gray-50);
+      background: rgba(250, 250, 250, 0.6);
       transform: translateX(4px);
     }
 
@@ -747,7 +791,7 @@
     .status.encours { background: var(--orange-light); color: #92400e; }
     .status.faste { background: var(--blue-light); color: #1d4ed8; }
 
-    /* Total Bar - toujours visible en bas */
+    /* Total Bar */
     .total-bar {
       padding: 14px 16px;
       background: linear-gradient(135deg, var(--red-light) 0%, white 100%);
@@ -755,7 +799,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
     }
 
     .total-bar span { font-size: 13px; color: var(--gray-500); }
@@ -770,11 +813,12 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.4);
       z-index: 1000;
       justify-content: center;
       align-items: center;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       opacity: 0;
       transition: opacity 0.3s;
     }
@@ -784,13 +828,16 @@
     }
 
     .modal {
-      background: white;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(229, 229, 229, 0.8);
       border-radius: var(--radius);
       width: 100%;
       max-width: 520px;
       max-height: 90vh;
       overflow-y: auto;
-      box-shadow: var(--shadow-lg);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
       animation: modalIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
@@ -963,23 +1010,24 @@
       border: none;
     }
 
-    /* Leaflet custom - optimisé pour le zoom */
+    /* Leaflet custom */
     .leaflet-marker-icon {
-      /* Pas de transition sur transform pour éviter les conflits avec le zoom */
-      will-change: transform;
+      transition: transform 0.2s;
     }
     .leaflet-marker-icon:hover {
-      filter: brightness(1.1);
-      z-index: 1000 !important;
+      transform: scale(1.1);
+    }
+
+    /* Leaflet custom */
+    .leaflet-container {
+      background: #e5e5e5;
     }
     
-    /* Fix pour les animations de zoom Leaflet */
-    .leaflet-zoom-anim .leaflet-zoom-animated {
-      will-change: transform;
+    .leaflet-marker-icon {
+      transition: transform 0.2s;
     }
-    
-    .leaflet-tile-container {
-      will-change: transform;
+    .leaflet-marker-icon:hover {
+      transform: scale(1.1);
     }
 
     .legend {
@@ -1279,8 +1327,8 @@
       gap: 6px;
     }
   </style>
-<link rel="stylesheet" href="./Cartographie SMAC villepinte_files/leaflet.css"><link rel="stylesheet" href="./Cartographie SMAC villepinte_files/MarkerCluster.css"><link rel="stylesheet" href="./Cartographie SMAC villepinte_files/MarkerCluster.Default.css"><link rel="stylesheet" href="./Cartographie SMAC villepinte_files/leaflet(1).css"><link rel="stylesheet" href="./Cartographie SMAC villepinte_files/MarkerCluster(1).css"><link rel="stylesheet" href="./Cartographie SMAC villepinte_files/MarkerCluster(1).Default.css"></head>
-<body class="">
+<link rel="stylesheet" href="./Cartographie SMAC mdp_files/leaflet.css"><link rel="stylesheet" href="./Cartographie SMAC mdp_files/MarkerCluster.css"><link rel="stylesheet" href="./Cartographie SMAC mdp_files/MarkerCluster.Default.css"></head>
+<body>
 
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
@@ -1333,14 +1381,14 @@
             <button class="tab-action-btn rename" title="Renommer">✏️</button>
             <button class="tab-action-btn delete" title="Supprimer">✕</button>
           </span>
-        </button><button class="tab-btn   " data-tab="tab_1768221876427_bzdn" data-index="1" draggable="true">
+        </button><button class="tab-btn  locked protected" data-tab="projets" data-index="1" draggable="true">
           <span class="drag-handle">⋮⋮</span>
-          <span class="tab-dot" style="background:#22c55e"></span>
-          <span class="tab-name">Projets 2026</span>
-          
+          <span class="tab-dot" style="background:#8b5cf6"></span>
+          <span class="tab-name">Projets Chiffrés 2026</span>
+          <span class="lock-icon">🔒</span>
           <span class="tab-count">1</span>
           <span class="tab-actions">
-            <button class="tab-action-btn lock " title="Protéger">🔒</button>
+            <button class="tab-action-btn lock has-password" title="Retirer la protection">🔓</button>
             <button class="tab-action-btn rename" title="Renommer">✏️</button>
             <button class="tab-action-btn delete" title="Supprimer">✕</button>
           </span>
@@ -1355,7 +1403,6 @@
   <!-- MAIN -->
   <main>
     <div id="map"></div>
-    
     <div class="sidebar">
       <div class="search-section">
         <div class="search-box">
@@ -2681,12 +2728,6 @@
 
     const nfEUR = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
     const displayMontant = m => { const n = parseMontant(m); return Number.isFinite(n) ? nfEUR.format(n) : (m || '-'); };
-    // Version PDF sans espaces insécables ni caractères spéciaux
-    const displayMontantPDF = m => { 
-      const n = parseMontant(m); 
-      if (!Number.isFinite(n)) return m || '-';
-      return n.toLocaleString('fr-FR').replace(/\s/g, ' ') + ' EUR';
-    };
     const formatDateStamp = () => { const d = new Date(); const pad = n => String(n).padStart(2,'0'); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
     const parseCoord = v => { const s = String(v ?? '').trim().replace(',', '.'); return parseFloat(s) || NaN; };
     const parseDateISO = v => { const d = new Date(v); return Number.isFinite(d.getTime()) ? d.getTime() : NaN; };
@@ -2738,20 +2779,10 @@
 
     /* Protection Modal Functions */
     function openSetPasswordModal(tabId) {
-      // Demander le code maître avant de permettre la protection
-      const masterCodeInput = prompt('🔐 Code de gestion requis pour protéger cet onglet :');
+      const masterCodeInput = prompt('🔐 Code de gestion requis :');
+      if (!masterCodeInput) return showToast('Annulé', 'info');
+      if (masterCodeInput !== MASTER_CODE) return showToast('❌ Code incorrect', 'error');
       
-      if (!masterCodeInput) {
-        showToast('Protection annulée.', 'info');
-        return;
-      }
-      
-      if (masterCodeInput !== MASTER_CODE) {
-        showToast('❌ Code de gestion incorrect. Protection refusée.', 'error');
-        return;
-      }
-      
-      // Code maître correct, on peut continuer
       protectingTabId = tabId;
       document.getElementById('newPasswordInput').value = '';
       document.getElementById('confirmPasswordInput').value = '';
@@ -2832,20 +2863,10 @@
 
     /* Remove Protection Modal Functions */
     function openRemoveProtectionModal(tabId) {
-      // Demander le code maître avant de permettre de retirer la protection
-      const masterCodeInput = prompt('🔐 Code de gestion requis pour retirer la protection :');
+      const masterCodeInput = prompt('🔐 Code de gestion requis :');
+      if (!masterCodeInput) return showToast('Annulé', 'info');
+      if (masterCodeInput !== MASTER_CODE) return showToast('❌ Code incorrect', 'error');
       
-      if (!masterCodeInput) {
-        showToast('Retrait de protection annulé.', 'info');
-        return;
-      }
-      
-      if (masterCodeInput !== MASTER_CODE) {
-        showToast('❌ Code de gestion incorrect. Retrait refusé.', 'error');
-        return;
-      }
-      
-      // Code maître correct, on peut continuer
       removingProtectionTabId = tabId;
       document.getElementById('removeProtectionPassword').value = '';
       document.getElementById('removeProtectionError').style.display = 'none';
@@ -3313,20 +3334,10 @@
     }
 
     async function deleteTab(tabId) {
-      // Demander le code maître avant de permettre la suppression
-      const masterCodeInput = prompt('🔐 Code de gestion requis pour supprimer cet onglet :');
+      const masterCodeInput = prompt('🔐 Code de gestion requis :');
+      if (!masterCodeInput) return showToast('Annulé', 'info');
+      if (masterCodeInput !== MASTER_CODE) return showToast('❌ Code incorrect', 'error');
       
-      if (!masterCodeInput) {
-        showToast('Suppression annulée.', 'info');
-        return;
-      }
-      
-      if (masterCodeInput !== MASTER_CODE) {
-        showToast('❌ Code de gestion incorrect. Suppression refusée.', 'error');
-        return;
-      }
-      
-      // Code maître correct, on peut continuer avec la suppression
       const idx = tabs.findIndex(t => t.id === tabId);
       if (idx > -1) {
         const tabName = tabs[idx].name;
@@ -3726,7 +3737,7 @@
       const lng = parseCoord(document.getElementById('mLng').value);
 
       if (!affaires || !client) {
-        showToast('Affaires et Client sont obligatoires.', 'error');
+        showToast('Affaires et MOA sont obligatoires.', 'error');
         return;
       }
       if (isNaN(lat) || isNaN(lng)) {
@@ -3837,60 +3848,107 @@
       }
       
       const { jsPDF } = jspdf;
-      // Mode paysage pour 8 colonnes
-      const doc = new jsPDF('landscape');
+      const doc = new jsPDF('landscape', 'mm', 'a4');
       
-      doc.setFontSize(18);
-      doc.setTextColor(225, 6, 0);
-      doc.text('SMAC - Cartographie des affaires', 14, 20);
-      
-      doc.setFontSize(10);
-      doc.setTextColor(100);
+      // Get current tab name
       const currentTabObj = tabs.find(t => t.id === currentTab);
-      doc.text(`Onglet: ${currentTabObj?.name || currentTab} | Export du ${new Date().toLocaleDateString('fr-FR')} | ${currentList.length} affaire(s)`, 14, 28);
+      const tabName = currentTabObj ? currentTabObj.name : 'Data-Centers';
       
-      const tableData = currentList.map(item => [
-        item.affaires || '-',
-        item.adresse || '-',
-        item.eg || '-',
-        item.architect || '-',
-        item.client || '-',
-        item.description || '-',
-        displayMontantPDF(item.montant),
-        formatDateFR(item.datePrevisionnelle) || '-'
+      // Header - Style SMAC avec rouge
+      doc.setFontSize(16);
+      doc.setFont(undefined, 'bold');
+      doc.setTextColor(225, 6, 0); // Rouge SMAC
+      doc.text('SMAC - Cartographie des affaires', 14, 15);
+      
+      // Subtitle with tab info
+      doc.setFontSize(9);
+      doc.setFont(undefined, 'normal');
+      doc.setTextColor(100, 100, 100);
+      const today = new Date();
+      const dateStr = `${today.getDate().toString().padStart(2,'0')}/${(today.getMonth()+1).toString().padStart(2,'0')}/${today.getFullYear()}`;
+      doc.text(`Onglet: ${tabName} | Export du ${dateStr} | ${currentList.length} affaire(s)`, 14, 21);
+      
+      // Fonction pour formater les montants proprement pour le PDF
+      const formatMontantPDF = (m) => {
+        const n = parseMontant(m);
+        if (!Number.isFinite(n)) return m || '-';
+        return n.toLocaleString('fr-FR').replace(/\s/g, ' ') + ' EUR';
+      };
+      
+      // Table data
+      const tableData = currentList.map(item => {
+        const ville = item.adresse ? item.adresse.split(',')[0].trim() : '-';
+        return [
+          item.affaires || '-',
+          ville,
+          item.eg || '-',
+          item.architect || '-',
+          item.client || '-',
+          item.description || '-',
+          formatMontantPDF(item.montant),
+          item.datePrevisionnelle ? formatDateFR(item.datePrevisionnelle) : '-'
+        ];
+      });
+      
+      // Calculate total
+      const total = currentList.reduce((sum, item) => {
+        const val = parseMontant(item.montant);
+        return Number.isFinite(val) ? sum + val : sum;
+      }, 0);
+      
+      // Add total row
+      const totalFormatted = total.toLocaleString('fr-FR').replace(/\s/g, ' ') + ' EUR';
+      tableData.push([
+        'Total:', '', '', '', '', '',
+        totalFormatted,
+        ''
       ]);
       
+      // Create table - Style SMAC avec header rouge
       doc.autoTable({
-        startY: 35,
+        startY: 27,
         head: [['Affaire', 'Ville', 'EG', 'MOE', 'MOA', 'Prestation', 'Montant', 'Date prév.']],
         body: tableData,
-        styles: { fontSize: 8, cellPadding: 2 },
-        headStyles: { fillColor: [225, 6, 0], textColor: 255, fontStyle: 'bold' },
-        alternateRowStyles: { fillColor: [250, 250, 250] },
+        theme: 'grid',
+        styles: { 
+          fontSize: 8,
+          cellPadding: 2.5,
+          textColor: [30, 30, 30],
+          lineWidth: 0.1,
+          lineColor: [200, 200, 200]
+        },
+        headStyles: { 
+          fillColor: [225, 6, 0], // Rouge SMAC
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          halign: 'left'
+        },
+        bodyStyles: {
+          fillColor: [255, 255, 255]
+        },
+        alternateRowStyles: {
+          fillColor: [252, 252, 252]
+        },
         columnStyles: {
-          0: { cellWidth: 35 },  // Affaire
-          1: { cellWidth: 35 },  // Ville
-          2: { cellWidth: 20 },  // EG
-          3: { cellWidth: 30 },  // Archi
-          4: { cellWidth: 30 },  // Client
-          5: { cellWidth: 40 },  // Prestation
-          6: { cellWidth: 28, halign: 'right' },  // Montant
-          7: { cellWidth: 25 }   // Date
-        }
+          0: { cellWidth: 38 },
+          1: { cellWidth: 40 },
+          2: { cellWidth: 18 },
+          3: { cellWidth: 32 },
+          4: { cellWidth: 28 },
+          5: { cellWidth: 38 },
+          6: { cellWidth: 30, halign: 'right' },
+          7: { cellWidth: 24 }
+        },
+        didParseCell: function(data) {
+          if (data.row.index === tableData.length - 1) {
+            data.cell.styles.fontStyle = 'bold';
+            data.cell.styles.fillColor = [255, 245, 245]; // Rouge très clair
+          }
+        },
+        margin: { left: 14, right: 14 }
       });
       
-      // Total en bas
-      const finalY = doc.lastAutoTable.finalY + 10;
-      let total = 0;
-      currentList.forEach(item => {
-        const m = parseMontant(item.montant);
-        if (!isNaN(m)) total += m;
-      });
-      doc.setFontSize(12);
-      doc.setTextColor(225, 6, 0);
-      doc.text(`Total: ${total.toLocaleString('fr-FR').replace(/\s/g, ' ')} EUR`, 250, finalY, { align: 'right' });
-      
-      doc.save(`SMAC_${currentTabObj?.name || 'Export'}_${formatDateStamp()}.pdf`);
+      doc.save(`SMAC_${tabName}_${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getDate().toString().padStart(2,'0')}.pdf`);
       showToast('Export PDF téléchargé !', 'success');
     }
 
@@ -3953,16 +4011,6 @@
         return div;
       };
       legend.addTo(map);
-
-      // Fix: Invalider la taille après le rendu initial (bug classique Leaflet)
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 100);
-      
-      // Fix: Invalider aussi après un resize de fenêtre
-      window.addEventListener('resize', () => {
-        map.invalidateSize();
-      });
 
       // Initial render
       applyFilters();
@@ -4269,5 +4317,4 @@
   </script>
 
 
-
-</body></html>
+<script src="./Cartographie SMAC mdp_files/leaflet.js.téléchargement" async=""></script><script src="./Cartographie SMAC mdp_files/leaflet.markercluster.js.téléchargement" async=""></script><script src="./Cartographie SMAC mdp_files/xlsx.full.min.js.téléchargement" async=""></script><script src="./Cartographie SMAC mdp_files/jspdf.umd.min.js.téléchargement" async=""></script><script src="./Cartographie SMAC mdp_files/jspdf.plugin.autotable.min.js.téléchargement" async=""></script></body></html>
