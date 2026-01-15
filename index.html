@@ -2303,12 +2303,144 @@
       align-items: center;
       gap: 6px;
     }
+
+    /* === CLIENT MODE === */
+    .client-mode-btn {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .client-mode-btn.active {
+      background: linear-gradient(135deg, #06b6d4, #0891b2);
+      color: white;
+      border-color: transparent;
+    }
+
+    .client-mode-btn.active::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) rotate(45deg); }
+    }
+
+    .client-mode-indicator {
+      position: fixed;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #06b6d4, #0891b2);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      z-index: 1001;
+      display: none;
+      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+      animation: slideDown 0.3s ease;
+    }
+
+    .client-mode-indicator.visible {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Hide elements in client mode */
+    body.client-mode .list-item-amount,
+    body.client-mode .total-bar strong,
+    body.client-mode .popup-amount,
+    body.client-mode .stats-card-value,
+    body.client-mode .stats-panel,
+    body.client-mode #statsBtn,
+    body.client-mode .forecast-value,
+    body.client-mode .forecast-detail-value,
+    body.client-mode .comparison-period-value,
+    body.client-mode .comparison-percent,
+    body.client-mode .ranking-amount,
+    body.client-mode .objective-values,
+    body.client-mode .objective-fill,
+    body.client-mode .objective-percent,
+    body.client-mode .bar-chart,
+    body.client-mode .timeline-chart,
+    body.client-mode #exportExcel,
+    body.client-mode #exportPdf,
+    body.client-mode .filter-group:has(#minMontant),
+    body.client-mode .filter-group:has(#maxMontant),
+    body.client-mode #statusStats,
+    body.client-mode .responsable-badge,
+    body.client-mode .list-item-actions .edit,
+    body.client-mode .list-item-actions .delete,
+    body.client-mode .list-item-actions .duplicate,
+    body.client-mode #addBtn,
+    body.client-mode .tab-actions,
+    body.client-mode #addTabBtn,
+    body.client-mode #resetData,
+    body.client-mode .objective-edit-btn,
+    body.client-mode .objective-input-group,
+    body.client-mode .advanced-toggle,
+    body.client-mode .advanced-panel {
+      display: none !important;
+    }
+
+    /* Replace amounts with masked indicator */
+    body.client-mode .list-item-footer::after {
+      content: '•••••';
+      font-weight: 600;
+      color: var(--gray-400);
+      letter-spacing: 2px;
+    }
+
+    body.client-mode .total-bar::after {
+      content: 'Mode présentation client';
+      font-size: 13px;
+      color: var(--cyan);
+      font-weight: 500;
+    }
+
+    /* Adjust EG column visibility - make it less prominent */
+    body.client-mode .list-item-meta span:first-child {
+      color: var(--gray-400);
+    }
+
+    /* Style adjustments for cleaner client view */
+    body.client-mode .search-section {
+      padding-bottom: 12px;
+    }
+
+    body.client-mode .stats-bar {
+      background: linear-gradient(135deg, var(--cyan-light), white);
+      border-left: 3px solid var(--cyan);
+    }
+
+    body.client-mode .header-actions {
+      gap: 6px;
+    }
   </style>
 <link rel="stylesheet" href="./Cartographie SMAC mdp_files/leaflet.css"><link rel="stylesheet" href="./Cartographie SMAC mdp_files/MarkerCluster.css"><link rel="stylesheet" href="./Cartographie SMAC mdp_files/MarkerCluster.Default.css"></head>
 <body>
 
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Client Mode Indicator -->
+  <div class="client-mode-indicator" id="clientModeIndicator">
+    👁️ Mode Présentation Client · <span style="opacity:0.8">Données confidentielles masquées</span>
+  </div>
 
   <!-- HEADER -->
   <header>
@@ -2340,6 +2472,9 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
       </button>
       <button class="btn btn-ghost btn-sm" id="helpBtn" title="Aide (?)">❓</button>
+      <button class="btn btn-secondary btn-sm client-mode-btn" id="clientModeBtn" title="Mode Client (présentation)">
+        👁️ Client
+      </button>
       <button class="btn btn-ghost btn-sm mobile-menu-btn" id="mobileMenuBtn">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
       </button>
@@ -3917,6 +4052,7 @@
           <ul style="font-size: 13px; margin-top: 8px; padding-left: 20px; color: var(--gray-700);">
             <li>Glissez-déposez les onglets pour les réorganiser</li>
             <li>Cliquez sur 🔒 pour protéger un onglet par mot de passe</li>
+            <li>Utilisez le <strong>Mode Client</strong> pour masquer prix, EG et statistiques lors d'une présentation</li>
           </ul>
         </div>
         <div style="display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13px;">
@@ -3927,6 +4063,7 @@
           <span class="kbd">/</span><span>Focus recherche</span>
           <span class="kbd">Échap</span><span>Fermer les fenêtres</span>
           <span class="kbd">1-5</span><span>Filtrer par statut</span>
+          <span class="kbd">C</span><span>Mode Client (présentation)</span>
         </div>
       </div>
       <div class="modal-footer">
@@ -4006,6 +4143,39 @@
       toast.textContent = message;
       container.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
+    }
+
+    /* Client Mode - Hide confidential data for presentations */
+    let clientModeActive = false;
+
+    function toggleClientMode() {
+      clientModeActive = !clientModeActive;
+      
+      const body = document.body;
+      const btn = document.getElementById('clientModeBtn');
+      const indicator = document.getElementById('clientModeIndicator');
+      
+      if (clientModeActive) {
+        body.classList.add('client-mode');
+        btn.classList.add('active');
+        btn.innerHTML = '👁️ Client ON';
+        indicator.classList.add('visible');
+        
+        // Close stats panel if open
+        document.getElementById('statsPanel')?.classList.remove('open');
+        
+        showToast('🔒 Mode Client activé - Données confidentielles masquées', 'success');
+      } else {
+        body.classList.remove('client-mode');
+        btn.classList.remove('active');
+        btn.innerHTML = '👁️ Client';
+        indicator.classList.remove('visible');
+        
+        showToast('Mode Client désactivé', 'info');
+      }
+      
+      // Re-render to update the view
+      applyFilters();
     }
 
     /* Password Hashing (Simple hash that works everywhere) */
@@ -5263,8 +5433,8 @@
         marker.bindPopup(`
           <div class="popup-content">
             <div class="popup-title">${escapeHTML(item.affaires)}</div>
-            <div class="popup-client">${escapeHTML(item.client)} · ${escapeHTML(item.eg)}</div>
-            <div class="popup-amount">${displayMontant(item.montant)}</div>
+            <div class="popup-client">${escapeHTML(item.client)}${clientModeActive ? '' : ' · ' + escapeHTML(item.eg)}</div>
+            ${clientModeActive ? '' : `<div class="popup-amount">${displayMontant(item.montant)}</div>`}
             <button onclick="if(window.itineraryMode && window.itineraryMode()){window.addItineraryStop(${JSON.stringify(item).replace(/"/g, '&quot;')})}" 
                     style="margin-top:8px;padding:6px 10px;background:#e10600;color:white;border:none;border-radius:4px;font-size:11px;cursor:pointer;width:100%;">
               🚗 Ajouter à l'itinéraire
@@ -6154,6 +6324,9 @@
       document.getElementById('exportExcel')?.addEventListener('click', exportExcel);
       document.getElementById('exportPdf')?.addEventListener('click', exportPDF);
 
+      // Client Mode Toggle
+      document.getElementById('clientModeBtn')?.addEventListener('click', toggleClientMode);
+
       // Mobile
       document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
         document.getElementById('mobileSidebar').classList.add('open');
@@ -6228,6 +6401,9 @@
             break;
           case '5':
             document.querySelector('.pill[data-filter="Faste"]')?.click();
+            break;
+          case 'c': case 'C':
+            toggleClientMode();
             break;
         }
       });
